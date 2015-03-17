@@ -1,0 +1,4 @@
+zone "netflix.com." {
+    type master;
+    file "/data/db.override";
+};
