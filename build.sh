@@ -40,4 +40,5 @@ cp init/* /etc/init
 # change back to original directory
 popd
 
+echo "Change your DNS to" $ipaddr "and start watching Netflix out of region."
 echo "Done!"
