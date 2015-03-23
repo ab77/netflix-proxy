@@ -41,8 +41,8 @@ $(which sed) -i "s/127.0.0.1/${ipaddr}/g" data/db.override
 $(which sed) -i "s/YYYYMMDD/${date}/g" data/db.override
 
 echo "Building docker containers"
-$(which docker) build -t bind docker-bind
-$(which docker) build -t sniproxy docker-sniproxy
+#$(which docker) build -t bind docker-bind
+#$(which docker) build -t sniproxy docker-sniproxy
 
 echo "Starting Docker containers"
 $(which docker) run --name bind -d -v /opt/netflix-proxy/data:/data -p 53:53/udp -t ab77/bind
