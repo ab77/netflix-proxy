@@ -45,8 +45,8 @@ $(which docker) build -t bind docker-bind
 $(which docker) build -t sniproxy docker-sniproxy
 
 echo "Starting Docker containers"
-$(which docker) run --name bind -d -v /opt/netflix-proxy/data:/data -p 53:53/udp -t bind
-$(which docker) run --name sniproxy -d -v /opt/netflix-proxy/data:/data --net=host -t sniproxy
+$(which docker) run --name bind -d -v /opt/netflix-proxy/data:/data -p 53:53/udp -t ab77/bind
+$(which docker) run --name sniproxy -d -v /opt/netflix-proxy/data:/data --net=host -t ab77/sniproxy
 
 echo "Testing DNS"
 $(which dig) netflix.com @$ipaddr
