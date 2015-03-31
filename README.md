@@ -1,5 +1,5 @@
 # netflix-proxy
-Docker packaged smart DNS proxy to watch Netflix out of region using BIND and sniproxy.
+Docker packaged smart DNS proxy to watch Netflix out of region using BIND and sniproxy[n1].
 
 # Instructions
 These instructions are based on a standard Ubuntu Docker image provided by Digital Ocean, but should work on any Linux distubution with Docker pre-installed.
@@ -13,3 +13,5 @@ These instructions are based on a standard Ubuntu Docker image provided by Digit
 6. Enjoy!
 
 -- ab1
+
+[n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
