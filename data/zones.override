@@ -1,4 +1,29 @@
 zone "netflix.com." {
-    type master;
-    file "/data/db.override";
+	type master;
+	file "/etc/named/db.override";
+};
+
+zone "hulu.com." {
+        type master;
+        file "/etc/named/db.override";
+};
+
+zone "hbonow.com." {
+        type master;
+        file "/etc/named/db.override";
+};
+
+zone "crackle.com." {
+        type master;
+        file "/etc/named/db.override";
+};
+
+zone "pandora.com." {
+        type master;
+        file "/etc/named/db.override";
+};
+
+zone "vudu.com." {
+        type master;
+        file "/etc/named/db.override";
 };
