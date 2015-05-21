@@ -13,6 +13,11 @@ zone "hbonow.com." {
     file "/data/db.override";
 };
 
+zone "amazon.com." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "crackle.com." {
     type master;
     file "/data/db.override";
