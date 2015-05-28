@@ -5,7 +5,7 @@
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
 
 ## DigitalOcean
-The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distubution with Docker pre-installed.
+The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution with Docker pre-installed.
 
 1. Head over to [Digital Ocean](https://www.digitalocean.com/?refcode=937b01397c94) to get $10 USD credit to create a Docker VM
 2. Create a `Droplet` using `Docker 1.6.2` on `Ubuntu 14.04` (find in under Applications images).
@@ -16,7 +16,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 6. Enjoy!
 
 ## Linode
-The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distubution **without** Docker installed.
+The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed.
 
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
@@ -27,7 +27,7 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 6. Binge. Not that there is anything wrong with that..
 
 ## DreamCompute by DreamHost
-The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distubution **without** Docker installed and running under **non-root** user.
+The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user.
 
 1. Head over to [DreamHost]( http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
 2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance.
