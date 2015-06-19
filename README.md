@@ -1,5 +1,15 @@
 # netflix-proxy
-`Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2] and/or `HBO Now`, out of region using `BIND` and `sniproxy`[n1].
+`Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1].
+
+# Supported Services
+The following are supported out of the box, however adding additional services is trivial and is done by editing `zones.override` and `sniproxy.conf` files:
+* Netflix
+* Hulu
+* HBO Now 
+* Amazon Instant Video (US)
+* Crackle
+* Pandora
+* Vudu
 
 # Instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
