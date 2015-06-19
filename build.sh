@@ -24,7 +24,7 @@ date=$(/bin/date +'%Y%m%d')
 # display usage
 usage() {
 	echo "Usage: $0 [-r 0|1] [-b 0|1]" 1>&2; \
-	printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 0)\n"; \
+	printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
         printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
 	exit 1;
 }
@@ -48,7 +48,7 @@ done
 shift $((OPTIND-1))
 
 if [[ -z "${r}" ]]; then
-	r=0
+	r=1
 fi
 
 if [[ -z "${b}" ]]; then
