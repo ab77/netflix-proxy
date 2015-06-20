@@ -1,7 +1,7 @@
 $TTL  86400
 
 @   IN  SOA ns1 root (
-            2015061901  ; serial
+            YYYYMMDD01  ; serial
             604800      ; refresh 1w
             86400       ; retry 1d
             2419200     ; expiry 4w
@@ -9,6 +9,6 @@ $TTL  86400
             )
 
     IN  NS  ns1
-ns1 IN  A   46.101.16.182
-@   IN  A   46.101.16.182
-*   IN  A   46.101.16.182
+ns1 IN  A   127.0.0.1
+@   IN  A   127.0.0.1
+*   IN  A   127.0.0.1
