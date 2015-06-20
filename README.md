@@ -23,7 +23,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 3. SSH to your `Droplet` and run the following command..
 4. `cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
 5. Point your DNS at the Droplet IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-6. Enjoy!
+6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if somethng doesn't work quite right..
 
 ## Security
 The build script automatically configures the system with **DNS recursion turned on**. This has security implications, since it potentially opens your DNS server to a DNS amplification attack, a kind of a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack). This should not be a concern however, as long as the `iptables` firewall rules configured automatically by the build script for you remain in place. However if you ever decide to turn the firewall off, please be aware of this.
@@ -44,7 +44,7 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 3. SSH to your `Linode` and run the following command..
 4. `curl -sSL https://get.docker.com/ | sh && cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
 5. Point your DNS at the `Linode` IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-6. Binge. Not that there is anything wrong with that..
+6. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if somethng doesn't work quite right..
 
 ### DreamCompute by DreamHost
 The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user.
@@ -56,10 +56,10 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 3. SSH to your instance and run the following command..
 4. `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker dhc-user && cd /opt && sudo git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
 5. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-6. Well done, enjoy!
+6. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if somethng doesn't work quite right..
 
 -- [ab1](https://plus.google.com/+AntonBelodedenko?rel=author)
 
 [n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
 
-[n2] At the time of writing (May 2015), Hulu appears to be geo-restricted from DigitalOcean and Linode US IPs, but working from DreamCompute IAD DC IPs (at least the ones I've tried).
+[n2] At the time of writing (May 2015), `Hulu` appears to be geo-restricted from `DigitalOcean` and `Linode` US IPs, but working from `DreamCompute` IAD DC IPs (at least the ones I've tried).
