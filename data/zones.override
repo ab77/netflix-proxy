@@ -18,6 +18,11 @@ zone "amazon.com." {
     file "/data/db.override";
 };
 
+zone "amazon.co.uk." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "crackle.com." {
     type master;
     file "/data/db.override";
