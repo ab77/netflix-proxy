@@ -23,7 +23,7 @@ date=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
-	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>" 1>&2; \
+	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>]" 1>&2; \
 	printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
 	printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
 	printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n"; \
