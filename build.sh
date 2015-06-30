@@ -23,27 +23,31 @@ date=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
-	echo "Usage: $0 [-r 0|1] [-b 0|1]" 1>&2; \
+	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c 0.0.0.0|<ip>" 1>&2; \
 	printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
-        printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
+	printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
+	printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n"; \
 	exit 1;
 }
 
 # process options
-while getopts ":r:b:" o; do
-    case "${o}" in
-        r)
-            r=${OPTARG}
-            ((r == 0|| r == 1)) || usage
-            ;;
-        b)
-            b=${OPTARG}
-            ((b == 0|| b == 1)) || usage
-            ;;
-        *)
-            usage
-            ;;
-    esac
+while getopts ":r:b:c:" o; do
+	case "${o}" in
+		r)
+			r=${OPTARG}
+			((r == 0|| r == 1)) || usage
+			;;
+		b)
+			b=${OPTARG}
+			((b == 0|| b == 1)) || usage
+			;;
+		c)
+			c=${OPTARG}
+			;;
+		*)
+			usage
+			;;
+	esac
 done
 shift $((OPTIND-1))
 
@@ -52,7 +56,11 @@ if [[ -z "${r}" ]]; then
 fi
 
 if [[ -z "${b}" ]]; then
-        b=0
+	b=0
+fi
+
+if [[ -n "${c}" ]]; then
+	clientip="${c}"
 fi
 
 # prepare BIND config
