@@ -33,7 +33,12 @@ If you want to turn DNS recursion off, please be aware that you will need a mech
 `cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh -r 0 -b 1`
 
 ### Command Line Options
-You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
+The following command line options can be optionaly passed to `build.sh` for additional control:
+
+    Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>]
+        -r      enable (1) or disable (0) DNS recursion (default: 1)
+        -b      grab docker images from repository (0) or build locally (1) (default: 0)
+        -c      specify client-ip instead of being taken from ssh_connection[n3]
 
 ## Other Cloud Providers
 
@@ -65,3 +70,5 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 [n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
 
 [n2] At the time of writing (May 2015), `Hulu` appears to be geo-restricted from `DigitalOcean` and `Linode` US IPs, but working from `DreamCompute` IAD DC IPs (at least the ones I've tried).
+
+[n3] You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
