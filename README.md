@@ -32,7 +32,7 @@ If you want to turn DNS recursion off, please be aware that you will need a mech
 
 `cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh -r 0 -b 1`
 
-### Other Cloud Providers
+### Command Line Options
 You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
 
 ## Other Cloud Providers
