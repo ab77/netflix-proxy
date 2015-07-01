@@ -65,11 +65,11 @@ fi
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
-	printf "disabling DNS recursion...\n"
-	printf "\t\tallow-recursion { none; };\n\t\trecursion no;\n\t\tadditional-from-auth no;\n\t\tadditional-from-cache no;\n" > ${root}/docker-bind/named.recursion.conf
+        printf "disabling DNS recursion...\n"
+        printf "\t\tallow-recursion { none; };\n\t\trecursion no;\n\t\tadditional-from-auth no;\n\t\tadditional-from-cache no;\n" | sudo tee ${root}/docker-bind/named.recursion.conf
 else
-	printf "WARNING: enabling DNS recursion...\n"
-	printf "\t\tallow-recursion { trusted; };\n\t\trecursion yes;\n\t\tadditional-from-auth yes;\n\t\tadditional-from-cache yes;\n" > ${root}/docker-bind/named.recursion.conf	
+        printf "WARNING: enabling DNS recursion...\n"
+        printf "\t\tallow-recursion { trusted; };\n\t\trecursion yes;\n\t\tadditional-from-auth yes;\n\t\tadditional-from-cache yes;\n" | sudo tee ${root}/docker-bind/named.recursion.conf
 fi
 
 # switch to working directory
