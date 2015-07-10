@@ -6,7 +6,7 @@ The following are supported out of the box, however adding additional services i
 * Netflix
 * Hulu
 * HBO Now 
-* Amazon Instant Video (US)
+* Amazon Instant Video
 * Crackle
 * Pandora
 * Vudu
