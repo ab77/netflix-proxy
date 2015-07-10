@@ -61,7 +61,7 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
 3. SSH to your instance and run the following command..
-4. `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker dhc-user && cd /opt && sudo git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
+4. `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(who am i | awk '{print $1}') && cd /opt && sudo git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
 5. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 6. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
