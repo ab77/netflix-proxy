@@ -4,7 +4,7 @@
 # Supported Services
 The following are supported out of the box, however adding additional services is trivial and is done by editing `zones.override` and `sniproxy.conf` files:
 * Netflix
-* Hulu
+* Hulu[n2]
 * HBO Now 
 * Amazon Instant Video
 * Crackle
@@ -69,6 +69,6 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 
 [n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
 
-[n2] At the time of writing (May 2015), `Hulu` appears to be geo-restricted from `DigitalOcean` and `Linode` US IPs, but working from `DreamCompute` IAD DC IPs (at least the ones I've tried).
+[n2] At the time of writing (May 2015), `Hulu` appears to be geo-restricted from `DigitalOcean` and `Linode` US IPs, but worked for a short time from a `DreamCompute` IAD DC IP. It also seems to be working from `Amazon EC2` IPs.
 
 [n3] You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
