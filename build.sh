@@ -8,7 +8,7 @@ set -e
 # change to working directory
 root="/opt/netflix-proxy"
 
-# obtain the interface with the default gateway say
+# obtain the interface with the default gateway
 int=$(ip route | grep default | awk '{print $5}')
 
 # obtain IP address of the Internet facing interface
