@@ -105,7 +105,7 @@ if [[ "${b}" == "1" ]]; then
 	sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t bind
 	sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
 else
-	echo "Starting Docker containersi (from repository)"
+	echo "Starting Docker containers (from repository)"
 	sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t ab77/bind
 	sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t ab77/sniproxy
 fi
