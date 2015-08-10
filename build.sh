@@ -98,8 +98,8 @@ sudo $(which sed) -i "s/YYYYMMDD/${date}/g" data/db.override
 
 if [[ "${b}" == "1" ]]; then
 	echo "Building docker containers"
-	$(which docker) build -t bind docker-bind
-	$(which docker) build -t sniproxy docker-sniproxy
+	sudo $(which docker) build -t bind docker-bind
+	sudo $(which docker) build -t sniproxy docker-sniproxy
 
 	echo "Starting Docker containers (local)"
 	sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t bind
