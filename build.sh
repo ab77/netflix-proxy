@@ -63,6 +63,9 @@ if [[ -n "${c}" ]]; then
 	clientip="${c}"
 fi
 
+# diagnostics info
+echo "clientip="$clientip "ipaddr="$ipaddr "extip"=$extip
+
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
         printf "disabling DNS recursion...\n"
