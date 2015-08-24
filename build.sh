@@ -79,18 +79,21 @@ fi
 pushd ${root}
 
 # configure iptables
-sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A INPUT -p icmp -j ACCEPT
-sudo iptables -A INPUT -i lo -j ACCEPT
-sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-sudo iptables -A INPUT -s $clientip/32 -p tcp -m tcp --dport 80 -j ACCEPT
-sudo iptables -A INPUT -s $clientip/32 -p tcp -m tcp --dport 443 -j ACCEPT
-sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
-sudo iptables -A FORWARD -j REJECT --reject-with icmp-host-prohibited
-sudo iptables -A DOCKER -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A DOCKER -p icmp -j ACCEPT
-sudo iptables -A DOCKER -s $clientip/32 -p udp -m udp --dport 53 -j ACCEPT
-sudo iptables -A DOCKER -j REJECT --reject-with icmp-host-prohibited
+sudo iptables -N FRIENDS
+sudo iptables -A FRIENDS -s $clientip/32 -j ACCEPT
+sudo iptables -A FRIENDS -j DROP
+sudo iptables -N ALLOW
+sudo iptables -A INPUT -j ALLOW
+sudo iptables -A FORWARD -j ALLOW
+sudo iptables -A DOCKER -j ALLOW
+sudo iptables -A ALLOW -p icmp -j ACCEPT
+sudo iptables -A ALLOW -i lo -j ACCEPT
+sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
+sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
+sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
+sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 sudo apt-get -y install iptables-persistent
