@@ -26,7 +26,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 ### Authorising Additional IPs
-If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where x.x.x.x is the IP address) by running:
+If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where `x.x.x.x` is the IP address) by running:
 
     sudo iptables -I FRIENDS -s x.x.x.x/32 -j ACCEPT
     iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
