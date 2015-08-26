@@ -37,3 +37,13 @@ zone "vudu.com." {
     type master;
     file "/data/db.override";
 };
+
+zone "tvegolf-i.Akamaihd.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "tvenbcsn-i.Akamaihd.net." {
+    type master;
+    file "/data/db.override";
+};
