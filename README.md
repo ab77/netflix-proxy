@@ -10,6 +10,7 @@ The following are supported out of the box, however adding additional services i
 * Crackle
 * Pandora
 * Vudu
+* NBC Sports and potentially many more
 
 # Instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
