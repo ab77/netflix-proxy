@@ -77,6 +77,19 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 5. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 6. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
+
+### Further Work
+This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
+
+    zone "." {
+        type master;
+        file "/data/db.override";
+    };
+
+This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
+
+There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
+
 -- [ab1](https://plus.google.com/+AntonBelodedenko?rel=author)
 
 [n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
@@ -84,3 +97,5 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 [n2] At the time of writing (May 2015), `Hulu` appears to be geo-restricted from `DigitalOcean` and `Linode` US IPs, but worked for a short time from a `DreamCompute` IAD DC IP. It also seems to be working from `Amazon EC2` IPs.
 
 [n3] You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
+
+[n4] See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
