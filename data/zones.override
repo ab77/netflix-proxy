@@ -72,10 +72,7 @@ zone "nbcuni.com." {
     type master;
     file "/etc/bind/db.override";
 };
-zone "pandora.com." {
-    type master;
-    file "/etc/bind/db.override";
-};
+
 zone "broadband.espn.go.com." {
     type master;
     file "/etc/bind/db.override";
