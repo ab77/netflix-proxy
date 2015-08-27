@@ -2,7 +2,7 @@
 `Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1].
 
 # Supported Services
-The following are supported out of the box, however adding additional services is trivial and is done by editing `zones.override` and `sniproxy.conf` files:
+The following are supported out of the box, however adding additional services is trivial and is done by editing `zones.override` file:
 * Netflix
 * Hulu[n2]
 * HBO Now 
