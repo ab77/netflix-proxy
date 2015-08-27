@@ -84,3 +84,17 @@ zone "ip2location.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
+zone "tve_nbc-vh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "nbcuni.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+
+
+
