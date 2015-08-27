@@ -13,6 +13,11 @@ zone "hbonow.com." {
     file "/data/db.override";
 };
 
+zone "hbogo.com." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "amazon.com." {
     type master;
     file "/data/db.override";
@@ -86,6 +91,46 @@ zone "tve_nbc-vh.akamaihd.net." {
     type master;
     file "/etc/bind/db.override";
 };
+
+zone "pbs.org." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "warnerbros.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "southpark.cc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "ipad-streaming.cbs.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+zone "brightcove.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "cwtv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "spike.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+
+
 
 
 
