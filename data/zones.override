@@ -150,15 +150,19 @@ zone "video.dl.playstation.net." {
     type master;
     file "/etc/bind/db.override";
 };
-zone "video.dl.playstation.net." {
+zone "uplynk.com." {
     type master;
     file "/etc/bind/db.override";
 };
-zone "video.dl.playstation.net." {
+zone "maxmind.com." {
     type master;
     file "/etc/bind/db.override";
 };
-zone "video.dl.playstation.net." {
+zone "disney.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "disneyjunior.com." {
     type master;
     file "/etc/bind/db.override";
 };
