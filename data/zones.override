@@ -112,7 +112,6 @@ zone "ipad-streaming.cbs.com." {
     file "/etc/bind/db.override";
 };
 
-
 zone "brightcove.com." {
     type master;
     file "/etc/bind/db.override";
@@ -127,13 +126,3 @@ zone "spike.com." {
     type master;
     file "/etc/bind/db.override";
 };
-
-
-
-
-
-
-
-
-
-
