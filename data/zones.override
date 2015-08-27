@@ -128,6 +128,42 @@ zone "spike.com." {
     file "/etc/bind/db.override";
 };
 
+zone "go.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtvnservices.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "optimizely.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "video.dl.playstation.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "video.dl.playstation.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "video.dl.playstation.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "video.dl.playstation.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
 
 
 
