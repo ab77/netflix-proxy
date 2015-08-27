@@ -47,3 +47,40 @@ zone "tvenbcsn-i.Akamaihd.net." {
     type master;
     file "/data/db.override";
 };
+
+zone "abc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "abc.go.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "fox.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "link.theplatform.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "nbc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "nbcuni.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "pandora.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "broadband.espn.go.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "ip2location.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
