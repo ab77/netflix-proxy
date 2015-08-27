@@ -142,10 +142,7 @@ zone "mtvnservices.com." {
     type master;
     file "/etc/bind/db.override";
 };
-zone "optimizely.com." {
-    type master;
-    file "/etc/bind/db.override";
-};
+
 zone "video.dl.playstation.net." {
     type master;
     file "/etc/bind/db.override";
