@@ -57,22 +57,27 @@ zone "abc.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
 zone "abc.go.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
 zone "fox.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
 zone "link.theplatform.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
 zone "nbc.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
 zone "nbcuni.com." {
     type master;
     file "/etc/bind/db.override";
@@ -123,6 +128,42 @@ zone "cwtv.com." {
 };
 
 zone "spike.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "go.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtvnservices.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "video.dl.playstation.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "uplynk.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "maxmind.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "disney.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+zone "disneyjunior.com." {
     type master;
     file "/etc/bind/db.override";
 };
