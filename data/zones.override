@@ -43,6 +43,11 @@ zone "vudu.com." {
     file "/data/db.override";
 };
 
+zone "blinkbox.com." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "tvegolf-i.Akamaihd.net." {
     type master;
     file "/data/db.override";
