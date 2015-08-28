@@ -10,6 +10,7 @@ The following are supported out of the box, however adding additional services i
 * Crackle
 * Pandora
 * Vudu
+* blinkbox
 * NBC Sports and potentially many more
 
 # Instructions
