@@ -132,7 +132,7 @@ zone "cwtv.com." {
     file "/etc/bind/db.override";
 };
 
-zone "spike.com." {
+zone "usgageo.edgesuite.net." {
     type master;
     file "/etc/bind/db.override";
 };
@@ -175,3 +175,199 @@ zone "disneyjunior.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
+zone "crunchyroll.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "iheart.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "logotv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "vh1.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "sni-vh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "unicornmedia.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "dramafevertoken-a.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "ulive.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "demdex.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "adobe.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtvnimages.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "discoverymedia.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "flux.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "syfy.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "thewb.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "showtimeanytime.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "showtimeanytime.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "vevo.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tveusawest-lh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tve_usa-vh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "turner.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "wwe.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "usopen.org." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "usopen2011-f.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "chartbeat.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "scorecardresearch.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mylifetime.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "doubleclick.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "rubiconproject.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "cpxinteractive.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "adnxs.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "cpxadroit.comt." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "serving-sys.comt." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mog.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "demdex.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "imrworldwide.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "fwmrm.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+
+
+
+
