@@ -266,3 +266,39 @@ zone "vevo.com." {
     file "/etc/bind/db.override";
 };
 
+zone "tveusawest-lh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tve_usa-vh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "turner.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "wwe.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "usopen.org." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "usopen2011-f.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+
+
+
+
+
