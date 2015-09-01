@@ -365,9 +365,3 @@ zone "fwmrm.net." {
     type master;
     file "/etc/bind/db.override";
 };
-
-
-
-
-
-
