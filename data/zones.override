@@ -132,7 +132,7 @@ zone "cwtv.com." {
     file "/etc/bind/db.override";
 };
 
-zone "spike.com." {
+zone "usgageo.edgesuite.net." {
     type master;
     file "/etc/bind/db.override";
 };
@@ -231,6 +231,38 @@ zone "mtvnimages.com." {
     file "/etc/bind/db.override";
 };
 
+zone "discoverymedia.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
 
+zone "flux.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
 
+zone "syfy.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "thewb.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "showtimeanytime.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "showtimeanytime.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "vevo.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
 
