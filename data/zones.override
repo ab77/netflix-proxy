@@ -216,4 +216,21 @@ zone "ulive.com." {
     file "/etc/bind/db.override";
 };
 
+zone "demdex.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "adobe.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "mtvnimages.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
+
 
