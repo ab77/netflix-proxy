@@ -175,3 +175,45 @@ zone "disneyjunior.com." {
     type master;
     file "/etc/bind/db.override";
 };
+
+zone "crunchyroll.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "iheart.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "logotv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "vh1.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "sni-vh.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "unicornmedia.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "dramafevertoken-a.akamaihd.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "ulive.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+
