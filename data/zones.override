@@ -365,3 +365,88 @@ zone "fwmrm.net." {
     type master;
     file "/etc/bind/db.override";
 };
+
+zone "amctv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "sho.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "foxsports.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "wetv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "beinsportsplay.tv." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "ifc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "fxnetworks.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "usanetwork.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "nbcolympics.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "aetv.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "comcast.net." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "msnbc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "cnbc.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "simpsonsworld.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "starwars.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tennischannel.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
+
+zone "tvland.com." {
+    type master;
+    file "/etc/bind/db.override";
+};
