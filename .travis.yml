@@ -2,7 +2,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_b56834794a9a_key -iv $encrypted_b56834794a9a_iv -in id_rsa.travis.enc -out id_rsa.travis -d 
 
 script:
-  - ls -la id_rsa.travis
+  - python __testbuild.py $do_api_v2_token
 
 after_script:
   - rm id_rsa.travis
