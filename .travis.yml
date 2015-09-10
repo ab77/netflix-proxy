@@ -1,0 +1,8 @@
+before_install:
+  - openssl aes-256-cbc -K $encrypted_a92c8db529d5_key -iv $encrypted_a92c8db529d5_iv -in id_rsa.travis.enc -out id_rsa.travis -d
+
+script:
+  - echo id_rsa.travis
+
+after_script:
+  - rm id_rsa.travis
