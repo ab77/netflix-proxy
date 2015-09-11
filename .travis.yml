@@ -5,8 +5,8 @@ install:
   - sudo pip install -r requirements.txt
   
 script:
-  - pwd
-  - ls -la id_rsa.*
+  - sudo chmod 600 id_rsa.travis
+  - sudo chmod 644 id_rsa.travis.pub
   - python __testbuild.py digitalocean --api_token $do_api_v2_token
 
 after_script:
