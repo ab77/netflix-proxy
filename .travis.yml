@@ -5,6 +5,7 @@ install:
   - sudo pip install -r requirements.txt
   
 script:
+  - pwd
   - ls -la id_rsa.*
   - python __testbuild.py digitalocean --api_token $do_api_v2_token
 
