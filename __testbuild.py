@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
-import time, sys, inspect, traceback, argparse, json, uuid, requests
+import time, sys, socket, inspect, traceback, argparse, json, uuid, requests
 from pprint import pprint
 from subprocess import Popen, PIPE
 
+try:
+    import dns.resolver
+except ImportError:
+    sys.stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
+    sys.exit(1)
+    
 try:
     from termcolor import colored
 except ImportError:
@@ -69,23 +75,30 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
 
 def logger(message=None):
     print '%s\n' % repr(message)
-    
-def args():
+
+def get_public_ip():
+    resolver = dns.resolver.Resolver()
+    resolver.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
+    return resolver.query('myip.opendns.com', 'A').rrset[0]
+
+def args():   
     parser = argparse.ArgumentParser()
     sp = parser.add_subparsers()    
     digitalocean = sp.add_parser('digitalocean')
     digitalocean.add_argument('provider', action='store_const', const='digitalocean', help=argparse.SUPPRESS)
     digitalocean.add_argument('--api_token', type=str, required=True, help='DigitalOcean API v2 secret token')
+    digitalocean.add_argument('--client_ip', type=str, required=False, default=get_public_ip(), help='client IP to secure Droplet')
+    digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
     args = parser.parse_args()
     return args
 
-def create_droplet(s, name):
+def create_droplet(s, name, cip):
     user_data = '''
 #cloud-config
 
 runcmd:
-  - git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c 127.0.0.1
-'''
+  - git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s
+''' % cip
 
     json_data = {'name': name,
                  'region': DEFAULT_REGION_SLUG,
@@ -228,7 +241,7 @@ if __name__ == '__main__':
         
         try:
             print colored('Creating Droplet %s...' % name, 'yellow')
-            d = create_droplet(s, name)                
+            d = create_droplet(s, name, arg.client_ip)                
             pprint(d)
             
             droplet_ip = get_droplet_ip_by_name(s, name)
@@ -250,8 +263,9 @@ if __name__ == '__main__':
             sys.exit(1)
             
         finally:
-            droplet_id = get_droplet_id_by_name(s, name)
-            if droplet_id:
-                print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
-                d = destroy_droplet(s, droplet_id)
-                pprint(d)
+            if arg.destroy:
+                droplet_id = get_droplet_id_by_name(s, name)
+                if droplet_id:
+                    print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
+                    d = destroy_droplet(s, droplet_id)
+                    pprint(d)
