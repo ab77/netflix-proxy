@@ -5,6 +5,12 @@ from pprint import pprint
 from subprocess import Popen, PIPE
 
 try:
+    from termcolor import colored
+except ImportError:
+    sys.stderr.write('ERROR: Python module "termcolor" not found, please run "pip install termcolor".\n')
+    sys.exit(1)
+
+try:
     import requests
 except ImportError:
     sys.stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
@@ -14,7 +20,7 @@ PROXY_HOST = None
 PROXY_PORT = None
 BASE_API_URL = 'https://api.digitalocean.com/v2'
 DOCKER_IMAGE_SLUG = 'docker'
-DEFAULT_SSH_KEYS = '["d1:b6:92:ea:cc:4c:fe:9c:c5:ef:27:ce:33:1f:ba:61"]'
+DEFAULT_SSH_KEYS = ['d1:b6:92:ea:cc:4c:fe:9c:c5:ef:27:ce:33:1f:ba:61']
 DEFAULT_REGION_SLUG = 'nyc3'
 DEFAULT_MEMORY_SIZE_SLUG = '512mb'
 DEFAULT_VCPUS = 1
@@ -81,21 +87,20 @@ runcmd:
   - git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c 127.0.0.1
 '''
 
-    post_body = '''{"name": "%s",
-"region": "%s",
-"size": "%s",
-"vcpus": %d,
-"disk": %d,
-"image": "%s",
-"ssh_keys": %s,
-"backups": false,
-"ipv6": false,
-"private_networking": false,
-"user_data": "%s"}''' % (name, DEFAULT_REGION_SLUG, DEFAULT_MEMORY_SIZE_SLUG,
-                         DEFAULT_VCPUS, DEFAULT_DISK_SIZE, DOCKER_IMAGE_SLUG,
-                         DEFAULT_SSH_KEYS, user_data)
+    json_data = {'name': name,
+                 'region': DEFAULT_REGION_SLUG,
+                 'size': DEFAULT_MEMORY_SIZE_SLUG,
+                 'vcpus': DEFAULT_VCPUS,
+                 'disk': DEFAULT_DISK_SIZE,
+                 'image': DOCKER_IMAGE_SLUG,
+                 'ssh_keys': DEFAULT_SSH_KEYS,
+                 'backups': False,
+                 'ipv6': False,
+                 'private_networking': False,
+                 'user_data': user_data}
     
     s.headers.update({'Content-Type': 'application/json'})
+    post_body = json.dumps(json_data)
     response = s.post('%s/droplets' % BASE_API_URL, data=post_body)
     d = json.loads(response.text)
     pprint(d)
@@ -104,11 +109,12 @@ runcmd:
     def wait_for_vm_provisioning_completion_retry(action_url):
         response = s.get(action_url)
         d = json.loads(response.text)
-        pprint(d['action']['status']) 
         if 'completed' in d['action']['status']:
+            print colored(d['action']['status'], 'green')
             assert True
             return d
         else:
+            print colored(d['action']['status'], 'red')
             assert False
             return None
         
@@ -124,9 +130,11 @@ def destroy_droplet(s, droplet_id):
         response = s.delete('%s/droplets/%d' % (BASE_API_URL,
                                                 droplet_id))
         if response.__dict__['status_code'] == 204:
+            print colored(response.__dict__['status_code'], 'green')
             assert True
             return response.__dict__
         else:
+            print colored(response.__dict__['status_code'], 'red')
             assert False
             return None
 
@@ -158,11 +166,11 @@ def ssh_run_command(ip, command):
                  '-i', 'id_rsa.travis', 'root@%s' % ip, command],
                 shell=False, stdout=PIPE, stderr=PIPE)
     (stdout, stderr) = ssh.communicate()
-    print '%s: pid = %d, stdout = %s, stderr = %s, rc = %d' % (inspect.stack()[0][3],
-                                                               ssh.pid,
-                                                               stdout.splitlines(),
-                                                               stderr.splitlines(),
-                                                               ssh.returncode)
+    print colored('%s: pid = %d, stdout = %s, stderr = %s, rc = %d' % (inspect.stack()[0][3],
+                                                                       ssh.pid,
+                                                                       stdout.splitlines(),
+                                                                       stderr.splitlines(),
+                                                                       ssh.returncode), 'grey')
     return dict({'stdout': stdout.splitlines(),
                  'stderr': stderr.splitlines(),
                  'rc': ssh.returncode,
@@ -173,13 +181,16 @@ def docker_test(ip):
     @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
     def docker_test_retry(ip):
         stdout = ssh_run_command(ip, 'docker ps')['stdout']
-        print '%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
-                                                     stdout,
-                                                     len(stdout))
         if len(stdout) < 3: # quick and dirty check (3 lines of output = header + bind + sniproxy), needs improvement..
+            print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
+                                                                 stdout,
+                                                                 len(stdout)), 'red')
             assert False
             return False
         else:
+            print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
+                                                                 stdout,
+                                                                 len(stdout)), 'green')
             assert True
             return True
             
@@ -191,11 +202,12 @@ def netflix_proxy_test(ip):
     def netflix_proxy_test_retry(ip):
         ssh_run_command(ip, 'tail /var/log/cloud-init-output.log')
         rc = ssh_run_command(ip, "grep -E 'Change your DNS to ([0-9]{1,3}[\.]){3}[0-9]{1,3} and start watching Netflix out of region\.' /var/log/cloud-init-output.log")['rc']
-        print '%s: SSH return code = %s' % (inspect.stack()[0][3], rc)
         if rc > 0:
+            print colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'red')
             assert False
             return None
         else:
+            print colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'green')
             assert True
             return rc
             
@@ -215,31 +227,31 @@ if __name__ == '__main__':
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
         
         try:
-            print 'Creating Droplet %s...' % name
+            print colored('Creating Droplet %s...' % name, 'yellow')
             d = create_droplet(s, name)                
             pprint(d)
             
             droplet_ip = get_droplet_ip_by_name(s, name)
-            print 'Droplet ipaddr = %s...' % droplet_ip
+            print colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan')
 
-            print 'Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip)
+            print colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             result = docker_test(droplet_ip)
             if not result: sys.exit(1)
             
-            print 'Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip)
+            print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             rc = netflix_proxy_test(droplet_ip)
             if rc > 0: sys.exit(rc)
 
-            print 'Tested, OK..'
+            print colored('Tested, OK..', 'green')
             sys.exit(0)
             
         except Exception as e:
-            print traceback.print_exc()
+            print colored(traceback.print_exc(), 'red')
             sys.exit(1)
             
         finally:
             droplet_id = get_droplet_id_by_name(s, name)
             if droplet_id:
-                print 'Destroying Droplet name = %s, id = %s...' % (name, droplet_id)
+                print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
                 d = destroy_droplet(s, droplet_id)
                 pprint(d)
