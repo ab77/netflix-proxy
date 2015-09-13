@@ -143,11 +143,11 @@ def destroy_droplet(s, droplet_id):
         response = s.delete('%s/droplets/%d' % (BASE_API_URL,
                                                 droplet_id))
         if response.__dict__['status_code'] == 204:
-            print colored(response.__dict__['status_code'], 'green')
+            print colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'green')
             assert True
             return response.__dict__
         else:
-            print colored(response.__dict__['status_code'], 'red')
+            print colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'red')
             assert False
             return None
 
