@@ -230,7 +230,6 @@ if __name__ == '__main__':
     arg = args()
     if arg.api_token:
         name = str(uuid.uuid4())
-        name = '6b51bf5e-bf12-4a42-ba40-9c6b1c29a99f'
         droplet_id = None
         s = requests.Session()
         if PROXY_HOST and PROXY_PORT:
