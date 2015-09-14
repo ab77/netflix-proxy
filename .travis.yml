@@ -17,7 +17,7 @@ install:
   - pip install -r requirements.txt --download-cache "$HOME/.cache/pip"
 
 before_script:
-  - pwd && chmod 600 id_rsa.travis && sudo chmod 644 id_rsa.travis.pub && ls -la
+  - chmod 600 id_rsa.travis && sudo chmod 644 id_rsa.travis.pub
   
 script:
-  - __testbuild.py digitalocean --api_token $do_api_v2_token --destroy
+  - python __testbuild.py digitalocean --api_token $do_api_v2_token --destroy
