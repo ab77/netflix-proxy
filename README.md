@@ -23,7 +23,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 2. Create a `Droplet` using `Docker 1.x` on `Ubuntu 14.04` (find in under Applications images).
 3. Make sure you create the `Droplet` in the right location, for example if you want to watch US content, create in the US.
 3. SSH to your `Droplet` and run the following command..
-4. `cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
+4. `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the Droplet IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
 6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
@@ -43,7 +43,7 @@ The build script automatically configures the system with **DNS recursion turned
 
 If you want to turn DNS recursion off, please be aware that you will need a mechanism to selectively send DNS requests for domains your DNS server knows about (i.e. netflix.com) to your VPS and send all of the other DNS traffic to your local ISP's DNS server. Something like [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) can be used for this and some Internet routers even have it built in. In order to switch DNS recursion off, you will need to build your system using the following command:
 
-`cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh -r 0 -b 1`
+`git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -r 0 -b 1`
 
 ### Command Line Options
 The following command line options can be optionaly passed to `build.sh` for additional control:
@@ -62,7 +62,7 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
 3. Make sure you create the Linode in the right location, as there a few to pick from.
 3. SSH to your `Linode` and run the following command..
-4. `curl -sSL https://get.docker.com/ | sh && cd /opt && git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
+4. `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the `Linode` IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 6. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
@@ -74,7 +74,7 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
 3. SSH to your instance and run the following command..
-4. `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(who am i | awk '{print $1}') && cd /opt && sudo git clone https://github.com/ab77/netflix-proxy.git && cd netflix-proxy && ./build.sh`
+4. `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(who am i | awk '{print $1}') && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 6. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
