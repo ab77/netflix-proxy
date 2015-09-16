@@ -206,6 +206,7 @@ def docker_test(ip):
     @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
     def docker_test_retry(ip):
         stdout = ssh_run_command(ip, 'docker ps')['stdout']
+        # https://docs.docker.com/reference/commandline/ps/
         if len(stdout) < 3: # quick and dirty check (3 lines of output = header + bind + sniproxy), needs improvement..
             print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
                                                                  stdout,
