@@ -76,15 +76,31 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 7. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 
+### Continuous Integration (CI)
+
+I've linked this project with `Travis CI` to automatically test the build. The helper Python script `__testbuild.py` now runs automatically after every commit. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that both `Docker` containers start; and (b) the `built.sh` script outputs the correct message at the end. The test `Droplet` is destroyed and the end of the run.
+
+The `__testbuild.py` script can also be used to programatically deploy `Droplets` from the command line as follows:
+
+	python ./__testbuild.py digitalocean --api_token abcdef0123456789... --fingerprint 'aa:bb:cc:dd:...' --region 'abc1'
+	
+* `--api_token abcdef0123456789...` is your `DigitalOCean` API v2 token, which you can generate [here](https://cloud.digitalocean.com/settings/applications).
+* `--fingerprint aa:bb:cc:dd:...` are your personal SSH key fingerprint(s) quoted and separated by spaces. You can manage your SSH keys [here](https://cloud.digitalocean.com/settings/security). If you don't specify a fingerprint, it will default to my test one, which means you **won't** be able to SSH into your `Droplet`.
+* `--region abc1` is the region where you want the `Droplet` deployed. The default is `nyc3`, but you can use `--list_regions` to see the available choices.
+* `--help` parameter will also list all of the available command line options to pass to the script.
+
+Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
+
+
 ### Further Work
-This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
+This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparrent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
 
     zone "." {
         type master;
         file "/data/db.override";
     };
 
-This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
+This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. This will unfortunately invalidate the original purpose of this project. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
 
 There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
 

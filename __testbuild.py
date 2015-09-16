@@ -26,7 +26,7 @@ PROXY_HOST = None
 PROXY_PORT = None
 BASE_API_URL = 'https://api.digitalocean.com/v2'
 DOCKER_IMAGE_SLUG = 'docker'
-DEFAULT_SSH_KEYS = ['d1:b6:92:ea:cc:4c:fe:9c:c5:ef:27:ce:33:1f:ba:61']
+DEFAULT_FINGERPRINT = ['d1:b6:92:ea:cc:4c:fe:9c:c5:ef:27:ce:33:1f:ba:61']
 DEFAULT_REGION_SLUG = 'nyc3'
 DEFAULT_MEMORY_SIZE_SLUG = '512mb'
 DEFAULT_VCPUS = 1
@@ -81,6 +81,15 @@ def get_public_ip():
     resolver.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
     return resolver.query('myip.opendns.com', 'A').rrset[0]
 
+def get_regions(s):
+    response = s.get('%s/regions' % BASE_API_URL)
+    d = json.loads(response.text)
+    slugs = []
+    for region in d['regions']:
+        slugs.append(region['slug'])
+            
+    return slugs
+
 def args():   
     parser = argparse.ArgumentParser()
     sp = parser.add_subparsers()    
@@ -88,11 +97,14 @@ def args():
     digitalocean.add_argument('provider', action='store_const', const='digitalocean', help=argparse.SUPPRESS)
     digitalocean.add_argument('--api_token', type=str, required=True, help='DigitalOcean API v2 secret token')
     digitalocean.add_argument('--client_ip', type=str, required=False, default=get_public_ip(), help='client IP to secure Droplet')
+    digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
+    digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
+    digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
     args = parser.parse_args()
     return args
 
-def create_droplet(s, name, cip):
+def create_droplet(s, name, cip, fps, region):
     user_data = '''
 #cloud-config
 
@@ -101,12 +113,12 @@ runcmd:
 ''' % cip
 
     json_data = {'name': name,
-                 'region': DEFAULT_REGION_SLUG,
+                 'region': region,
                  'size': DEFAULT_MEMORY_SIZE_SLUG,
                  'vcpus': DEFAULT_VCPUS,
                  'disk': DEFAULT_DISK_SIZE,
                  'image': DOCKER_IMAGE_SLUG,
-                 'ssh_keys': DEFAULT_SSH_KEYS,
+                 'ssh_keys': fps,
                  'backups': False,
                  'ipv6': False,
                  'private_networking': False,
@@ -237,10 +249,14 @@ if __name__ == '__main__':
             s.proxies = {'http' : 'http://%s:%s' % (PROXY_HOST, PROXY_PORT),
                          'https': 'https://%s:%s' % (PROXY_HOST, PROXY_PORT)}
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
+
+        if arg.list_regions:
+            pprint(get_regions(s))
+            sys.exit(0)
         
         try:
             print colored('Creating Droplet %s...' % name, 'yellow')
-            d = create_droplet(s, name, arg.client_ip)                
+            d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region)                
             pprint(d)
             
             droplet_ip = get_droplet_ip_by_name(s, name)
