@@ -181,7 +181,6 @@ zone "marketplace-xb.xboxlive.com" {
     file "/data/db.override";
 };
 
-
 zone "lovefilm.com" {
     type master;
     file "/data/db.override";
@@ -217,7 +216,6 @@ zone "mog.com" {
     file "/data/db.override";
 };
 
-
 zone "wdtvlive.com" {
     type master;
     file "/data/db.override";
@@ -233,48 +231,37 @@ zone "beinsportsconnect.tv" {
     file "/data/db.override";
 };
 
-
 zone "beinsportsconnect.net" {
     type master;
     file "/data/db.override";
 };
-
 
 zone "besmenabs-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
 
-
 zone "besmenaas-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
-
 
 zone "besmenacs-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
 
-
 zone "besmenads-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
-
 
 zone "besmenaes-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
 
-
 zone "besmenafs-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
-
-
-
-
