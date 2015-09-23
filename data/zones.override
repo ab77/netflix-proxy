@@ -265,3 +265,45 @@ zone "besmenafs-s.akamaihd.net" {
     type master;
     file "/data/db.override";
 };
+
+zone "sprtott8-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott7-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott6-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtot5-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott4-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott3-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott2-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+zone "sprtott1-i.akamaihd.net" {
+    type master;
+    file "/data/db.override";
+};
+
+
