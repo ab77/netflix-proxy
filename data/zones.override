@@ -60,208 +60,210 @@ zone "tvenbcsn-i.Akamaihd.net." {
 
 zone "abc.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "abc.go.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "fox.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "link.theplatform.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "nbc.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "nbcuni.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "broadband.espn.go.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
+
 zone "ip2location.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "tve_nbc-vh.akamaihd.net." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "pbs.org." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "warnerbros.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "southpark.cc.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "ipad-streaming.cbs.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "brightcove.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "cwtv.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "spike.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "go.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "mtv.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "mtvnservices.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "video.dl.playstation.net." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
+
 zone "uplynk.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "maxmind.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "disney.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
 zone "disneyjunior.com." {
     type master;
-    file "/etc/bind/db.override";
+    file "/data/db.override";
 };
 
-zone "marketplace-xb.xboxlive.com" {
+zone "marketplace-xb.xboxlive.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "lovefilm.com" {
+zone "lovefilm.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "fbchdvod-f.akamaihd.net" {
+zone "fbchdvod-f.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "turner.com" {
+zone "turner.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "amctv.com" {
+zone "amctv.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "sho.com" {
+zone "sho.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "tveusa-vh.akamaihd.net" {
+zone "tveusa-vh.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "mog.com" {
+zone "mog.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "wdtvlive.com" {
+zone "wdtvlive.com." {
     type master;
     file "/data/db.override";
 };
 
-zone "pga-lh.akamaihd.net" {
+zone "pga-lh.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "beinsportsconnect.tv" {
+zone "beinsportsconnect.tv." {
     type master;
     file "/data/db.override";
 };
 
-zone "beinsportsconnect.net" {
+zone "beinsportsconnect.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenabs-s.akamaihd.net" {
+zone "besmenabs-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenaas-s.akamaihd.net" {
+zone "besmenaas-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenacs-s.akamaihd.net" {
+zone "besmenacs-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenads-s.akamaihd.net" {
+zone "besmenads-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenaes-s.akamaihd.net" {
+zone "besmenaes-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "besmenafs-s.akamaihd.net" {
+zone "besmenafs-s.akamaihd.net." {
     type master;
     file "/data/db.override";
 };
