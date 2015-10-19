@@ -117,10 +117,10 @@ else
 fi
 
 echo "Testing DNS"
-$(which dig) netflix.com @$ipaddr
+$(which dig) netflix.com @$extip
 
 echo "Testing proxy"
-echo "GET /" | $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
+echo "GET /" | $(which openssl) s_client -servername netflix.com -connect $extip:443
 
 # configure upstart
 sudo cp init/* /etc/init
