@@ -11,6 +11,7 @@ The following are supported out of the box, however adding additional services i
 * Pandora
 * Vudu
 * blinkbox
+* BBC iPlayer
 * NBC Sports and potentially many more
 
 # Instructions
