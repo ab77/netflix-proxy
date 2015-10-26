@@ -88,6 +88,8 @@ sudo iptables -A FORWARD -j ALLOW
 sudo iptables -A DOCKER -j ALLOW
 sudo iptables -A ALLOW -p icmp -j ACCEPT
 sudo iptables -A ALLOW -i lo -j ACCEPT
+sudo iptables -A FORWARD -i docker0 -o eth0 -j ACCEPT
+sudo iptables -A FORWARD -i eth0 -o docker0 -j ACCEPT
 sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
