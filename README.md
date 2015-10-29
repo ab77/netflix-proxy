@@ -11,7 +11,7 @@ The following are supported out of the box, however adding additional services i
 * Pandora
 * Vudu
 * blinkbox
-* BBC iPlayer
+* BBC iPlayer[n5]
 * NBC Sports and potentially many more
 
 # Instructions
@@ -114,3 +114,5 @@ There is a [similar](https://github.com/trick77/dockerflix) project to this, whi
 [n3] You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
 
 [n4] See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
+
+[n5] See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
