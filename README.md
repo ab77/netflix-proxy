@@ -105,6 +105,13 @@ This will in effect proxy every request that ends up on your VPS if you set your
 
 There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
 
+If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. netflix.com to your VPS IP by creating a file at `/etc/resolver/netflix.com` with these contents:
+
+    nameserver xxx.yyy.zzz.ttt
+
+replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
+
+
 -- [ab1](https://plus.google.com/+AntonBelodedenko?rel=author)
 
 [n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist dustin@null-ptr.net
