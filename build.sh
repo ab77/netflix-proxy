@@ -92,6 +92,7 @@ sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
 sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
+sudo iptables -A ALLOW -p tcp -m tcp --dport 43867 -j FRIENDS
 sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
 sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
