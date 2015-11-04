@@ -38,6 +38,16 @@ To remove previous authorised IP address, run:
     sudo iptables -D FRIENDS -s x.x.x.x/32 -j ACCEPT
     iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
 
+If you want to do this remotely, I've written a very basic front-end, which you can launch on your VPS as follows:
+
+    ./auth.py 43867
+
+Then, navigate to the following address in your browser to manage IP addresses in the `FRIENDS` group:
+
+    http://<your-vps-public-ip>:43867/auth
+
+Please note, this is a very basic implementation, which is completely unsecured (which means YOU SHOULD NOT RUN IT, APART FROM WHEN TESTING). To run it in a sensible way, you would need to host it behind a proper web server with at least basic authentication and over SSL, see [web.py install guide](http://webpy.org/install) for more details on how to do this.
+
 ### Security
 The build script automatically configures the system with **DNS recursion turned on**. This has security implications, since it potentially opens your DNS server to a DNS amplification attack, a kind of a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack). This should not be a concern however, as long as the `iptables` firewall rules configured automatically by the build script for you remain in place. However if you ever decide to turn the firewall off, please be aware of this.
 
