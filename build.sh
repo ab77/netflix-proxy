@@ -98,6 +98,7 @@ sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 sudo apt-get -y install iptables-persistent
+printf "\tpre-up service iptables-persistent reload\n" >> /etc/network/interfaces
 
 echo "Updating db.override with ipaddr"=$extip "and date="$date
 sudo $(which sed) -i "s/127.0.0.1/${extip}/g" data/db.override
