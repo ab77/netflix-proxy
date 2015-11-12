@@ -5,6 +5,9 @@
 # bomb on any error
 set -e
 
+# default timeout
+timeout=2
+
 # change to working directory
 root="/opt/netflix-proxy"
 
@@ -119,10 +122,10 @@ else
 fi
 
 echo "Testing DNS"
-$(which dig) netflix.com @$extip
+$(which dig) +time=$timeout netflix.com @$extip || $(which dig) +time=$timeout netflix.com @$ipaddr
 
 echo "Testing proxy"
-echo "GET /" | $(which openssl) s_client -servername netflix.com -connect $extip:443
+echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
 
 # configure upstart
 sudo cp init/* /etc/init
