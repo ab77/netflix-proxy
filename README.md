@@ -76,9 +76,9 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 6. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 ### DreamCompute by DreamHost
-The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services` and `Microsoft Azure`).
+The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`).
 
-1. Head over to [DreamHost]( http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
+1. Head over to [DreamHost](http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
 2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance.
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
@@ -86,6 +86,48 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 6. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 7. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
+### Microsoft Azure
+The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
+
+1. Head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
+2. Get [Python](https://www.python.org/downloads/).
+3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
+4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
+5. Follow [these](https://github.com/ab77/cloud-harness#create-storage-account-name-must-be-unique-as-it-forms-part-of-the-storage-url-check-with---action-check_storage_account_name_availability) instructions to create a storage account.
+6. [Create](https://github.com/ab77/cloud-harness#create-a-new-hosted-service-name-must-be-unique-within-cloudappnet-domain-check-with---action-check_storage_account_name_availability) a new hosted service.
+7. [Add](https://github.com/ab77/cloud-harness#add-x509-certificate-containing-rsa-public-key-for-ssh-authentication-to-the-hosted-service) a hosted service certificate for SSH public key authentication
+8. [Create](https://github.com/ab77/cloud-harness#create-a-reserved-ip-address-for-the-hosted-service) a reserved ip address.
+9. [Create](https://github.com/ab77/cloud-harness#create-virtual-network) a virtual network.
+10. [Create](http://docs.docker.com/engine/articles/https/) Docker certificates and update `[DockerExtension]` section in `cloud-harness.conf`.
+11. In `cloud-harness.conf` under `[DockerExtension]` section, set `docker_compose = netflix-proxy.yaml`.
+12. In `cloud-harness.conf` under `[LinuxConfiguration]` section, set `linux_custom_data_file = netflix-proxy.dat`
+
+[Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
+
+    ./cloud-harness.py azure --action create_virtual_machine_deployment \
+    --service <your hosted service name> \
+    --deployment <your hosted service name> \
+    --name <your virtual machine name> \
+    --label 'Netflix proxy' \
+    --account <your storage account name> \
+    --blob b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140414-en-us-30GB \
+    --os Linux \
+    --network VNet1 \
+    --subnet Subnet-1 \
+    --ipaddr <your reserved ipaddr name> \
+    --size Medium \
+    --extension DockerExtension \
+    --ssh_auth \
+    --disable_pwd_auth \
+    --verbose
+
+Once this part finishes, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and check if all the components have been deployed (it may take a while). Check the progress by tailing the `cloud-init-ouput.log` file (e.g. `tail -f /var/log/cloud-init-output.log`).
+
+Test the configuration by running:
+
+    dig netflix.com @localhost && echo "GET /" | openssl s_client -servername netflix.com -connect localhost:443
+
+Lastly, use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. This means you don't have to run `iptables` firewall on your VM.
 
 ### Continuous Integration (CI)
 
