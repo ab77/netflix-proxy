@@ -100,9 +100,8 @@ The following is based on a standard `Ubuntu` image provided by `Microsoft Azure
 9. [Create](https://github.com/ab77/cloud-harness#create-virtual-network) a virtual network.
 10. [Create](http://docs.docker.com/engine/articles/https/) Docker certificates and update `[DockerExtension]` section in `cloud-harness.conf`.
 11. In `cloud-harness.conf` under `[DockerExtension]` section, set `docker_compose = netflix-proxy.yaml`.
-12. In `cloud-harness.conf` under `[LinuxConfiguration]` section, set `linux_custom_data_file = netflix-proxy.dat`
 
-[Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
+Then, [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
 
     ./cloud-harness.py azure --action create_virtual_machine_deployment \
     --service <your hosted service name> \
@@ -116,18 +115,36 @@ The following is based on a standard `Ubuntu` image provided by `Microsoft Azure
     --subnet Subnet-1 \
     --ipaddr <your reserved ipaddr name> \
     --size Medium \
-    --extension DockerExtension \
     --ssh_auth \
     --disable_pwd_auth \
     --verbose
 
-Once this part finishes, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and check if all the components have been deployed (it may take a while). Check the progress by tailing the `cloud-init-ouput.log` file (e.g. `tail -f /var/log/cloud-init-output.log`).
+Next, add the DockerExtension:
 
-Test the configuration by running:
+    ./cloud-harness.py azure --action add_resource_extension \
+    --service <your hosted service name> \
+    --deployment <your hosted service name> \
+    --name <your virtual machine name> \
+    --extension DockerExtension \
+    --docker_compose netflix-proxy.yaml \
+    --verbose  
+
+Set `linux_customscript_name` under `[CustomScriptExtensionForLinux]` in `cloud-harness.conf` to `netflix-proxy.sh` and run:
+
+    ./cloud-harness.py azure --action add_resource_extension \
+    --service netflix-proxy \
+    --deployment netflix-proxy \
+    --name netflix-proxy \
+    --extension CustomScript \
+    --verbose  
+
+Once this part finishes, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and test the configuration by running:
 
     dig netflix.com @localhost && echo "GET /" | openssl s_client -servername netflix.com -connect localhost:443
 
 Lastly, use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. This means you don't have to run `iptables` firewall on your VM.
+
+Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy `Netflix`.
 
 ### Continuous Integration (CI)
 
