@@ -12,7 +12,7 @@ The following are supported out of the box, however adding additional services i
 * Vudu
 * blinkbox
 * BBC iPlayer[n5]
-* NBC Sports and potentially many more
+* NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/master/data/zones.override)
 
 # Instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
