@@ -1,0 +1,12 @@
+[Unit]
+Description=sniproxy container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a sniproxy
+ExecStop=/usr/bin/docker stop -t 2 sniproxy
+
+[Install]
+WantedBy=local.target
