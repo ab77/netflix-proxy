@@ -149,8 +149,15 @@ $(which dig) +time=$timeout netflix.com @$extip || $(which dig) +time=$timeout n
 echo "Testing proxy"
 echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
 
-# configure upstart
-sudo cp upstart/* /etc/init
+# add upstart scripts
+if [ -d "/etc/init" ]; then
+	sudo cp ./upstart/* /etc/init/
+fi
+
+# add systemd scripts
+if [ -d "/etc/systemd/system" ]; then
+        sudo cp ./systemd/* /etc/systemd/system/
+fi
 
 # change back to original directory
 popd
