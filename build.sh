@@ -37,7 +37,7 @@ usage() {
 }
 
 # process options
-while getopts ":r:b:c:i:d:" o; do
+while getopts ":r:b:c:i:d:t:" o; do
 	case "${o}" in
 		r)
 			r=${OPTARG}
