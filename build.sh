@@ -150,7 +150,7 @@ echo "Testing proxy"
 echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
 
 # configure upstart
-sudo cp init/* /etc/init
+sudo cp upstart/* /etc/init
 
 # change back to original directory
 popd
