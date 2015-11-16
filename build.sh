@@ -26,12 +26,13 @@ date=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
-	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1]" 1>&2; \
+	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1]" 1>&2; \
 	printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
 	printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
 	printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n"; \
 	printf "\t-i\tskip iptables steps\n"; \
 	printf "\t-d\tskip Docker steps\n"; \
+	printf "\t-t\tskip testing steps\n"; \
 	exit 1;
 }
 
@@ -56,6 +57,10 @@ while getopts ":r:b:c:i:d:" o; do
 		d)
 			d=${OPTARG}
 			((d == 0|| d == 1)) || usage
+			;;
+		t)
+			t=${OPTARG}
+			((t == 0|| t == 1)) || usage
 			;;
 		*)
 			usage
@@ -82,6 +87,10 @@ fi
 
 if [[ -z "${d}" ]]; then
 	d=0
+fi
+
+if [[ -z "${t}" ]]; then
+	t=0
 fi
 
 # diagnostics info
@@ -143,12 +152,6 @@ if [[ ${d} == 0 ]]; then
 	fi
 fi
 
-echo "Testing DNS"
-$(which dig) +time=$timeout netflix.com @$extip || $(which dig) +time=$timeout netflix.com @$ipaddr
-
-echo "Testing proxy"
-echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
-
 # add upstart scripts
 if [ -d "/etc/init" ]; then
 	sudo cp ./upstart/* /etc/init/
@@ -157,6 +160,14 @@ fi
 # add systemd scripts
 if [ -d "/etc/systemd/system" ]; then
         sudo cp ./systemd/* /etc/systemd/system/
+fi
+
+if [[ ${t} == 0 ]]; then
+	echo "Testing DNS"
+	$(which dig) +time=$timeout netflix.com @$extip || $(which dig) +time=$timeout netflix.com @$ipaddr
+
+	echo "Testing proxy"
+	echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
 fi
 
 # change back to original directory
