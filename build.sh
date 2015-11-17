@@ -6,7 +6,7 @@
 set -e
 
 # default timeout
-timeout=2
+timeout=3
 
 # change to working directory
 root="/opt/netflix-proxy"
