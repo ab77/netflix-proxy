@@ -1,5 +1,5 @@
 # netflix-proxy [![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy)
-`Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1]. Works for [porn](https://en.wikipedia.org/wiki/Internet_Watch_Foundation) too.
+`Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1]. Works for [blocked](https://en.wikipedia.org/wiki/Web_blocking_in_the_United_Kingdom) sites in the UK too, such as [Pirate Bay](http://www.piratebay.com/) and [Pornhub](http://www.pornhub.com/).
 
 # Supported Services
 The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart bind`:
