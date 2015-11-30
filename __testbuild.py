@@ -151,7 +151,7 @@ runcmd:
 
 def destroy_droplet(s, droplet_id):
 
-    @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(AssertionError)
     def wait_for_vm_deletion_completion_retry(s, droplet_id):
         response = s.delete('%s/droplets/%d' % (BASE_API_URL,
                                                 droplet_id))
