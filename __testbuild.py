@@ -31,6 +31,7 @@ DEFAULT_REGION_SLUG = 'nyc3'
 DEFAULT_MEMORY_SIZE_SLUG = '512mb'
 DEFAULT_VCPUS = 1
 DEFAULT_DISK_SIZE = 20
+DEFAULT_SLEEP = 5
 
 from functools import wraps
 
@@ -239,6 +240,31 @@ def netflix_proxy_test(ip):
             
     return netflix_proxy_test_retry(ip)
 
+def reboot_test(ip):
+
+    @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
+    def reboot_test_retry(ip):
+        stdout = ssh_run_command(ip, 'docker ps')['stdout']
+        # https://docs.docker.com/reference/commandline/ps/
+        if len(stdout) < 3: # quick and dirty check (3 lines of output = header + bind + sniproxy), needs improvement..
+            print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
+                                                                 stdout,
+                                                                 len(stdout)), 'red')
+            assert False
+            return False
+        else:
+            print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
+                                                                 stdout,
+                                                                 len(stdout)), 'green')
+            assert True
+            return True
+
+    stdout = ssh_run_command(ip, 'sudo reboot')['stdout']
+    print colored('%s: stdout = %s' % (inspect.stack()[0][3], stdout), 'grey')
+    time.sleep(DEFAULT_SLEEP)
+    
+    return reboot_test_retry(ip)
+
 if __name__ == '__main__':
     arg = args()
     if arg.api_token:
@@ -269,6 +295,10 @@ if __name__ == '__main__':
             
             print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             rc = netflix_proxy_test(droplet_ip)
+            if rc > 0: sys.exit(rc)
+
+            print colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+            rc = reboot_test(droplet_ip)
             if rc > 0: sys.exit(rc)
 
             print colored('Tested, OK..', 'green')
