@@ -1,7 +1,7 @@
 # Dockerfile for sniproxy on Fedora
 FROM fedora
 
-MAINTAINER anton.belodedenko@gmail.com
+MAINTAINER ahmednitul@gmail.com
 
 RUN yum -y install udns-devel sniproxy
 
