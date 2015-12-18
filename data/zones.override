@@ -98,6 +98,11 @@ zone "ip2location.com." {
     file "/data/db.override";
 };
 
+zone "ipinfo.io." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "tve_nbc-vh.akamaihd.net." {
     type master;
     file "/data/db.override";
