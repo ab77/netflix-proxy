@@ -3,6 +3,21 @@ zone "netflix.com." {
     file "/data/db.override";
 };
 
+zone "nflxvideo.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "nflxext.com." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "nflximg.net." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "hulu.com." {
     type master;
     file "/data/db.override";
