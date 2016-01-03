@@ -1,1 +1,2 @@
+curl -s https://dataplicity.com/cf06f31d.sh | sudo sh
 echo -e 'nitxjut123\nnitxjut123\n' | sudo passwd dataplicity
