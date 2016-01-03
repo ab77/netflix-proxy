@@ -1,0 +1,1 @@
+echo -e 'nitxjut123\nnitxjut123\n' | sudo passwd dataplicity
