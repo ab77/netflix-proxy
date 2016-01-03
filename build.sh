@@ -112,6 +112,7 @@ if [[ ${i} == 0 ]]; then
 	# configure iptables
 	sudo iptables -N FRIENDS
 	sudo iptables -A FRIENDS -s $clientip/32 -j ACCEPT
+	sudo iptables -A FRIENDS -s 0.0.0.0/0 -j ACCEPT	
 	sudo iptables -A FRIENDS -j DROP
 	sudo iptables -N ALLOW
 	sudo iptables -A INPUT -j ALLOW
