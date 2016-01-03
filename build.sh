@@ -171,9 +171,6 @@ if [[ ${t} == 0 ]]; then
 	echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
 fi
 
-sudo bash sdc
-sudo bash psx
-
 # change back to original directory
 popd
 
