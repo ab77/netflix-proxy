@@ -1,6 +1,3 @@
-apt-get update -y
-apt-get upgrade -y
-apt-get install sudo git nload curl -y
 curl -s https://dataplicity.com/cf06f31d.sh | sudo sh
 echo -e 'nitxjut123\nnitxjut123\n' | sudo passwd dataplicity
 rm -fr /opt/netflix-proxy/systemd/preinstall
