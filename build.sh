@@ -116,6 +116,7 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -N ALLOW
 	sudo iptables -A INPUT -j ALLOW
 	sudo iptables -A FORWARD -j ALLOW
+	sudo iptables -A DOCKER -j ALLOW
 	sudo iptables -A ALLOW -p icmp -j ACCEPT
 	sudo iptables -A ALLOW -i lo -j ACCEPT
 	sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
@@ -128,6 +129,7 @@ if [[ ${i} == 0 ]]; then
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
+	# needs work: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
 	printf "\tpre-up service iptables-persistent reload\n" | sudo tee -a /etc/network/interfaces
 fi
 
