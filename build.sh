@@ -128,11 +128,7 @@ if [[ ${i} == 0 ]]; then
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
-	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4
-	cp /tmp/rules.v4 /etc/iptables/rules.v4 && rm /tmp/rules.v4
-	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6
-	cp /tmp/rules.v6 /etc/iptables/rules.v6 && rm /tmp/rules.v6
-
+	printf "\tpre-up service iptables-persistent reload\n" | sudo tee -a /etc/network/interfaces
 fi
 
 echo "Updating db.override with ipaddr"=$extip "and date="$date
