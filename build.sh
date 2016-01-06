@@ -116,7 +116,6 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -N ALLOW
 	sudo iptables -A INPUT -j ALLOW
 	sudo iptables -A FORWARD -j ALLOW
-	sudo iptables -A DOCKER -j ALLOW
 	sudo iptables -A ALLOW -p icmp -j ACCEPT
 	sudo iptables -A ALLOW -i lo -j ACCEPT
 	sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
@@ -129,8 +128,18 @@ if [[ ${i} == 0 ]]; then
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
-	# needs work: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
-	printf "\tpre-up service iptables-persistent reload\n" | sudo tee -a /etc/network/interfaces
+	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && cp /tmp/rules.v4 /etc/iptables/rules.v4 && rm /tmp/rules.v4
+	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && cp /tmp/rules.v6 /etc/iptables/rules.v6 && rm /tmp/rules.v6
+
+	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
+	if [ ! -f "/etc/init/docker.conf.bak" ]; then
+		$(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started iptables-persistent)/' /etc/init/docker.conf
+	fi
+	
+	if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
+		$(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
+		$(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
+	fi	
 fi
 
 echo "Updating db.override with ipaddr"=$extip "and date="$date
@@ -144,11 +153,11 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) build -t sniproxy docker-sniproxy
 	
 		echo "Starting Docker containers (local)"
-		sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t bind
+		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t bind
 		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
 	else
 		echo "Starting Docker containers (from repository)"
-		sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t ab77/bind
+		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t ab77/bind
 		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t ab77/sniproxy
 	fi
 fi
