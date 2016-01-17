@@ -1,4 +1,64 @@
+zone "ipinfo.io." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "netflix.com." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "nflximg.com." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "nflximg.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "nflxvideo.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "llnwd.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "akamaihd.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "edgesuite.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "pornhub.com." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vidto.me." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vidzi.tv." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vodlocker.com." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "videoweed.es." {
     type master;
     file "/data/db.override";
 };
@@ -89,11 +149,6 @@ zone "nbcuni.com." {
 };
 
 zone "broadband.espn.go.com." {
-    type master;
-    file "/data/db.override";
-};
-
-zone "ipinfo.io." {
     type master;
     file "/data/db.override";
 };
@@ -266,14 +321,4 @@ zone "besmenaes-s.akamaihd.net." {
 zone "besmenafs-s.akamaihd.net." {
     type master;
     file "/data/db.override";
-};
-
-zone "bbc.co.uk." {
-        type master;
-        file "/data/db.override";
-};
-
-zone "bbci.co.uk." {
-        type master;
-        file "/data/db.override";
 };
