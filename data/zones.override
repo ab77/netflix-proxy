@@ -23,21 +23,6 @@ zone "nflxvideo.net." {
     file "/data/db.override";
 };
 
-zone "llnwd.net." {
-    type master;
-    file "/data/db.override";
-};
-
-zone "akamaihd.net." {
-    type master;
-    file "/data/db.override";
-};
-
-zone "edgesuite.net." {
-    type master;
-    file "/data/db.override";
-};
-
 zone "pornhub.com." {
     type master;
     file "/data/db.override";
