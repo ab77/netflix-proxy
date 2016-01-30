@@ -25,7 +25,8 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 3. Make sure you create the `Droplet` in the right region, for example if you want to watch US content, create in the US.
 4. SSH to your `Droplet` and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the Droplet IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+6. Turn off IPv6 on your network (or relevant devices).[n6]
+7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 ### Authorising Additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where `x.x.x.x` is the IP address) by running:
@@ -73,7 +74,8 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 3. Make sure you create the Linode in the right location, as there a few to pick from.
 4. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the `Linode` IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-6. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+6. Turn off IPv6 on your network (or relevant devices). 
+7. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 ### DreamCompute by DreamHost
 The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`).
@@ -83,8 +85,9 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
 5. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(who am i | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-7. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+6. Turn off IPv6 on your network (or relevant devices). 
+7. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
+8. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
 ### Microsoft Azure
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
@@ -144,7 +147,7 @@ Once this part finishes, you should be able to SSH to your VM as `azureuser` usi
 
 Lastly, use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. This means you don't have to run `iptables` firewall on your VM.
 
-Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy `Netflix`.
+Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy `Netflix` and don't forget to turn off IPv6.
 
 ### Continuous Integration (CI)
 
@@ -192,3 +195,5 @@ replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 [n4] See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
 
 [n5] See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
+
+[n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056).
