@@ -72,6 +72,7 @@
 <li>SSH to your <code>Droplet</code> and run: <code>git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
 <li>Point your DNS at the Droplet IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
+<li>Turn off IPv6 on your network (or relevant devices).[n6]</li>
 <li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
 </ol>
 
@@ -137,6 +138,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>SSH to your <code>Linode</code> and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
 <li>Point your DNS at the <code>Linode</code> IP and watch <code>Netflix</code>, <code>Hulu</code> and/or <code>HBO Now</code> out of region.</li>
+<li>Turn off IPv6 on your network (or relevant devices). </li>
 <li>Binge. Not that there is anything wrong with that or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
 </ol>
 
@@ -153,6 +155,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>Also add a <code>Floating IP</code> to your instance, otherwise it will only have an IPv6 IP.</li>
 <li>SSH to your instance and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(who am i | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
+<li>Turn off IPv6 on your network (or relevant devices). </li>
 <li>Point your DNS at the instance IP and watch <code>Netflix</code>, <code>Hulu</code> and/or <code>HBO Now</code> out of region.</li>
 <li>Well done, enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
 </ol>
@@ -229,7 +232,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 
 <p>Lastly, use the <a href="https://manage.windowsazure.com/">Azure Management Portal</a> to add <code>DNS (UDP)</code>, <code>HTTP (TCP)</code> and <code>HTTPS (TCP)</code> endpoints and secure them to your home/work/whatever IPs using the Azure <code>ACL</code> feature. This means you don't have to run <code>iptables</code> firewall on your VM.</p>
 
-<p>Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy <code>Netflix</code>.</p>
+<p>Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy <code>Netflix</code> and don't forget to turn off IPv6.</p>
 
 <h3>
 <a id="continuous-integration-ci" class="anchor" href="#continuous-integration-ci" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Continuous Integration (CI)</h3>
@@ -287,6 +290,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>[n4] See, serverfault <a href="http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains">post</a>.</p>
 
 <p>[n5] See, this <a href="https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091">issue</a>.</p>
+
+<p>[n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this <a href="https://forums.he.net/index.php?topic=3056">issue</a>.</p>
       </section>
     </div>
     <footer>
