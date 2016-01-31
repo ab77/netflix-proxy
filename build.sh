@@ -128,17 +128,17 @@ if [[ ${i} == 0 ]]; then
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
-	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && cp /tmp/rules.v4 /etc/iptables/rules.v4 && rm /tmp/rules.v4
-	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && cp /tmp/rules.v6 /etc/iptables/rules.v6 && rm /tmp/rules.v6
+	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && sudo cp /tmp/rules.v4 /etc/iptables/rules.v4 && sudo rm /tmp/rules.v4
+	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && sudo cp /tmp/rules.v6 /etc/iptables/rules.v6 && sudo rm /tmp/rules.v6
 
 	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
 	if [ ! -f "/etc/init/docker.conf.bak" ]; then
-		$(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started iptables-persistent)/' /etc/init/docker.conf
+		sudo $(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started iptables-persistent)/' /etc/init/docker.conf
 	fi
 	
 	if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
-		$(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
-		$(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
+		sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
+		sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
 	fi	
 fi
 
