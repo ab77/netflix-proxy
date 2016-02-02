@@ -131,14 +131,23 @@ if [[ ${i} == 0 ]]; then
 	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && sudo cp /tmp/rules.v4 /etc/iptables/rules.v4 && sudo rm /tmp/rules.v4
 	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && sudo cp /tmp/rules.v6 /etc/iptables/rules.v6 && sudo rm /tmp/rules.v6
 
-	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
-	if [ ! -f "/etc/init/docker.conf.bak" ]; then
-		sudo $(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started iptables-persistent)/' /etc/init/docker.conf
+	# Ubuntu and Debian have different service names for iptables-persistent service
+	if [ -f "/etc/init.d/iptables-persistent" ]; then
+		SERVICE=iptables
+	elif [ -f "/etc/init.d/netfilter-persistent" ]; then
+		SERVICE=netfilter
 	fi
 	
-	if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
-		sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
-		sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
+	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
+	if [ ! -f "/etc/init/docker.conf.bak" ]; then
+		sudo $(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started $SERVICE-persistent)/' /etc/init/docker.conf
+	fi
+	
+	if [[ ${SERVICE} == "iptables" ]]; then
+		if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
+			sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
+			sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
+		fi
 	fi	
 fi
 
@@ -166,7 +175,18 @@ fi
 if [[ `/sbin/init --version` =~ upstart ]]; then
 	sudo cp ./upstart/* /etc/init/
 elif [[ `systemctl` =~ -\.mount ]]; then
-	sudo cp ./systemd/* /etc/systemd/system/
+	sudo cp ./systemd/* /lib/systemd/system/
+	sudo systemctl enable docker-bind
+	sudo systemctl enable docker-sniproxy
+	sudo systemctl start docker-bind
+	sudo systemctl start docker-sniproxy
+fi
+
+# OS specific steps
+if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
+	echo "No specific steps to execute for Ubuntu at this time."
+elif [[ `cat /etc/os-release | grep '^ID='` =~ debian ]]; then
+	echo "No specific steps to execute for Debian at this time."
 fi
 
 if [[ ${t} == 0 ]]; then
