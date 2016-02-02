@@ -163,13 +163,21 @@ if [[ ${d} == 0 ]]; then
 fi
 
 # add upstart scripts
-if [ -d "/etc/init" ]; then
-	sudo cp ./upstart/* /etc/init/
-fi
+#if [ -d "/etc/init" ]; then
+#	sudo cp ./upstart/* /etc/init/
+#fi
 
 # add systemd scripts
-if [ -d "/etc/systemd/system" ]; then
-        sudo cp ./systemd/* /etc/systemd/system/
+#if [ -d "/etc/systemd/system" ]; then
+#        sudo cp ./systemd/* /etc/systemd/system/
+#fi
+
+# configure appropriate init system (http://unix.stackexchange.com/a/164092/78029)
+if [[ `/sbin/init --version` =~ upstart ]]; then
+	sudo cp ./upstart/* /etc/init/;
+
+elif [[ `systemctl` =~ -\.mount ]]; then
+	sudo cp ./systemd/* /etc/systemd/system/;
 fi
 
 if [[ ${t} == 0 ]]; then
