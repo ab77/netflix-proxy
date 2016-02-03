@@ -66,6 +66,16 @@ The following command line options can be optionaly passed to `build.sh` for add
 
 ## Other Cloud Providers
 
+## Vultr
+The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution.
+
+1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
+2. Create a compute instance using `Debian 8 x64 (jessie)` image.
+3. Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.
+4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+5. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
+6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+
 ### Linode
 The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed.
 
