@@ -140,7 +140,7 @@ if [[ ${i} == 0 ]]; then
 	
 	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
 	if [ ! -f "/etc/init/docker.conf.bak" ]; then
-		sudo $(which sed) -i.bak 's/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started $SERVICE-persistent)/' /etc/init/docker.conf
+		sudo $(which sed) -i.bak "s/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started $SERVICE-persistent)/" /etc/init/docker.conf
 	fi
 	
 	if [[ ${SERVICE} == "iptables" ]]; then
