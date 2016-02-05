@@ -5,6 +5,7 @@ auth.py: basic web front-end to auth/de-auth ipaddrs using iptables.
 author: anton@belodedenko.me
 '''
 
+import sys
 from subprocess import Popen, PIPE
 
 try:
