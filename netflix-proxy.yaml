@@ -1,0 +1,20 @@
+bind:
+  image: ab77/bind
+  container_name: bind
+  ports:
+    - "53:53/udp"
+  volumes:
+    - /opt/netflix-proxy/data:/data
+  net: host
+  restart: always
+
+sniproxy:
+  image: ab77/sniproxy
+  container_name: sniproxy
+  net: host
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - /opt/netflix-proxy/data:/data
+  restart: always
