@@ -165,9 +165,13 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t bind
 		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
 	else
+		echo "Creating Docker containers using docker-compose (from repository)"
+		sudo apt-get -y install python-pip && \
+		sudo pip install docker-compose
+		sudo $(which docker-compose) -f netflix-proxy.yaml create
+
 		echo "Starting Docker containers (from repository)"
-		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t ab77/bind
-		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t ab77/sniproxy
+		sudo $(which docker-compose) -f netflix-proxy.yaml start
 	fi
 fi
 
