@@ -15,11 +15,11 @@ root="/opt/netflix-proxy"
 int=$(ip route | grep default | awk '{print $5}')
 
 # obtain IP address of the Internet facing interface
-ipaddr=$(ip addr show dev $int | grep inet | grep -v inet6 | awk '{print $2}' | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
+ipaddr=$(ip addr show dev ${int} | grep inet | grep -v inet6 | awk '{print $2}' | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 extip=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
 
 # obtain client (home) ip address
-clientip=$(echo $SSH_CONNECTION | awk '{print $1}')
+clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
 
 # get the current date
 date=$(/bin/date +'%Y%m%d')
@@ -94,7 +94,7 @@ if [[ -z "${t}" ]]; then
 fi
 
 # diagnostics info
-echo "clientip="$clientip "ipaddr="$ipaddr "extip"=$extip "-r"=${r} "-b"=${b} "-i"=${i} "-d"=${d}
+echo "clientip="${clientip} "ipaddr="${ipaddr} "extip"=${extip} "-r"=${r} "-b"=${b} "-i"=${i} "-d"=${d}
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
@@ -111,7 +111,7 @@ pushd ${root}
 if [[ ${i} == 0 ]]; then
 	# configure iptables
 	sudo iptables -N FRIENDS
-	sudo iptables -A FRIENDS -s $clientip/32 -j ACCEPT
+	sudo iptables -A FRIENDS -s ${clientip}/32 -j ACCEPT
 	sudo iptables -A FRIENDS -j DROP
 	sudo iptables -N ALLOW
 	sudo iptables -A INPUT -j ALLOW
@@ -140,7 +140,7 @@ if [[ ${i} == 0 ]]; then
 	
 	# socialise Docker with iptables-persistent: https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
 	if [ ! -f "/etc/init/docker.conf.bak" ]; then
-		sudo $(which sed) -i.bak "s/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started $SERVICE-persistent)/" /etc/init/docker.conf
+		sudo $(which sed) -i.bak "s/start on (local-filesystems and net-device-up IFACE!=lo)/start on (local-filesystems and net-device-up IFACE!=lo and started ${SERVICE}-persistent)/" /etc/init/docker.conf
 	fi
 	
 	if [[ ${SERVICE} == "iptables" ]]; then
@@ -151,7 +151,7 @@ if [[ ${i} == 0 ]]; then
 	fi	
 fi
 
-echo "Updating db.override with ipaddr"=$extip "and date="$date
+echo "Updating db.override with ipaddr"=${extip} "and date="${date}
 sudo $(which sed) -i "s/127.0.0.1/${extip}/g" data/db.override
 sudo $(which sed) -i "s/YYYYMMDD/${date}/g" data/db.override
 
@@ -165,13 +165,12 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t bind
 		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
 	else
-		echo "Creating Docker containers using docker-compose (from repository)"
+		echo "Installing python-pip and docker-compose.."
 		sudo apt-get -y install python-pip && \
 		sudo pip install docker-compose
-		sudo $(which docker-compose) -f netflix-proxy.yaml create
 
-		echo "Starting Docker containers (from repository)"
-		sudo $(which docker-compose) -f netflix-proxy.yaml start
+		echo "Creating and starting Docker containers (from repository)"
+		sudo $(which docker-compose) -f netflix-proxy.yaml up -d
 	fi
 fi
 
@@ -182,8 +181,6 @@ elif [[ `systemctl` =~ -\.mount ]]; then
 	sudo cp ./systemd/* /lib/systemd/system/
 	sudo systemctl enable docker-bind
 	sudo systemctl enable docker-sniproxy
-	sudo systemctl start docker-bind
-	sudo systemctl start docker-sniproxy
 fi
 
 # OS specific steps
@@ -195,14 +192,15 @@ fi
 
 if [[ ${t} == 0 ]]; then
 	echo "Testing DNS"
-	$(which dig) +time=$timeout netflix.com @$extip || $(which dig) +time=$timeout netflix.com @$ipaddr
+	$(which dig) +time=${timeout} netflix.com @${extip} || $(which dig) +time=${timeout} netflix.com @${ipaddr}
 
 	echo "Testing proxy"
-	echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $extip:443 || echo "GET /" | $(which timeout) $timeout $(which openssl) s_client -servername netflix.com -connect $ipaddr:443
+	echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${extip}:443 || \
+	  echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${ipaddr}:443
 fi
 
 # change back to original directory
 popd
 
-echo "Change your DNS to" $extip "and start watching Netflix out of region."
+echo "Change your DNS to" ${extip} "and start watching Netflix out of region."
 echo "Done!"
