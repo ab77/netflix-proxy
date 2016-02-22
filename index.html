@@ -28,12 +28,10 @@
       </header>
       <section>
         <h1>
-<a id="netflix-proxy-" class="anchor" href="#netflix-proxy-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a>
+<a id="netflix-proxy--" class="anchor" href="#netflix-proxy--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a> <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" alt=""></a>
 </h1>
 
 <p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>sniproxy</code>[n1]. Works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>.</p>
-
-<p><strong>January, 2016</strong>: Netflix in the news again, this time announcing expansion into new territories as well as a crack down on VPNs and proxies. If you are affected by this - I'd like to hear from you. Please contact me through GitHub.</p>
 
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
@@ -125,6 +123,21 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 
 <h2>
 <a id="other-cloud-providers" class="anchor" href="#other-cloud-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other Cloud Providers</h2>
+
+<h2>
+<a id="vultr" class="anchor" href="#vultr" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Vultr</h2>
+
+<p>The following is based on a Debian image provided by <code>Vultr</code>, but should in theory work on any Debian distribution.</p>
+
+<ol>
+<li>Head over to <a href="http://www.vultr.com/?ref=6871746">Vultr</a> to create an account.</li>
+<li>Create a compute instance using <code>Debian 8 x64 (jessie)</code> image.</li>
+<li>Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.</li>
+<li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+</li>
+<li>Point your DNS at the server IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+</ol>
 
 <h3>
 <a id="linode" class="anchor" href="#linode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linode</h3>
@@ -278,6 +291,31 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 </code></pre>
 
 <p>replacing <code>xxx.yyy.zzz.ttt</code> with your VPS IP, of course.</p>
+
+<h3>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h3>
+
+<p>If you have any idea, feel free to fork it and submit your changes back to me.</p>
+
+<h3>
+<a id="donate" class="anchor" href="#donate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Donate</h3>
+
+<p>If you find this useful you can make a small donation with <a href="https://www.paypal.me/belodetech">PayPal</a> or Bitcoin.</p>
+
+<table>
+<thead>
+<tr>
+<th>Paypal</th>
+<th>Bitcoin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif" alt=""></a></td>
+<td> <img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png" alt="91c446adbd54ef84eef1c6c1c723586aa0ba85d7"><br>91c446adbd54ef84eef1c6c1c723586aa0ba85d7</td>
+</tr>
+</tbody>
+</table>
 
 <p>-- <a href="https://plus.google.com/+AntonBelodedenko?rel=author">ab1</a></p>
 
