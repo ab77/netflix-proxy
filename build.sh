@@ -166,8 +166,9 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
 	else
 		echo "Installing python-pip and docker-compose.."
-		sudo apt-get -y install python-pip && \
-		sudo pip install docker-compose
+		sudo apt-get -y update && \
+		  sudo apt-get -y install python-pip && \
+		  sudo pip install docker-compose
 
 		echo "Creating and starting Docker containers (from repository)"
 		sudo $(which docker-compose) -f netflix-proxy.yaml up -d
