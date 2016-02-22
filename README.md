@@ -193,6 +193,15 @@ If your client is running OS X, you can skip dnsmasq and simply redirect all DNS
 
 replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 
+### Contributing
+If you have any idea, feel free to fork it and submit your changes back to me.
+
+### Donate
+If you find this useful you can make a small donation with [PayPal](https://www.paypal.me/belodetech) or Bitcoin.
+
+| Paypal | Bitcoin |
+| ------ | ------- |
+| [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ) |  <center> ![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)<br />91c446adbd54ef84eef1c6c1c723586aa0ba85d7</center> |
 
 -- [ab1](https://plus.google.com/+AntonBelodedenko?rel=author)
 
