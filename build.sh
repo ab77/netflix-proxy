@@ -170,7 +170,7 @@ if [[ ${d} == 0 ]]; then
 		sudo pip install docker-compose
 
 		echo "Creating and starting Docker containers (from repository)"
-		sudo $(which docker-compose) -f netflix-proxy.yaml up -d
+		sudo docker-compose -f netflix-proxy.yaml up -d
 	fi
 fi
 
