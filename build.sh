@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Note, this script assumes Ubuntu Linux and it will most likely fail on any other distribution.
+# Note, this script assumes Ubuntu or Debian Linux and it will most likely fail on any other distribution.
 
 # bomb on any error
 set -e
@@ -17,6 +17,14 @@ int=$(ip route | grep default | awk '{print $5}')
 # obtain IP address of the Internet facing interface
 ipaddr=$(ip addr show dev ${int} | grep inet | grep -v inet6 | awk '{print $2}' | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 extip=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
+
+# check if public IPv6 access is available
+if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
+        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+                echo "enabling IPv6 priority..."
+                printf "\nresolver {\n  mode ipv6_first\n}\n" | sudo tee -a ${root}/data/sniproxy.conf
+        fi
+fi
 
 # obtain client (home) ip address
 clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
@@ -94,7 +102,7 @@ if [[ -z "${t}" ]]; then
 fi
 
 # diagnostics info
-echo "clientip="${clientip} "ipaddr="${ipaddr} "extip"=${extip} "-r"=${r} "-b"=${b} "-i"=${i} "-d"=${d}
+echo "clientip=${clientip} ipaddr=${ipaddr} extip=${extip} -r=${r} -b=${b} -i=${i} -d=${d}"
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
