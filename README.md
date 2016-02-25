@@ -106,7 +106,8 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 ### Microsoft Azure
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
 
-1. Head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
+0. First, please see note regarding [IPv6](https://azure.microsoft.com/en-us/pricing/faq/#) support.
+1. Then, if you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
 3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
 4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
