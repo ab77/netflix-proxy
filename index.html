@@ -66,6 +66,8 @@
 <li>Head over to <a href="https://m.do.co/c/937b01397c94">Digital Ocean</a> to get <strong>$10 USD credit</strong>
 </li>
 <li>Create a <code>Droplet</code> using <code>Docker 1.x</code> on <code>Ubuntu 14.04</code> (find in under <code>One-click Apps</code> tab).</li>
+<li>
+<strong>Make sure to enable <code>IPv6</code> support</strong>.</li>
 <li>Make sure you create the <code>Droplet</code> in the right region, for example if you want to watch US content, create in the US.</li>
 <li>SSH to your <code>Droplet</code> and run: <code>git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
@@ -132,6 +134,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <ol>
 <li>Head over to <a href="http://www.vultr.com/?ref=6871746">Vultr</a> to create an account.</li>
 <li>Create a compute instance using <code>Debian 8 x64 (jessie)</code> image.</li>
+<li>
+<strong>Make sure to enable <code>IPv6</code> support</strong>. </li>
 <li>Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.</li>
 <li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
@@ -147,6 +151,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <ol>
 <li>Head over to <a href="https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9">Linode</a> and sign-up for an account.</li>
 <li>Create a new <code>Linode</code> and deploy an <code>Ubuntu 14-04 LTS</code> image into it.</li>
+<li>
+<strong>Make sure to enable <code>IPv6</code> support (untested)</strong>.</li>
 <li>Make sure you create the Linode in the right location, as there a few to pick from.</li>
 <li>SSH to your <code>Linode</code> and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
@@ -163,10 +169,12 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <ol>
 <li>Head over to <a href="http://www.dreamhost.com/r.cgi?2124700">DreamHost</a> and sign-up for an account.</li>
 <li>Find the <code>DreamCompute</code> or <code>Public Cloud Computing</code> section and launch an <code>Ubuntu 14-04-Trusty</code> instance.</li>
+<li>
+<strong>Make sure to enable <code>IPv6</code> support (untested)</strong>.</li>
 <li>Make sure to add an additional firewall rule to allow DNS: <code>Ingress  IPv4    UDP 53  0.0.0.0/0 (CIDR)</code>
 </li>
 <li>Also add a <code>Floating IP</code> to your instance, otherwise it will only have an IPv6 IP.</li>
-<li>SSH to your instance and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(who am i | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>SSH to your instance and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
 <li>Turn off IPv6 on your network (or relevant devices). </li>
 <li>Point your DNS at the instance IP and watch <code>Netflix</code>, <code>Hulu</code> and/or <code>HBO Now</code> out of region.</li>
@@ -312,12 +320,16 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <tbody>
 <tr>
 <td><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif" alt=""></a></td>
-<td> <img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png" alt="91c446adbd54ef84eef1c6c1c723586aa0ba85d7"><br>91c446adbd54ef84eef1c6c1c723586aa0ba85d7</td>
+<td>
+<img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png" alt="91c446adbd54ef84eef1c6c1c723586aa0ba85d7"><br>91c446adbd54ef84eef1c6c1c723586aa0ba85d7</td>
 </tr>
 </tbody>
 </table>
 
-<p>-- <a href="https://plus.google.com/+AntonBelodedenko?rel=author">ab1</a></p>
+<p><a href="http://ab77.github.io/"><img src="https://avatars2.githubusercontent.com/u/2033996?v=3&amp;s=96" alt="ab1"></a></p>
+
+<h4>
+<a id="footnotes" class="anchor" href="#footnotes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Footnotes</h4>
 
 <p>[n1] <a href="https://github.com/dlundquist/sniproxy">https://github.com/dlundquist/sniproxy</a> by Dustin Lundquist <a href="mailto:dustin@null-ptr.net">dustin@null-ptr.net</a></p>
 
