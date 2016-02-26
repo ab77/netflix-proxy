@@ -33,6 +33,8 @@
 
 <p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>sniproxy</code>[n1]. Works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>.</p>
 
+<p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
+
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
 
@@ -187,7 +189,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>The following is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription. Probably a bit more complicated than it should be, but whatever :)</p>
 
 <ol>
-<li>Head over to <a href="https://azure.microsoft.com/en-gb/">Microsoft Azure</a> and sign-up for an account.</li>
+<li>First, please see note regarding <a href="https://azure.microsoft.com/en-us/pricing/faq/#">IPv6</a> support.</li>
+<li>Then, if you are still interested, head over to <a href="https://azure.microsoft.com/en-gb/">Microsoft Azure</a> and sign-up for an account.</li>
 <li>Get <a href="https://www.python.org/downloads/">Python</a>.</li>
 <li>On your workstation, run <code>git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness</code>.</li>
 <li>Follow <code>cloud-harness</code> <a href="https://github.com/ab77/cloud-harness#installation-and-configuration">Installation and Configuration</a> section to set it up.</li>
@@ -342,6 +345,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>[n5] See, this <a href="https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091">issue</a>.</p>
 
 <p>[n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this <a href="https://forums.he.net/index.php?topic=3056">issue</a>.</p>
+
+<p>[n7] See, <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">https://en.wikipedia.org/wiki/Server_Name_Indication</a>.</p>
       </section>
     </div>
     <footer>
