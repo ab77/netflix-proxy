@@ -1,6 +1,6 @@
 $TTL  86400
 
-@   IN  SOA ns1 root (
+@   IN  SOA ns1. root (
             YYYYMMDD01  ; serial
             604800      ; refresh 1w
             86400       ; retry 1d
