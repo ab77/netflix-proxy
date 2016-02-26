@@ -18,14 +18,6 @@ int=$(ip route | grep default | awk '{print $5}')
 ipaddr=$(ip addr show dev ${int} | grep inet | grep -v inet6 | awk '{print $2}' | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 extip=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
 
-# check if public IPv6 access is available
-if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
-                echo "enabling IPv6 priority..."
-                printf "\nresolver {\n  mode ipv6_first\n}\n" | sudo tee -a ${root}/data/sniproxy.conf
-        fi
-fi
-
 # obtain client (home) ip address
 clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
 
@@ -118,6 +110,7 @@ pushd ${root}
 
 if [[ ${i} == 0 ]]; then
 	# configure iptables
+	echo "adding IPv4 iptables rules.."
 	sudo iptables -N FRIENDS
 	sudo iptables -A FRIENDS -s ${clientip}/32 -j ACCEPT
 	sudo iptables -A FRIENDS -j DROP
@@ -133,6 +126,25 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -A ALLOW -p tcp -m tcp --dport 43867 -j FRIENDS
 	sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
 	sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
+	
+	# check if public IPv6 access is available
+	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
+	        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+	                echo "enabling IPv6 priority..."
+	                printf "\nresolver {\n  mode ipv6_first\n}\n" | sudo tee -a ${root}/data/sniproxy.conf
+	                
+	                echo "adding IPv6 iptables rules.."
+			sudo ip6tables -N ALLOW
+			sudo ip6tables -A INPUT -j ALLOW
+			sudo ip6tables -A FORWARD -j ALLOW
+			sudo ip6tables -A ALLOW -p icmpv6 -j ACCEPT
+			sudo ip6tables -A ALLOW -i lo -j ACCEPT
+			sudo ip6tables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+			sudo ip6tables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
+			sudo ip6tables -A ALLOW -j REJECT --reject-with icmp6-adm-prohibited
+	        fi
+	fi
+
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
