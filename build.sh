@@ -131,7 +131,8 @@ if [[ ${i} == 0 ]]; then
 	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
 	        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
 	                echo "enabling IPv6 priority..."
-	                printf "\nresolver {\n  mode ipv6_first\n}\n" | sudo tee -a ${root}/data/sniproxy.conf
+	                printf "\nresolver {\n  nameserver 2001:4860:4860::8888\n  nameserver 2001:4860:4860::8844\n  mode ipv6_first\n}\n" | \
+	                  sudo tee -a ${root}/data/sniproxy.conf
 	                
 	                echo "adding IPv6 iptables rules.."
 			sudo ip6tables -N ALLOW
@@ -142,6 +143,9 @@ if [[ ${i} == 0 ]]; then
 			sudo ip6tables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 			sudo ip6tables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
 			sudo ip6tables -A ALLOW -j REJECT --reject-with icmp6-adm-prohibited
+		else
+			printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
+	                  sudo tee -a ${root}/data/sniproxy.conf
 	        fi
 	fi
 
