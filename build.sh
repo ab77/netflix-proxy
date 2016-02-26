@@ -143,10 +143,10 @@ if [[ ${i} == 0 ]]; then
 			sudo ip6tables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 			sudo ip6tables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
 			sudo ip6tables -A ALLOW -j REJECT --reject-with icmp6-adm-prohibited
-		else
-			printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
-	                  sudo tee -a ${root}/data/sniproxy.conf
 	        fi
+	else
+		printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
+		  sudo tee -a ${root}/data/sniproxy.conf
 	fi
 
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
