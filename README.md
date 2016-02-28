@@ -22,6 +22,10 @@ The following paragraphs show how to get this solution up and running with a few
 ## DigitalOcean
 The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed.
 
+A tutorial was recently made by one of our users: https://www.youtube.com/watch?v=vPNG878IBJU&ab_channel=TheATBVCopyrightChannel
+
+The YouTube link will update if the video is taken down.
+
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a `Droplet` using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. **Make sure to enable `IPv6` support**.
