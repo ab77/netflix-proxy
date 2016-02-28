@@ -181,6 +181,16 @@ The `__testbuild.py` script can also be used to programatically deploy `Droplets
 
 Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
 
+### IPv6
+This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled. If IPv6 is not enbled, the VPS is built with IPv4 support only.
+
+```
++----------+                  +-----------+                  +-----------------+
+|          |                  |           |                  |                 |
+|  client  | +--------------> |   proxy   | +--------------> |  Netflix, etc.  |
+|          |      (ipv4)      |           |       (ipv6)     |                 |
++----------+                  +-----------+                  +-----------------+
+```
 
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparrent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
