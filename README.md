@@ -80,6 +80,17 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 6. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
 7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
 
+[![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
+
+The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
+
+1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
+2. Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.
+3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
+4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+5. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
+6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+
 ### Linode
 The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed.
 
@@ -185,11 +196,11 @@ Note, you will need a working `Python 2.7` environment and the modules listed in
 This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled:
 
 ```
-+----------+                  +-----------+                  +-----------------+
-|          |                  |           |                  |                 |
-|  client  | +--------------> |   proxy   | +--------------> |  Netflix, etc.  |
-|          |      (ipv4)      |           |       (ipv6)     |                 |
-+----------+                  +-----------+                  +-----------------+
++----------+                  +-----------+                 +-----------------+
+|          |                  |           |                 |                 |
+|  client  | +--------------> |   proxy   | +-------------> |  Netflix, etc.  |
+|          |      (ipv4)      |           |      (ipv6)     |                 |
++----------+                  +-----------+                 +-----------------+
 ```
 
 If IPv6 is not enabled, the VPS is built with IPv4 support only.
