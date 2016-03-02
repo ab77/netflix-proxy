@@ -98,10 +98,11 @@ zone "ip2location.com." {
     file "/data/db.override";
 };
 
-zone "tve_nbc-vh.akamaihd.net." {
-    type master;
-    file "/data/db.override";
-};
+# zone not loading for some reason
+#zone "tve_nbc-vh.akamaihd.net." {
+#    type master;
+#    file "/data/db.override";
+#};
 
 zone "pbs.org." {
     type master;
