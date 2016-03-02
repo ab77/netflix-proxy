@@ -206,6 +206,8 @@ elif [[ `systemctl` =~ -\.mount ]]; then
 	sudo cp ./systemd/* /lib/systemd/system/
 	sudo systemctl enable docker-bind
 	sudo systemctl enable docker-sniproxy
+	sudo systemctl enable systemd-networkd
+	sudo systemctl enable systemd-networkd-wait-online
 fi
 
 # OS specific steps
