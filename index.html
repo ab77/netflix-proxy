@@ -35,6 +35,8 @@
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
+<p><strong>Unblocked Netflix?</strong> <a href="http://www.poll-maker.com/poll604485xBF6c4fd9-25">Vote</a> now and see the <a href="http://www.poll-maker.com/results604485x0978D169-25">results</a>.</p>
+
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
 
@@ -75,7 +77,7 @@
 </li>
 <li>Point your DNS at the Droplet IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
 <li>Turn off IPv6 on your network (or relevant devices).[n6]</li>
-<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
 <h3>
@@ -139,6 +141,20 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>
 <strong>Make sure to enable <code>IPv6</code> support</strong>. </li>
 <li>Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.</li>
+<li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+</li>
+<li>Point your DNS at the server IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+</ol>
+
+<p><a href="https://clientarea.ramnode.com/aff.php?aff=3079"><img src="http://www.ramnode.com/images/banners/affbannerdarknewlogo.png" alt=""></a></p>
+
+<p>The following is based on a Debian or Ubuntu OS images provided by <code>RamNode</code>.</p>
+
+<ol>
+<li>Head over to <a href="https://clientarea.ramnode.com/aff.php?aff=3079">RamNode</a> to create an account and buy a <strong>KVM</strong> VPS (OpenVZ won't work).</li>
+<li>Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.</li>
+<li>Log into the <code>VPS Control Panel</code> and (re)install the OS using <code>Ubuntu 14.04 x86_64 Server Minimal</code> or <code>Debian 8.0 x86_64 Minimal</code> image.</li>
 <li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
 <li>Point your DNS at the server IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
@@ -280,6 +296,20 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 </ul>
 
 <p>Note, you will need a working <code>Python 2.7</code> environment and the modules listed in <code>requirements.txt</code> (run <code>pip install -r requirements.txt</code>).</p>
+
+<h3>
+<a id="ipv6" class="anchor" href="#ipv6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IPv6</h3>
+
+<p>This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled:</p>
+
+<pre><code>+----------+                  +-----------+                 +-----------------+
+|          |                  |           |                 |                 |
+|  client  | +--------------&gt; |   proxy   | +-------------&gt; |  Netflix, etc.  |
+|          |      (ipv4)      |           |      (ipv6)     |                 |
++----------+                  +-----------+                 +-----------------+
+</code></pre>
+
+<p>If IPv6 is not enabled, the VPS is built with IPv4 support only.</p>
 
 <h3>
 <a id="further-work" class="anchor" href="#further-work" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further Work</h3>
