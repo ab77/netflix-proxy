@@ -29,7 +29,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 5. SSH to your `Droplet` and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 6. Point your DNS at the Droplet IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
 7. Turn off IPv6 on your network (or relevant devices).[n6]
-8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/)).
 
 ### Authorising Additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where `x.x.x.x` is the IP address) by running:
