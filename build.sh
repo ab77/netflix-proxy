@@ -226,6 +226,7 @@ if [[ ${t} == 0 ]]; then
 	  echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${ipaddr}:443
 fi
 
+# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu
 #echo "Testing Hulu availability.."
 #printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n" || \
 #  printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
