@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-Unblocked Netflix? [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
+**Unblocked Netflix?** [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
 
 # Supported Services
 The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart bind`:
