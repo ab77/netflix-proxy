@@ -3,6 +3,17 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
+**Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker bind restart`:
+
+```
+zone "nflxvideo.net." {
+    type master;
+    file "/data/db.override";
+};
+```
+
+Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.
+
 **Unblocked Netflix?** [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
 
 # Supported Services
@@ -251,3 +262,5 @@ If you find this useful you can make a small donation with [PayPal](https://www.
 [n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056).
 
 [n7] See, https://en.wikipedia.org/wiki/Server_Name_Indication.
+
+[n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
