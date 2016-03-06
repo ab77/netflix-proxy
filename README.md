@@ -83,7 +83,8 @@ The following command line options can be optionaly passed to `build.sh` for add
 
 ## Other Cloud Providers
 
-## Vultr
+[![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png)](http://www.vultr.com/?ref=6871746)
+
 The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution.
 
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
