@@ -278,3 +278,8 @@ zone "bbci.co.uk." {
         type master;
         file "/data/db.override";
 };
+
+zone "ipinfo.io." {
+    type master;
+    file "/data/db.override";
+};
