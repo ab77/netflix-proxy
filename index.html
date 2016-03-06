@@ -35,7 +35,17 @@
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
-<p><strong>Unblocked Netflix?</strong> <a href="http://www.poll-maker.com/poll604485xBF6c4fd9-25">Vote</a> now and see the <a href="http://www.poll-maker.com/results604485x0978D169-25">results</a>.</p>
+<p><strong>Update March/2016</strong>: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker bind restart</code>:</p>
+
+<pre><code>zone "nflxvideo.net." {
+    type master;
+    file "/data/db.override";
+};
+</code></pre>
+
+<p>Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.</p>
+
+<p><strong>Unblocked Netflix?</strong> Great success! <a href="http://www.poll-maker.com/poll604485xBF6c4fd9-25">Vote</a> now and see the <a href="http://www.poll-maker.com/results604485x0978D169-25">results</a>.</p>
 
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
@@ -377,6 +387,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>[n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this <a href="https://forums.he.net/index.php?topic=3056">issue</a>.</p>
 
 <p>[n7] See, <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">https://en.wikipedia.org/wiki/Server_Name_Indication</a>.</p>
+
+<p>[n8] See, <a href="https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/">https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/</a>.</p>
       </section>
     </div>
     <footer>
