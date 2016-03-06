@@ -14,7 +14,7 @@ zone "nflxvideo.net." {
 
 Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.
 
-**Unblocked Netflix?** [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
+**Unblocked Netflix?** Great success! [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
 
 # Supported Services
 The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart bind`:
