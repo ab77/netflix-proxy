@@ -236,7 +236,7 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 If IPv6 is not enabled, the VPS is built with IPv4 support only. You may need to turn off IPv6 on your local network (or relevant devices).[n6]
 
 ### Further Work
-This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparrent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
+This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
 
     zone "." {
         type master;
@@ -247,7 +247,7 @@ This will in effect proxy every request that ends up on your VPS if you set your
 
 There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
 
-If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. netflix.com to your VPS IP by creating a file at `/etc/resolver/netflix.com` with these contents:
+If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. `netflix.com` to your VPS IP by creating a file at `/etc/resolver/netflix.com` with these contents:
 
     nameserver xxx.yyy.zzz.ttt
 
@@ -257,7 +257,7 @@ replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 If you have any idea, feel free to fork it and submit your changes back to me.
 
 ### Donate
-If you find this useful you can make a small donation with [PayPal](https://www.paypal.me/belodetech) or Bitcoin.
+If you find this useful, please feel free to make a small donation with [PayPal](https://www.paypal.me/belodetech) or Bitcoin.
 
 | Paypal | Bitcoin |
 | ------ | ------- |
