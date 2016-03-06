@@ -32,7 +32,8 @@ The following are supported out of the box, however adding additional services i
 # Instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
 
-## DigitalOcean
+[![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
+
 The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed.
 
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
