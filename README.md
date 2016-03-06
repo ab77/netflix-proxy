@@ -91,7 +91,7 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 4. Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.
 5. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 6. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
@@ -102,7 +102,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Linode
 The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed.
@@ -114,7 +114,7 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 5. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 6. Point your DNS at the `Linode` IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
 7. Turn off IPv6 on your network (or relevant devices). 
-8. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+8. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### DreamCompute by DreamHost
 The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`).
@@ -127,7 +127,17 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 6. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 7. Turn off IPv6 on your network (or relevant devices). 
 8. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-9. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right..
+9. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+
+[![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
+
+The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
+
+1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
+2. Make sure you buy your server in the right region, for example if you want to watch US content, select the Baltimore DC.
+3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+4. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
+5. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Microsoft Azure
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
