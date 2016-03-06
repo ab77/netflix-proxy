@@ -207,7 +207,7 @@ Lastly, use the [Azure Management Portal](https://manage.windowsazure.com/) to a
 
 Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy `Netflix` and don't forget to turn off IPv6.
 
-### Continuous Integration (CI)
+### Automated Tests
 
 I've linked this project with `Travis CI` to automatically test the build. The helper Python script `__testbuild.py` now runs automatically after every commit. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that both `Docker` containers start; and (b) the `built.sh` script outputs the correct message at the end. The test `Droplet` is destroyed and the end of the run.
 
