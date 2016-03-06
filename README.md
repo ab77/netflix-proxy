@@ -41,9 +41,9 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 3. **Make sure to enable `IPv6` support**.
 4. Make sure you create the `Droplet` in the right region, for example if you want to watch US content, create in the US.
 5. SSH to your `Droplet` and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the Droplet IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-7. Turn off IPv6 on your network (or relevant devices).[n6]
-8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. Point your DNS at the Droplet IP, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
+7. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
+9. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Authorising Additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where `x.x.x.x` is the IP address) by running:
@@ -92,8 +92,9 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 3. **Make sure to enable `IPv6` support**. 
 4. Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.
 5. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+7. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
+8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
@@ -103,8 +104,9 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 2. Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.
 3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-5. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+5. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+6. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
+7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
@@ -115,8 +117,8 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 3. **Make sure to enable `IPv6` support (untested)**.
 4. Make sure you create the Linode in the right location, as there a few to pick from.
 5. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the `Linode` IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
-7. Turn off IPv6 on your network (or relevant devices). 
+6. Point your DNS at your Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
+7. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
 8. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png)](http://www.dreamhost.com/r.cgi?2124700)
@@ -129,8 +131,8 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 4. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 5. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
 6. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-7. Turn off IPv6 on your network (or relevant devices). 
-8. Point your DNS at the instance IP and watch `Netflix`, `Hulu` and/or `HBO Now` out of region.
+7. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
+8. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
 9. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
@@ -140,8 +142,9 @@ The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Make sure you buy your server in the right region, for example if you want to watch US content, select the Baltimore DC.
 3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-4. Point your DNS at the server IP and watch `Netflix`, `Hulu` and `HBO Now` out of region.
-5. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+4. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+5. Finally, watch `Netflix`, `Hulu` and `HBO Now` out of region.
+6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Microsoft Azure
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
@@ -230,7 +233,7 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-If IPv6 is not enabled, the VPS is built with IPv4 support only.
+If IPv6 is not enabled, the VPS is built with IPv4 support only. You may need to turn off IPv6 on your local network (or relevant devices).[n6]
 
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparrent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
