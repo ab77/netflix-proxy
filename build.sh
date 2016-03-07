@@ -268,15 +268,15 @@ if [[ ${t} == 0 ]]; then
 	$(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
 	  $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
-	echo "Testing proxy"
+	printf "Testing proxy\n"
 	echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
 	  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
 
 	# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
-	echo "Testing Hulu availability"
+	printf "Testing Hulu availability\n"
 	printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
-	echo "Testing netflix-proxy admin interface"
+	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
 	curl http://${EXTIP}:8080/netflix-proxy/admin/ || curl http://${IPADDR}:8080/netflix-proxy/admin/
 	curl http://localhost:${SDNS_ADMIN_PORT}/netflix-proxy/admin/ && \
 	  echo -e "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m"
@@ -285,5 +285,5 @@ fi
 # change back to original directory
 popd
 
-echo "Change your DNS to ${EXTIP} and start watching Netflix out of region."
-echo "Done!"
+printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
+printf "Done!\n"
