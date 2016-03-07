@@ -1,4 +1,4 @@
-0.0.0.0, http://{{IPADDR}}:8080, https://{{RDNS}}:4443
+0.0.0.0:8080, https://{{RDNS}}:4443
 gzip
 rewrite / /home
 
