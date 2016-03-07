@@ -199,9 +199,13 @@ echo "Updating db.override with ipaddr"=${EXTIP} "and date="${DATE}
 sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" data/db.override
 sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" data/db.override
 
+echo "Installing python-pip and docker-compose"
+sudo apt-get -y update && \
+  sudo apt-get -y install python-pip install sqlite3 && \
+  sudo pip install docker-compose
+
 echo "Configuring admin back-end"
-sudo apt-get -y install sqlite3 && \
-  sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
+sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
   sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db && \
   PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
   HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
@@ -229,11 +233,6 @@ if [[ ${d} == 0 ]]; then
 		  -p 4443:4443 \
 		  -t abiosoft/caddy
 	else
-		echo "Installing python-pip and docker-compose.."
-		sudo apt-get -y update && \
-		  sudo apt-get -y install python-pip && \
-		  sudo pip install docker-compose
-
 		echo "Creating and starting Docker containers (from repository)"
 		sudo $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
 		sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
@@ -279,9 +278,9 @@ if [[ ${t} == 0 ]]; then
 	$(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
 	  $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
-	echo "Testing proxy"
-	echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
-	  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
+	#echo "Testing proxy"
+	#echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
+	#  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
 
 	# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
 	echo "Testing Hulu availability"
