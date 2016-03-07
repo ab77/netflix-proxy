@@ -2,5 +2,11 @@
 
 import sys
 from passlib.hash import pbkdf2_sha256
+from passlib.utils import generate_password
 
-print(pbkdf2_sha256.encrypt(sys.argv[1], rounds=200000, salt_size=16))
+try:
+  plaintext = sys.argv[1]
+except IndexError:
+  plaintext = generate_password()
+
+print(pbkdf2_sha256.encrypt(plaintext, rounds=200000, salt_size=16))
