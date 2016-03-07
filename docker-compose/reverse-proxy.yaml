@@ -1,9 +1,7 @@
 reverse-proxy:
   image: abiosoft/caddy
   container_name: caddy
-  ports:
-    - "8080:80"
-    - "4443:443"
+  net: host
   volumes:
     - ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile
     - ${BUILD_ROOT}/wwwroot:/srv
