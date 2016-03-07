@@ -221,7 +221,13 @@ if [[ ${d} == 0 ]]; then
 		echo "Starting Docker containers (local)"
 		sudo $(which docker) run --name bind -d -v ${BUILD_ROOT}/data:/data -p 53:53/udp -t bind
 		sudo $(which docker) run --name sniproxy -d -v ${BUILD_ROOT}/data:/data -p 80:80 -p 443:443 -t sniproxy
-		...
+		sudo $(which docker) run --name caddy --net=host -d \
+		  -v ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile \
+		  -v ${HOME}/.caddy:/root/.caddy \
+		  -v ${BUILD_ROOT}/wwwroot:/srv \
+		  -p 8080:8080 \
+		  -p 4443:4443 \
+		  -t abiosoft/caddy
 	else
 		echo "Installing python-pip and docker-compose.."
 		sudo apt-get -y update && \
@@ -230,7 +236,7 @@ if [[ ${d} == 0 ]]; then
 
 		echo "Creating and starting Docker containers (from repository)"
 		sudo $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
-		sudo $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
+		sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 	fi
 fi
 
