@@ -24,6 +24,10 @@ clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
 # get the current date
 date=$(/bin/date +'%Y%m%d')
 
+# trim addresses
+ipaddr=`echo ${ipaddr} | awk '{print $1}'`
+extip=`echo ${extip} | awk '{print $1}'`
+
 # display usage
 usage() {
 	echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1]" 1>&2; \
