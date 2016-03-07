@@ -203,9 +203,8 @@ sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
   sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;"
 
 echo "Configuring Caddy"
-$(which sed) "s/{{RDNS}}/${RDNS}/" ${BUILD_ROOT}/Caddyfile.template | sudo tee ${BUILD_ROOT}/Caddyfile
-sudo $(which sed) -i'' "s/{{IPADDR}}/${IPADDR}/" ${BUILD_ROOT}/Caddyfile 
-printf "proxy /netflix-proxy/admin/ localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
+$(which sed) "s/{{RDNS}}/${RDNS}/" ${BUILD_ROOT}/Caddyfile.template | sudo tee ${BUILD_ROOT}/Caddyfile && \
+  printf "proxy /netflix-proxy/admin/ localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
 
 if [[ ${d} == 0 ]]; then
 	if [[ "${b}" == "1" ]]; then
