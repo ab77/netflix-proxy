@@ -268,9 +268,9 @@ if [[ ${t} == 0 ]]; then
 	$(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
 	  $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
-	#echo "Testing proxy"
-	#echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
-	#  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
+	echo "Testing proxy"
+	echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
+	  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
 
 	# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
 	echo "Testing Hulu availability"
