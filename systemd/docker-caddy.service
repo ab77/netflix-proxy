@@ -1,0 +1,12 @@
+[Unit]
+Description=Caddy container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a caddy
+ExecStop=/usr/bin/docker stop -t 2 caddy
+
+[Install]
+WantedBy=multi-user.target
