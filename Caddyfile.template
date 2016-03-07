@@ -1,0 +1,4 @@
+0.0.0.0, https://{{REVERSE_PROXY_FQDN}}
+gzip
+rewrite / /home
+

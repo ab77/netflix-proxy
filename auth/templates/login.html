@@ -1,0 +1,9 @@
+$def with (form)
+$var title = form.title
+$var webroot = form.webroot
+$var region = form.region
+<form name="main" method="post">
+<input type="hidden" name="csrf_token" value="$csrf_token()"/>
+$:form.render()
+<input type="submit" value="Login"/>
+</form>

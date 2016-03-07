@@ -1,0 +1,51 @@
+$def with (content)
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>$content.get('title') ($content.get('region'))</title>
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/app.css">
+
+    <link rel="shortcut icon" href="/static/favico.ico">
+  </head>
+  <body>
+     <div class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container">
+         <div class="navbar-header">
+           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Home</a>
+         </div>
+         <div class="collapse navbar-collapse">
+           <ul class="nav navbar-nav">
+             <li><a href="/$content.get('webroot', 'admin')/$content.get('region', 'uk')/add">Authorize</a></li>
+             <li><a href="/$content.get('webroot', 'admin')/$content.get('region', 'uk')/delete">Delete</a></li>                          
+             <li><a href="/$content.get('webroot', 'admin')/$content.get('region', 'uk')/logout">Logout</a></li>
+           </ul>
+         </div><!--/.nav-collapse -->
+       </div>
+     </div>
+
+     <div class="container">
+       $:render('flash_messages', 'success')
+       $:render('flash_messages', 'error')
+       
+       $:content
+    </div> <!-- /container -->
+
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>
