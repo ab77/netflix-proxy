@@ -127,27 +127,21 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i eth0 -j ACCEPT
 	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
 	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 4443
-	sudo iptables -N FRIENDS
-	sudo iptables -A FRIENDS -s ${CLIENTIP}/32 -j ACCEPT
-	sudo iptables -A FRIENDS -j DROP
-	sudo iptables -N ALLOW
-	sudo iptables -A INPUT -j ALLOW
-	sudo iptables -A FORWARD -j ALLOW
-	sudo iptables -A ALLOW -p icmp -j ACCEPT
-	sudo iptables -A ALLOW -i lo -j ACCEPT
-	sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-	sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
-	sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 8080 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 4443 -j FRIENDS
-	sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j FRIENDS
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j FRIENDS
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j FRIENDS
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j FRIENDS
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 4443 -j FRIENDS
+	sudo iptables -A INPUT -p icmp -j ACCEPT
+	sudo iptables -A INPUT -i lo -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+	sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	sudo iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 4443 -j ACCEPT
+	sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 4443 -j ACCEPT
 	
 	# check if public IPv6 access is available
 	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
@@ -157,14 +151,11 @@ if [[ ${i} == 0 ]]; then
 	                  sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
 	                
 	                echo "adding IPv6 iptables rules.."
-			sudo ip6tables -N ALLOW
-			sudo ip6tables -A INPUT -j ALLOW
-			sudo ip6tables -A FORWARD -j ALLOW
-			sudo ip6tables -A ALLOW -p icmpv6 -j ACCEPT
-			sudo ip6tables -A ALLOW -i lo -j ACCEPT
-			sudo ip6tables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-			sudo ip6tables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
-			sudo ip6tables -A ALLOW -j REJECT --reject-with icmp6-adm-prohibited
+			sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
+			sudo ip6tables -A INPUT -i lo -j ACCEPT
+			sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+			sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+			sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
 	        fi
 	else
 		printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
@@ -295,5 +286,5 @@ fi
 # change back to original directory
 popd
 
-echo "Change your DNS to"${EXTIP}"and start watching Netflix out of region."
+echo "Change your DNS to ${EXTIP} and start watching Netflix out of region."
 echo "Done!"
