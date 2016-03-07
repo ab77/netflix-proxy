@@ -111,6 +111,9 @@ pushd ${root}
 if [[ ${i} == 0 ]]; then
 	# configure iptables
 	echo "adding IPv4 iptables rules.."
+	sudo iptables -t nat -A PREROUTING -s ${clientip}/32 -i eth0 -j ACCEPT
+	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 4443
 	sudo iptables -N FRIENDS
 	sudo iptables -A FRIENDS -s ${clientip}/32 -j ACCEPT
 	sudo iptables -A FRIENDS -j DROP
@@ -121,11 +124,17 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -A ALLOW -i lo -j ACCEPT
 	sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 	sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 43867 -j FRIENDS
 	sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
+	sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
+	sudo iptables -A ALLOW -p tcp -m tcp --dport 8080 -j FRIENDS
+	sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
+	sudo iptables -A ALLOW -p tcp -m tcp --dport 4443 -j FRIENDS
 	sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j FRIENDS
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j FRIENDS
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j FRIENDS
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j FRIENDS
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 4443 -j FRIENDS
 	
 	# check if public IPv6 access is available
 	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
@@ -152,8 +161,6 @@ if [[ ${i} == 0 ]]; then
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
-	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && sudo cp /tmp/rules.v4 /etc/iptables/rules.v4 && sudo rm /tmp/rules.v4
-	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && sudo cp /tmp/rules.v6 /etc/iptables/rules.v6 && sudo rm /tmp/rules.v6
 
 	# Ubuntu and Debian have different service names for iptables-persistent service
 	if [ -f "/etc/init.d/iptables-persistent" ]; then
@@ -186,8 +193,8 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) build -t sniproxy docker-sniproxy
 	
 		echo "Starting Docker containers (local)"
-		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t bind
-		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
+		sudo $(which docker) run --name bind -d -v ${root}/data:/data -p 53:53/udp -t bind
+		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data -p 80:80 -p 443:443 -t sniproxy
 	else
 		echo "Installing python-pip and docker-compose.."
 		sudo apt-get -y update && \
@@ -199,16 +206,26 @@ if [[ ${d} == 0 ]]; then
 	fi
 fi
 
-# configure appropriate init system (http://unix.stackexchange.com/a/164092/78029)
+# disable Docker iptables control and configure appropriate init system
+# http://unix.stackexchange.com/a/164092/78029 
+# https://github.com/docker/docker/issues/9889
+echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
 if [[ `/sbin/init --version` =~ upstart ]]; then
-	sudo cp ./upstart/* /etc/init/
+	sudo cp ./upstart/* /etc/init/ && \
+	  sudo service docker restart
 elif [[ `systemctl` =~ -\.mount ]]; then
-	sudo cp ./systemd/* /lib/systemd/system/
-	sudo systemctl enable docker-bind
-	sudo systemctl enable docker-sniproxy
-	sudo systemctl enable systemd-networkd
+      sudo mkdir -p /lib/systemd/system/docker.service.d && \
+        printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
+        sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
+	sudo cp ./systemd/* /lib/systemd/system/ && \
+        sudo systemctl daemon-reload && \
+        sudo systemctl restart docker && \	
+	sudo systemctl enable docker-bind && \
+	sudo systemctl enable docker-sniproxy && \
+	sudo systemctl enable systemd-networkd && \
 	sudo systemctl enable systemd-networkd-wait-online
 fi
+sudo iptables-restore < /etc/iptables/rules.v4
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
@@ -219,11 +236,12 @@ fi
 
 if [[ ${t} == 0 ]]; then
 	echo "Testing DNS"
-	$(which dig) +time=${timeout} netflix.com @${extip} || $(which dig) +time=${timeout} netflix.com @${ipaddr}
+	$(which dig) +time=${timeout} netflix.com @`echo ${extip} | awk '{print $1}'` || \
+	  $(which dig) +time=${timeout} netflix.com @`echo ${ipaddr} | awk '{print $1}'`
 
 	echo "Testing proxy"
-	echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${extip}:443 || \
-	  echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${ipaddr}:443
+	echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect `echo ${extip} | awk '{print $1}'`:443 || \
+	  echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect `echo ${ipaddr} | awk '{print $1}'`:443
 fi
 
 # https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu
@@ -234,5 +252,5 @@ fi
 # change back to original directory
 popd
 
-echo "Change your DNS to" ${extip} "and start watching Netflix out of region."
+echo "Change your DNS to" `echo ${extip} | awk '{print $1}'` "and start watching Netflix out of region."
 echo "Done!"
