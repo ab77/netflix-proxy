@@ -12,15 +12,17 @@ IPADDR=$(ip addr show dev ${IFACE} | \
   awk '{print $2}' | \
   grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 
-RDNS=$(echo ${IPADDR} | awk '{print $1}' | xargs dig +short -x)
+IPADDR=$(echo ${IPADDR} | awk '{print $1}')
+RDNS=$(echo ${IPADDR} | xargs dig +short -x)
 
 if [[ -z "${RDNS}" ]]; then
 	echo "PTR record not found, disabling SSL"
-	RDNS=$(echo ${IPADDR} | awk '{print $1}')
+	RDNS=${IPADDR}
 fi
 
 echo "Configuring Caddy"
 $(which sed) "s/{{RDNS}}/${RDNS}/" ${BUILD_ROOT}/Caddyfile.template | sudo tee ${BUILD_ROOT}/Caddyfile
+sudo $(which sed) -i'' "s/{{IPADDR}}/${IPADDR}/" ${BUILD_ROOT}/Caddyfile 
 printf "proxy /netflix-proxy/admin/ localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
 
 echo "Creating and starting Docker containers"
@@ -32,7 +34,7 @@ sudo apt-get -y install sqlite3 && \
   sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db && \
   PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
   HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
-  sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = ${HASH} WHERE ID = 1;"
+  sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;"
 
 if [[ `/sbin/init --version` =~ upstart ]]; then
 	echo "Configuring upstart init system"
@@ -51,7 +53,5 @@ fi
 
 echo "Waiting 10 seconds for Caddy to start.."
 sleep 10
-curl -I http://localhost:${SDNS_ADMIN_PORT}/
-curl -I https://${RDNS}/ || curl -I http://`echo ${IPADDR} | awk '{print $1}'`/
-
-echo "netflix-proxy admin site credentials = admin:${PLAINTEXT}"
+curl -I http://localhost:${SDNS_ADMIN_PORT}/netflix-proxy/admin/
+echo -e "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m"

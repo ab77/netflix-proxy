@@ -1,4 +1,4 @@
-0.0.0.0, https://{{RDNS}}
+0.0.0.0, http://{{IPADDR}}, https://{{RDNS}}
 gzip
 rewrite / /home
 
