@@ -15,6 +15,7 @@ IPADDR=$(ip addr show dev ${IFACE} | \
 RDNS=$(echo ${IPADDR} | awk '{print $1}' | xargs dig +short -x)
 
 if [[ -z "${RDNS}" ]]; then
+	echo "PTR record not found, disabling SSL"
 	RDNS=$(echo ${IPADDR} | awk '{print $1}')
 fi
 
@@ -24,6 +25,14 @@ printf "proxy /netflix-proxy/admin/ localhost:${SDNS_ADMIN_PORT} {\n\texcept /st
 
 echo "Creating and starting Docker containers"
 sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
+
+echo "Configuring admin back-end"
+sudo apt-get -y install sqlite3 && \
+  sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
+  sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db && \
+  PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
+  HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
+  sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = ${HASH} WHERE ID = 1;"
 
 if [[ `/sbin/init --version` =~ upstart ]]; then
 	echo "Configuring upstart init system"
@@ -43,4 +52,6 @@ fi
 echo "Waiting 10 seconds for Caddy to start.."
 sleep 10
 curl -I http://localhost:${SDNS_ADMIN_PORT}/
-curl -I https://${RDNS}/
+curl -I https://${RDNS}/ || curl -I http://`echo ${IPADDR} | awk '{print $1}'`/
+
+echo "netflix-proxy admin site credentials = admin:${PLAINTEXT}"
