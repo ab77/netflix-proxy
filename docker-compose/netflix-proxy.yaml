@@ -10,6 +10,7 @@ bind:
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
+  net: host
   ports:
     - "80:80"
     - "443:443"
