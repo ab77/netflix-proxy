@@ -201,7 +201,7 @@ sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" data/db.override
 
 echo "Installing python-pip and docker-compose"
 sudo apt-get -y update && \
-  sudo apt-get -y install python-pip install sqlite3 && \
+  sudo apt-get -y install python-pip sqlite3 && \
   sudo pip install docker-compose
 
 echo "Configuring admin back-end"
