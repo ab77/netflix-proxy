@@ -4,7 +4,7 @@ bind:
   ports:
     - "53:53/udp"
   volumes:
-    - /opt/netflix-proxy/data:/data
+    - ${BUILD_ROOT}/data:/data
   restart: always
 
 dnsmasq:
@@ -15,7 +15,8 @@ dnsmasq:
   ports:
     - "5353:5353"
     - "5353:5353/udp"
-  command: --log-facility=- -A /#/127.0.0.1
+  command: --port=5353 --log-facility=- --local-ttl=60 --max-ttl=60 -A /#/${EXTIP}
+  restart: always
 
 sniproxy:
   image: ab77/sniproxy
@@ -25,5 +26,5 @@ sniproxy:
     - "80:80"
     - "443:443"
   volumes:
-    - /opt/netflix-proxy/data:/data
+    - ${BUILD_ROOT}/data:/data
   restart: always
