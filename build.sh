@@ -127,18 +127,20 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
 	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080
 	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 4443
-        sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 5353 -j REDIRECT --to-port 5353
+        sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353
 	sudo iptables -A INPUT -p icmp -j ACCEPT
 	sudo iptables -A INPUT -i lo -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 	sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 	sudo iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+        sudo iptables -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 4443 -j ACCEPT
 	sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
+        sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 5353 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
@@ -238,6 +240,7 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
 	sudo cp ./upstart/* /etc/init/ && \
 	  sudo service docker restart && \
 	  sudo service docker-caddy start && \
+          sudo service docker-dnsmasq start && \
           sudo service sdns-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
       sudo mkdir -p /lib/systemd/system/docker.service.d && \
@@ -249,10 +252,12 @@ elif [[ `systemctl` =~ -\.mount ]]; then
 	sudo systemctl enable docker-bind && \
 	sudo systemctl enable docker-sniproxy && \
 	sudo systemctl enable docker-caddy && \
+	sudo systemctl enable docker-dnsmasq && \
         sudo systemctl enable sdns-admin && \
 	sudo systemctl enable systemd-networkd && \
 	sudo systemctl enable systemd-networkd-wait-online && \
         sudo systemctl start docker-caddy && \
+        sudo systemctl start docker-dnsmasq && \
         sudo systemctl start sdns-admin
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
