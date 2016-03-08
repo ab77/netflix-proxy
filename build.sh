@@ -21,13 +21,6 @@ IPADDR=$(ip addr show dev ${IFACE} | \
   grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 
 IPADDR=$(echo ${IPADDR} | awk '{print $1}')
-RDNS=$(echo ${IPADDR} | xargs dig +short -x | sed 's/\.$//g')
-
-if [[ -z "${RDNS}" ]]; then
-	echo "PTR record not found, reverting to ipaddr=${IPADDR}"
-	RDNS=${IPADDR}
-fi
-
 EXTIP=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
 EXTIP=`echo ${EXTIP} | awk '{print $1}'`
 
@@ -206,8 +199,7 @@ sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
   sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;"
 
 echo "Configuring Caddy"
-$(which sed) "s/{{RDNS}}/${RDNS}/" ${BUILD_ROOT}/Caddyfile.template | sudo tee ${BUILD_ROOT}/Caddyfile && \
-  printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
+printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
 
 if [[ ${d} == 0 ]]; then
 	if [[ "${b}" == "1" ]]; then
@@ -282,10 +274,10 @@ if [[ ${t} == 0 ]]; then
 	printf "Testing Hulu availability\n"
 	printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
-	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/ || https://${RDNS}:4443/\n"
+	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
 	(curl http://${EXTIP}:8080/ || curl http://${IPADDR}:8080/) && \
 	curl http://localhost:${SDNS_ADMIN_PORT}/ && \
-	  printf "\nnetflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+	  printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
 # change back to original directory
