@@ -15,7 +15,7 @@ dnsmasq:
   ports:
     - "5353:5353"
     - "5353:5353/udp"
-  command: --port=5353 --log-facility=- --local-ttl=60 --max-ttl=60 -A /#/${EXTIP}
+  command: --port=5353 --log-facility=- -A /#/${EXTIP}
   restart: always
 
 sniproxy:
