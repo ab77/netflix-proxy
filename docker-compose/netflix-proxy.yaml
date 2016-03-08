@@ -7,6 +7,16 @@ bind:
     - /opt/netflix-proxy/data:/data
   restart: always
 
+dnsmasq:
+  image: andyshinn/dnsmasq
+  container_name: dnsmasq
+  cap_add:
+    - NET_ADMIN
+  ports:
+    - "5353:5353"
+    - "5353:5353/udp"
+  command: --log-facility=- -A /#/127.0.0.1
+
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
