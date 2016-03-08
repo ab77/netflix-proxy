@@ -1,0 +1,30 @@
+bind:
+  image: ab77/bind
+  container_name: bind
+  ports:
+    - "53:53/udp"
+  volumes:
+    - ${BUILD_ROOT}/data:/data
+  restart: always
+
+dnsmasq:
+  image: andyshinn/dnsmasq
+  container_name: dnsmasq
+  cap_add:
+    - NET_ADMIN
+  ports:
+    - "5353:5353"
+    - "5353:5353/udp"
+  command: --port=5353 --log-facility=- -A /#/${EXTIP}
+  restart: always
+
+sniproxy:
+  image: ab77/sniproxy
+  container_name: sniproxy
+  net: host
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ${BUILD_ROOT}/data:/data
+  restart: always

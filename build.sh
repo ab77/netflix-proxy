@@ -5,24 +5,30 @@
 # bomb on any error
 set -e
 
-# default timeout
-timeout=3
-
-# change to working directory
-root="/opt/netflix-proxy"
+# gobals
+TIMEOUT=3
+BUILD_ROOT="/opt/netflix-proxy"
+SDNS_ADMIN_PORT=43867
 
 # obtain the interface with the default gateway
-int=$(ip route | grep default | awk '{print $5}')
+IFACE=$(ip route | grep default | awk '{print $5}')
 
 # obtain IP address of the Internet facing interface
-ipaddr=$(ip addr show dev ${int} | grep inet | grep -v inet6 | awk '{print $2}' | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
-extip=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
+IPADDR=$(ip addr show dev ${IFACE} | \
+  grep inet | \
+  grep -v inet6 | \
+  awk '{print $2}' | \
+  grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
+
+IPADDR=$(echo ${IPADDR} | awk '{print $1}')
+EXTIP=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
+EXTIP=`echo ${EXTIP} | awk '{print $1}'`
 
 # obtain client (home) ip address
-clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
+CLIENTIP=$(echo ${SSH_CONNECTION} | awk '{print $1}')
 
 # get the current date
-date=$(/bin/date +'%Y%m%d')
+DATE=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
@@ -94,66 +100,67 @@ if [[ -z "${t}" ]]; then
 fi
 
 # diagnostics info
-echo "clientip=${clientip} ipaddr=${ipaddr} extip=${extip} -r=${r} -b=${b} -i=${i} -d=${d}"
+echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d}"
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
         printf "disabling DNS recursion...\n"
-        printf "\t\tallow-recursion { none; };\n\t\trecursion no;\n\t\tadditional-from-auth no;\n\t\tadditional-from-cache no;\n" | sudo tee ${root}/docker-bind/named.recursion.conf
+        printf "\t\tallow-recursion { none; };\n\t\trecursion no;\n\t\tadditional-from-auth no;\n\t\tadditional-from-cache no;\n" | sudo tee ${BUILD_ROOT}/docker-bind/named.recursion.conf
 else
         printf "WARNING: enabling DNS recursion...\n"
-        printf "\t\tallow-recursion { trusted; };\n\t\trecursion yes;\n\t\tadditional-from-auth yes;\n\t\tadditional-from-cache yes;\n" | sudo tee ${root}/docker-bind/named.recursion.conf
+        printf "\t\tallow-recursion { trusted; };\n\t\trecursion yes;\n\t\tadditional-from-auth yes;\n\t\tadditional-from-cache yes;\n" | sudo tee ${BUILD_ROOT}/docker-bind/named.recursion.conf
 fi
 
 # switch to working directory
-pushd ${root}
+pushd ${BUILD_ROOT}
 
 if [[ ${i} == 0 ]]; then
 	# configure iptables
 	echo "adding IPv4 iptables rules.."
-	sudo iptables -N FRIENDS
-	sudo iptables -A FRIENDS -s ${clientip}/32 -j ACCEPT
-	sudo iptables -A FRIENDS -j DROP
-	sudo iptables -N ALLOW
-	sudo iptables -A INPUT -j ALLOW
-	sudo iptables -A FORWARD -j ALLOW
-	sudo iptables -A ALLOW -p icmp -j ACCEPT
-	sudo iptables -A ALLOW -i lo -j ACCEPT
-	sudo iptables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-	sudo iptables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 80 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 443 -j FRIENDS
-	sudo iptables -A ALLOW -p tcp -m tcp --dport 43867 -j FRIENDS
-	sudo iptables -A ALLOW -p udp -m udp --dport 53 -j FRIENDS
-	sudo iptables -A ALLOW -j REJECT --reject-with icmp-host-prohibited
+	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080
+	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 4443
+        sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353
+	sudo iptables -A INPUT -p icmp -j ACCEPT
+	sudo iptables -A INPUT -i lo -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+	sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+	sudo iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+        sudo iptables -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+	sudo iptables -A INPUT -p tcp -m tcp --dport 4443 -j ACCEPT
+	sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
+        sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 5353 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
+	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 4443 -j ACCEPT
 	
 	# check if public IPv6 access is available
 	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
 	        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
 	                echo "enabling IPv6 priority..."
 	                printf "\nresolver {\n  nameserver 2001:4860:4860::8888\n  nameserver 2001:4860:4860::8844\n  mode ipv6_first\n}\n" | \
-	                  sudo tee -a ${root}/data/sniproxy.conf
+	                  sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
 	                
 	                echo "adding IPv6 iptables rules.."
-			sudo ip6tables -N ALLOW
-			sudo ip6tables -A INPUT -j ALLOW
-			sudo ip6tables -A FORWARD -j ALLOW
-			sudo ip6tables -A ALLOW -p icmpv6 -j ACCEPT
-			sudo ip6tables -A ALLOW -i lo -j ACCEPT
-			sudo ip6tables -A ALLOW -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-			sudo ip6tables -A ALLOW -m state --state RELATED,ESTABLISHED -j ACCEPT
-			sudo ip6tables -A ALLOW -j REJECT --reject-with icmp6-adm-prohibited
+			sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
+			sudo ip6tables -A INPUT -i lo -j ACCEPT
+			sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+			sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+			sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
 	        fi
 	else
 		printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
-		  sudo tee -a ${root}/data/sniproxy.conf
+		  sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
 	fi
 
 	echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
 	echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 	sudo apt-get -y install iptables-persistent
-	$(which grep) -vi docker /etc/iptables/rules.v4 > /tmp/rules.v4 && sudo cp /tmp/rules.v4 /etc/iptables/rules.v4 && sudo rm /tmp/rules.v4
-	$(which grep) -vi docker /etc/iptables/rules.v6 > /tmp/rules.v6 && sudo cp /tmp/rules.v6 /etc/iptables/rules.v6 && sudo rm /tmp/rules.v6
 
 	# Ubuntu and Debian have different service names for iptables-persistent service
 	if [ -f "/etc/init.d/iptables-persistent" ]; then
@@ -175,9 +182,25 @@ if [[ ${i} == 0 ]]; then
 	fi	
 fi
 
-echo "Updating db.override with ipaddr"=${extip} "and date="${date}
-sudo $(which sed) -i "s/127.0.0.1/${extip}/g" data/db.override
-sudo $(which sed) -i "s/YYYYMMDD/${date}/g" data/db.override
+echo "Updating db.override with ipaddr"=${EXTIP} "and date="${DATE}
+sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" data/db.override
+sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" data/db.override
+
+echo "Installing python-pip and docker-compose"
+sudo apt-get -y update && \
+  sudo apt-get -y install python-pip sqlite3 && \
+  sudo pip install docker-compose
+
+echo "Configuring admin back-end"
+sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
+  sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db && \
+  PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
+  HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
+  sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;"
+
+echo "Configuring Caddy"
+sudo cp ${BUILD_ROOT}/Caddyfile.template ${BUILD_ROOT}/Caddyfile
+printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
 
 if [[ ${d} == 0 ]]; then
 	if [[ "${b}" == "1" ]]; then
@@ -186,29 +209,51 @@ if [[ ${d} == 0 ]]; then
 		sudo $(which docker) build -t sniproxy docker-sniproxy
 	
 		echo "Starting Docker containers (local)"
-		sudo $(which docker) run --name bind -d -v ${root}/data:/data --net=host -t bind
-		sudo $(which docker) run --name sniproxy -d -v ${root}/data:/data --net=host -t sniproxy
+		sudo $(which docker) run --name bind -d -v ${BUILD_ROOT}/data:/data -p 53:53/udp -t bind
+		sudo $(which docker) run --name sniproxy -d -v ${BUILD_ROOT}/data:/data -p 80:80 -p 443:443 -t sniproxy
+		sudo $(which docker) run --name caddy --net=host -d \
+		  -v ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile \
+		  -v ${HOME}/.caddy:/root/.caddy \
+		  -v ${BUILD_ROOT}/wwwroot:/srv \
+		  -p 8080:8080 \
+		  -p 4443:4443 \
+		  -t abiosoft/caddy
 	else
-		echo "Installing python-pip and docker-compose.."
-		sudo apt-get -y update && \
-		  sudo apt-get -y install python-pip && \
-		  sudo pip install docker-compose
-
 		echo "Creating and starting Docker containers (from repository)"
-		sudo $(which docker-compose) -f netflix-proxy.yaml up -d
+		sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
+		sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 	fi
 fi
 
-# configure appropriate init system (http://unix.stackexchange.com/a/164092/78029)
+# disable Docker iptables control and configure appropriate init system
+# http://unix.stackexchange.com/a/164092/78029 
+# https://github.com/docker/docker/issues/9889
+echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
 if [[ `/sbin/init --version` =~ upstart ]]; then
-	sudo cp ./upstart/* /etc/init/
+	sudo cp ./upstart/* /etc/init/ && \
+	  sudo service docker restart && \
+	  sudo service docker-caddy start && \
+          sudo service docker-dnsmasq start && \
+          sudo service sdns-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
-	sudo cp ./systemd/* /lib/systemd/system/
-	sudo systemctl enable docker-bind
-	sudo systemctl enable docker-sniproxy
-	sudo systemctl enable systemd-networkd
-	sudo systemctl enable systemd-networkd-wait-online
+      sudo mkdir -p /lib/systemd/system/docker.service.d && \
+        printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
+        sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
+	sudo cp ./systemd/* /lib/systemd/system/ && \
+        sudo systemctl daemon-reload && \
+        sudo systemctl restart docker && \	
+	sudo systemctl enable docker-bind && \
+	sudo systemctl enable docker-sniproxy && \
+	sudo systemctl enable docker-caddy && \
+	sudo systemctl enable docker-dnsmasq && \
+        sudo systemctl enable sdns-admin && \
+	sudo systemctl enable systemd-networkd && \
+	sudo systemctl enable systemd-networkd-wait-online && \
+        sudo systemctl start docker-caddy && \
+        sudo systemctl start docker-dnsmasq && \
+        sudo systemctl start sdns-admin
 fi
+sudo iptables-restore < /etc/iptables/rules.v4
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
@@ -219,20 +264,25 @@ fi
 
 if [[ ${t} == 0 ]]; then
 	echo "Testing DNS"
-	$(which dig) +time=${timeout} netflix.com @${extip} || $(which dig) +time=${timeout} netflix.com @${ipaddr}
+	$(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
+	  $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
-	echo "Testing proxy"
-	echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${extip}:443 || \
-	  echo "GET /" | $(which timeout) ${timeout} $(which openssl) s_client -servername netflix.com -connect ${ipaddr}:443
+	printf "Testing proxy\n"
+	echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
+	  echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
+
+	# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
+	printf "Testing Hulu availability\n"
+	printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
+
+	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
+	(curl http://${EXTIP}:8080/ || curl http://${IPADDR}:8080/) && \
+	curl http://localhost:${SDNS_ADMIN_PORT}/ && \
+	  printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
-# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu
-#echo "Testing Hulu availability.."
-#printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n" || \
-#  printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
-  
 # change back to original directory
 popd
 
-echo "Change your DNS to" ${extip} "and start watching Netflix out of region."
-echo "Done!"
+printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
+printf "Done!\n"
