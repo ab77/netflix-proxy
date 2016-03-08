@@ -21,7 +21,7 @@ IPADDR=$(ip addr show dev ${IFACE} | \
   grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
 
 IPADDR=$(echo ${IPADDR} | awk '{print $1}')
-RDNS=$(echo ${IPADDR} | xargs dig +short -x)
+RDNS=$(echo ${IPADDR} | xargs dig +short -x | sed 's/\.$//g')
 
 if [[ -z "${RDNS}" ]]; then
 	echo "PTR record not found, reverting to ipaddr=${IPADDR}"
