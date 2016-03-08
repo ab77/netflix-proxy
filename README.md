@@ -42,7 +42,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 2. Create a `Droplet` using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. **Make sure to enable `IPv6` support**.
 4. Make sure you create the `Droplet` in the right region, for example if you want to watch US content, create in the US.
-5. SSH to your `Droplet` and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+5. SSH to your `Droplet` and run: `git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 6. Make sure to record the credentials for the `netflix-proxy` admin site.
 7. Point your DNS at the Droplet IP, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
 8. Finally, watch `Netflix` and others out of region.
@@ -62,7 +62,7 @@ The build script automatically configures the system with **DNS recursion turned
 If you want to turn DNS recursion off, please be aware that you will need a mechanism to selectively send DNS requests for domains your DNS server knows about (i.e. netflix.com) to your VPS and send all of the other DNS traffic to your local ISP's DNS server. Something like [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) can be used for this and some Internet routers even have it built in. In order to switch DNS recursion off, you will need to build your system using the following command:
 
 ```
-git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -r 0 -b 1
+git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -r 0 -b 1
 ```
 
 ### Command Line Options
@@ -83,7 +83,7 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 2. Create a compute instance using `Debian 8 x64 (jessie)` image.
 3. **Make sure to enable `IPv6` support**. 
 4. Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.
-5. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+5. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 7. Make sure to record the credentials for the `netflix-proxy` admin site.
 8. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
 9. Finally, watch `Netflix` and others out of region.
@@ -96,7 +96,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
 2. Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.
 3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
-4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 5. Make sure to record the credentials for the `netflix-proxy` admin site.
 6. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
 7. Finally, watch `Netflix` and others out of region.
@@ -110,7 +110,7 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
 3. **Make sure to enable `IPv6` support (untested)**.
 4. Make sure you create the Linode in the right location, as there a few to pick from.
-5. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+5. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 6. Make sure to record the credentials for the `netflix-proxy` admin site.
 7. Point your DNS at your Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
 8. Finally, watch `Netflix` and others out of region.
@@ -125,7 +125,7 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 3. **Make sure to enable `IPv6` support (untested)**.
 4. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 5. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
-6. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+6. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 7. Make sure to record the credentials for the `netflix-proxy` admin site.
 8. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
 9. Finally, watch `Netflix` and others out of region.
@@ -137,7 +137,7 @@ The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Make sure you buy your server in the right region, for example if you want to watch US content, select the Baltimore DC.
-3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 4. Make sure to record the credentials for the `netflix-proxy` admin site.
 5. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
 6. Finally, watch `Netflix`, `Hulu` and others out of region.
@@ -149,7 +149,7 @@ The following is based on a standard `Ubuntu` image provided by `Microsoft Azure
 0. First, please see note regarding [IPv6](https://azure.microsoft.com/en-us/pricing/faq/#) support.
 1. Then, if you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
-3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
+3. On your workstation, run `git clone -b new-auth https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
 4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
 5. [Create](https://github.com/ab77/cloud-harness#create-storage-account-name-must-be-unique-as-it-forms-part-of-the-storage-url-check-with---action-check_storage_account_name_availability) a storage account.
 6. [Create](https://github.com/ab77/cloud-harness#create-a-new-hosted-service-name-must-be-unique-within-cloudappnet-domain-check-with---action-check_storage_account_name_availability) a new hosted service.
