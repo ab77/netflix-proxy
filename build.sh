@@ -277,10 +277,10 @@ if [[ ${t} == 0 ]]; then
 	printf "Testing Hulu availability\n"
 	printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
-	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
+	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/ || https://${RDNS}:4443/\n"
 	curl http://${EXTIP}:8080/netflix-proxy/admin/ || curl http://${IPADDR}:8080/netflix-proxy/admin/
 	curl http://localhost:${SDNS_ADMIN_PORT}/netflix-proxy/admin/ && \
-	  printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+	  printf "\nnetflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
 # change back to original directory
