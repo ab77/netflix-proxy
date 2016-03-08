@@ -23,9 +23,27 @@ except ImportError:
     sys.stderr.write('ERROR: Python module "passlib" not found, please run "pip install passlib".\n')
     sys.exit(1)
 
- 
+
+def get_iface():
+    cmd = "ip route | grep default | awk '{print $5}'"
+    web.debug('DEBUG: getting public iface name cmd=%s' % cmd)
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    rc = p.returncode
+    web.debug('DEBUG: get_iface()=%s' % [rc, err, output])
+    if rc == 0:
+        iface = output.rstrip()
+    else:
+        iface = 'eth0'
+        web.debug('WARNING: get_iface() failed, guessing iface=%s' % iface)
+        
+    return iface
+
+
 def run_ipt_cmd(ipaddr, op):
-    ipt_cmd = 'iptables -%s CUSTOMERS -s %s/32 -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4' % (op, ipaddr)
+    iface = get_iface()
+    web.debug('DEBUG: public iface=%s' % iface)
+    ipt_cmd = 'iptables -t nat -%s PREROUTING -s %s/32 -i %s -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules' % (op, ipaddr, iface)
     web.debug('DEBUG: ipaddr=%s, op=%s, ipt_cmd=%s' % (ipaddr, op, ipt_cmd))
     p = Popen(ipt_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
