@@ -119,7 +119,7 @@ if [[ ${i} == 0 ]]; then
 	echo "adding IPv4 iptables rules.."
 	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
 	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080
-	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 4443
+	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080 
         sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353
 	sudo iptables -A INPUT -p icmp -j ACCEPT
 	sudo iptables -A INPUT -i lo -j ACCEPT
@@ -130,14 +130,12 @@ if [[ ${i} == 0 ]]; then
 	sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-	sudo iptables -A INPUT -p tcp -m tcp --dport 4443 -j ACCEPT
 	sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
         sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 5353 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
 	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
-	sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 4443 -j ACCEPT
 	
 	# check if public IPv6 access is available
 	if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
@@ -207,22 +205,11 @@ if [[ ${d} == 0 ]]; then
 		echo "Building docker containers"
 		sudo $(which docker) build -t bind docker-bind
 		sudo $(which docker) build -t sniproxy docker-sniproxy
-	
-		echo "Starting Docker containers (local)"
-		sudo $(which docker) run --name bind -d -v ${BUILD_ROOT}/data:/data -p 53:53/udp -t bind
-		sudo $(which docker) run --name sniproxy -d -v ${BUILD_ROOT}/data:/data -p 80:80 -p 443:443 -t sniproxy
-		sudo $(which docker) run --name caddy --net=host -d \
-		  -v ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile \
-		  -v ${HOME}/.caddy:/root/.caddy \
-		  -v ${BUILD_ROOT}/wwwroot:/srv \
-		  -p 8080:8080 \
-		  -p 4443:4443 \
-		  -t abiosoft/caddy
-	else
-		echo "Creating and starting Docker containers (from repository)"
-		sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
-		sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 	fi
+
+	echo "Creating and starting Docker containers"
+	sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
+	sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 fi
 
 # disable Docker iptables control and configure appropriate init system

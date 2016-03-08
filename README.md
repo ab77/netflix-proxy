@@ -43,30 +43,16 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 3. **Make sure to enable `IPv6` support**.
 4. Make sure you create the `Droplet` in the right region, for example if you want to watch US content, create in the US.
 5. SSH to your `Droplet` and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the Droplet IP, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
-7. Finally, watch `Netflix` and others out of region.
+6. Make sure to record the credentials for the `netflix-proxy` admin site.
+7. Point your DNS at the Droplet IP, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
+8. Finally, watch `Netflix` and others out of region.
 9. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Authorising Additional IPs
-If you want to share your system with friends and family, you can authorise their home IP address(s) as follows (where `x.x.x.x` is the IP address) by running:
+If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build, in step 6.
 
-    sudo iptables -I FRIENDS -s x.x.x.x/32 -j ACCEPT
-    iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
-
-To remove previous authorised IP address, run:
-
-    sudo iptables -D FRIENDS -s x.x.x.x/32 -j ACCEPT
-    iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
-
-If you want to do this remotely, I've written a very basic front-end, which you can launch on your VPS as follows:
-
-    ./auth.py 43867
-
-Then, navigate to the following address in your browser to manage IP addresses in the `FRIENDS` group:
-
-    http://<your-vps-public-ip>:43867/auth
-
-Please note, this is a very basic implementation, which is completely unsecured (which means YOU SHOULD NOT RUN IT, APART FROM WHEN TESTING). To run it in a sensible way, you would need to host it behind a proper web server with at least basic authentication and over SSL, see [web.py install guide](http://webpy.org/install) for more details on how to do this.
+### Home IP Address Change
+You can also use the `netflix-proxy` admin site to update your IP address, should your ISP assign you a new one (e.g. via DHCP). If your IP address does change, all HTTP/HTTPS requests will automatically be redirected to the admin site on port `8080`. All DNS requests will be redirected to `dnsmasq` instance running on port `5353`. You will most likely need to purge your browser and system DNS caches after this (e.g. `ipconfig /flushdns` and `chrome://net-internals/#dns`) and/or reboot the relevant devices. This mechanism should work on browsers, but will most likely cause errors on other devices, such as Apple TVs and smart TVs. If you Internet stops working all of a sudden, try loading a browser and going to `netflix.com`.
 
 ### Security
 The build script automatically configures the system with **DNS recursion turned on**. This has security implications, since it potentially opens your DNS server to a DNS amplification attack, a kind of a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack). This should not be a concern however, as long as the `iptables` firewall rules configured automatically by the build script for you remain in place. However if you ever decide to turn the firewall off, please be aware of this.
@@ -94,9 +80,10 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 3. **Make sure to enable `IPv6` support**. 
 4. Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.
 5. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
-7. Finally, watch `Netflix` and others out of region.
-8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+7. Make sure to record the credentials for the `netflix-proxy` admin site.
+8. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+9. Finally, watch `Netflix` and others out of region.
+10. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
@@ -106,9 +93,10 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 2. Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.
 3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 4. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-5. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
-6. Finally, watch `Netflix` and others out of region.
-7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+5. Make sure to record the credentials for the `netflix-proxy` admin site.
+6. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+7. Finally, watch `Netflix` and others out of region.
+8. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
@@ -119,9 +107,10 @@ The following is based on a standard Ubuntu image provided by `Linode`, but shou
 3. **Make sure to enable `IPv6` support (untested)**.
 4. Make sure you create the Linode in the right location, as there a few to pick from.
 5. SSH to your `Linode` and run the following command: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-6. Point your DNS at your Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
-7. Finally, watch `Netflix` and others out of region.
-8. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. Make sure to record the credentials for the `netflix-proxy` admin site.
+7. Point your DNS at your Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
+8. Finally, watch `Netflix` and others out of region.
+9. Binge. Not that there is anything wrong with that or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png)](http://www.dreamhost.com/r.cgi?2124700)
 
@@ -133,9 +122,10 @@ The following is based on a standard Ubuntu image provided by `DreamHost`, but s
 4. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 5. Also add a `Floating IP` to your instance, otherwise it will only have an IPv6 IP.
 6. SSH to your instance and run the following command: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-7. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
-8. Finally, watch `Netflix` and others out of region.
-9. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+7. Make sure to record the credentials for the `netflix-proxy` admin site.
+8. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
+9. Finally, watch `Netflix` and others out of region.
+10. Well done, enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
@@ -144,9 +134,10 @@ The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Make sure you buy your server in the right region, for example if you want to watch US content, select the Baltimore DC.
 3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-4. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
-5. Finally, watch `Netflix`, `Hulu` and others out of region.
-6. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+4. Make sure to record the credentials for the `netflix-proxy` admin site.
+5. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
+6. Finally, watch `Netflix`, `Hulu` and others out of region.
+7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Microsoft Azure
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
