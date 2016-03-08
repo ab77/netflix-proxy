@@ -51,7 +51,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 ### Authorising Additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build, in step 6.
 
-[![](https://raw.githubusercontent.com/ab77/netflix-proxy/new-auth/static/admin.png)]()
+[![](https://raw.githubusercontent.com/ab77/netflix-proxy/new-auth/static/admin.png)](https://raw.githubusercontent.com/ab77/netflix-proxy/new-auth/static/admin.png)
 
 ### Dynamic IPs
 You can also use the `netflix-proxy` admin site to update your IP address, should your ISP assign you a new one (e.g. via DHCP). If your IP address does change, all HTTP/HTTPS requests will automatically be redirected to the admin site on port `8080`. All DNS requests will be redirected to `dnsmasq` instance running on port `5353`. You will most likely need to purge your browser and system DNS caches after this (e.g. `ipconfig /flushdns` and `chrome://net-internals/#dns`) and/or reboot the relevant devices. This mechanism should work on browsers, but will most likely cause errors on other devices, such as Apple TVs and smart TVs. If you Internet stops working all of a sudden, try loading a browser and going to `netflix.com`.
