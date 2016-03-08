@@ -124,9 +124,10 @@ pushd ${BUILD_ROOT}
 if [[ ${i} == 0 ]]; then
 	# configure iptables
 	echo "adding IPv4 iptables rules.."
-	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i eth0 -j ACCEPT
-	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
-	sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 4443
+	sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080
+	sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 4443
+        sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 5353 -j REDIRECT --to-port 5353
 	sudo iptables -A INPUT -p icmp -j ACCEPT
 	sudo iptables -A INPUT -i lo -j ACCEPT
 	sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
@@ -224,7 +225,7 @@ if [[ ${d} == 0 ]]; then
 		  -t abiosoft/caddy
 	else
 		echo "Creating and starting Docker containers (from repository)"
-		sudo $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
+		sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
 		sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 	fi
 fi
@@ -279,7 +280,7 @@ if [[ ${t} == 0 ]]; then
 	printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
 	curl http://${EXTIP}:8080/netflix-proxy/admin/ || curl http://${IPADDR}:8080/netflix-proxy/admin/
 	curl http://localhost:${SDNS_ADMIN_PORT}/netflix-proxy/admin/ && \
-	  echo -e "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m"
+	  printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
 # change back to original directory
