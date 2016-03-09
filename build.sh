@@ -233,7 +233,7 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
       sudo systemctl daemon-reload && \
-      sudo systemctl restart docker && \	
+      sudo systemctl restart docker && \
       sudo systemctl enable docker-bind && \
       sudo systemctl enable docker-sniproxy && \
       sudo systemctl enable docker-caddy && \
