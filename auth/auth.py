@@ -8,7 +8,7 @@ author: anton@belodedenko.me
 
 from subprocess import Popen, PIPE
 from collections import defaultdict
-import datetime, traceback, sys
+import datetime, traceback, sys, socket
 from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION, AUTO_AUTH)
 
 try:
@@ -23,7 +23,13 @@ except ImportError:
     sys.stderr.write('ERROR: Python module "passlib" not found, please run "pip install passlib".\n')
     sys.exit(1)
 
+try:
+    from dns import (resolver, reversename)
+except ImportError:
+    sys.stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
+    sys.exit(1)
 
+    
 def get_iface():
     cmd = "ip route | grep default | awk '{print $5}'"
     web.debug('DEBUG: getting public iface name cmd=%s' % cmd)
@@ -51,9 +57,46 @@ def run_ipt_cmd(ipaddr, op):
     return rc, err, output
 
 
-def get_public_ip():
+def get_client_public_ip():
     return web.ctx.env.get('HTTP_X_FORWARDED_FOR') or web.ctx.get('ip', None)
 
+
+def get_server_public_ip():
+    reslvr = resolver.Resolver()
+    reslvr.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
+    return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).rstrip('.').lower()
+
+
+def get_server_public_fqdn():
+    reslvr = resolver.Resolver()
+    ipaddr = reversename.from_address(get_server_public_ip())
+    return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
+
+
+def get_server_port():
+    port = '8080'
+    try:
+        port = sys.argv[1]
+    except:
+        return str(port).lower()
+
+
+def get_server_host_port():
+    host = '%s:%s' % (web.ctx.environ['SERVER_NAME'],
+                      web.ctx.environ['SERVER_PORT'])
+    return host.lower()
+
+
+def is_redirected():
+    ipaddr = get_server_public_ip()
+    fqdn = get_server_public_fqdn()
+    port = get_server_port()
+    server = get_server_host_port()
+    if server == '%s:%s' % (ipaddr, port) or server == '%s:%s' % (fqdn, port):
+        return False
+    else:
+        return True
+    
 
 def csrf_token():
     if not session.has_key('csrf_token'):
@@ -115,7 +158,7 @@ def get_ipaddrs():
     
     ipaddrs = [ip['ipaddr'] for ip in results]
     session.auth_ip_count = len(ipaddrs)
-    ip = get_public_ip()
+    ip = get_client_public_ip()
     if ip in ipaddrs:
         session.already_authorized = True
     else:
@@ -128,7 +171,7 @@ def get_form(name='add'):
         frm = web.form.Form(web.form.Textbox('ipaddr'),
                             web.form.Button('Submit', type='submit', value='submit', id='submit'))
         
-        frm.ipaddr.value = get_public_ip()        
+        frm.ipaddr.value = get_client_public_ip()        
         session.auth_ip_count = 0
         session.already_authorized = False
         frm.title = 'admin'
@@ -138,7 +181,7 @@ def get_form(name='add'):
             frm = web.form.Form(web.form.Dropdown('ipaddr', []),
                                 web.form.Button('Add', type='submit', value='add', id='add'))
 
-            frm.ipaddr.args = [get_public_ip()]
+            frm.ipaddr.args = [get_client_public_ip()]
             frm.title = 'add'
         if name == 'delete':
             frm = web.form.Form(web.form.Dropdown('ipaddr', []),
@@ -151,6 +194,13 @@ def get_form(name='add'):
                 frm.title = 'delete'             
     return frm
 
+
+def redirect_to_google():
+    content = web.form.Form()
+    content.title = 'Redirect to Google'
+    content.redirect_url = 'http://google.com/'
+    return render.redirect(content)
+                
 
 # Set a custom 404 not found error message
 def notfound():
@@ -179,7 +229,7 @@ def flash_messages(group=None):
 
 
 web.config.debug = DEBUG
-web.config.session_parameters['cookie_name'] = 'sdns'
+web.config.session_parameters['cookie_name'] = 'netflix-proxy-admin'
 
 urls = (
     r'/login', 'Login',
@@ -221,7 +271,7 @@ t_globals['context'] = session
 class Index:
 
     def GET(self):
-        ipaddr = get_public_ip()
+        ipaddr = get_client_public_ip()
         if AUTO_AUTH:            
             if ipaddr:
                 web.debug('AUTO_AUTH: %s' % ipaddr)
@@ -229,10 +279,7 @@ class Index:
                 web.debug('iptables_update: %s' % [result])
                 if result[0] == 0: 
                     flash('success', 'automatically authorized %s' % ipaddr)
-                    content = web.form.Form()
-                    content.title = 'Redirect to Google'
-                    content.redirect_url = 'http://google.com/'
-                    return render.redirect(content)
+                    redirect_to_google()
                 else:
                     flash('error', 'unable to automatically authorize %s' % ipaddr)
                     raise web.seeother('/add')
@@ -338,7 +385,11 @@ class Add:
                 web.debug('db.insert: %s' % db_result)
                 session.auth_ip_count += 1
                 flash('success', 'succesfully authorized %s' % auth_form['ipaddr'].value)
-                return render.form(get_form())
+                if is_redirected():
+                    web.debug('is_redirected()=%s' % is_redirected()) 
+                    redirect_to_google()
+                else:
+                    return render.form(get_form())
             
             else:
                 flash('error', 'error authorizing %s' % auth_form['ipaddr'].value)
