@@ -221,16 +221,26 @@ t_globals['context'] = session
 class Index:
 
     def GET(self):
-        if AUTO_AUTH:
-            ipaddr = get_public_ip()
+        ipaddr = get_public_ip()
+        if AUTO_AUTH:            
             if ipaddr:
                 web.debug('AUTO_AUTH: %s' % ipaddr)
                 result = run_ipt_cmd(ipaddr, 'I')
                 web.debug('iptables_update: %s' % [result])
-                raise web.seeother('http://google.com/')
+                if result[0] == 0: 
+                    flash('success', 'automatically authorized %s' % ipaddr)
+                    content = web.form.Form()
+                    content.title = 'Redirect to Google'
+                    content.redirect_url = 'http://google.com/'
+                    return render.redirect(content)
+                else:
+                    flash('error', 'unable to automatically authorize %s' % ipaddr)
+                    raise web.seeother('/add')
             else:
+                flash('error', 'something went wrong, please login to authorize')
                 raise web.seeother('/add')
-        else:
+        else:            
+            flash('success', 'welcome, please login to authorize %s' % ipaddr)
             raise web.seeother('/add')
 
 
@@ -242,7 +252,7 @@ class Login:
     def get_login_form(self):    
         login_form = Login.loginform()
         login_form.title = 'login'
-        return login_form       
+        return login_form
 
 
     def GET(self):
@@ -270,7 +280,7 @@ class Login:
         if user:
             session.user = user
             web.debug(web.config.session_parameters)
-            flash('success', """You are now logged in, "Add" to authorize your IP""")
+            flash('success', """you are now logged in, "Add" to authorize your IP""")
             raise web.seeother('/add')
         else:
             session.user = None
