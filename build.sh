@@ -116,8 +116,12 @@ pushd ${BUILD_ROOT}
 
 if [[ ${i} == 0 ]]; then
     # configure iptables
-    echo "adding IPv4 iptables rules.."
-    sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+    printf "adding IPv4 iptables rules\n"
+    if [[ -n "${CLIENTIP}" ]]; then
+        sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+    else
+        printf "WARNING: CLIENTIP variable is not set\n"
+    fi
     sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080
     sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080 
     sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353
@@ -140,11 +144,11 @@ if [[ ${i} == 0 ]]; then
     # check if public IPv6 access is available
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
-        echo "enabling IPv6 priority..."
+        printf "enabling IPv6 priority\n"
         printf "\nresolver {\n  nameserver 2001:4860:4860::8888\n  nameserver 2001:4860:4860::8844\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
 	                
-        echo "adding IPv6 iptables rules.."
+        printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
         sudo ip6tables -A INPUT -i lo -j ACCEPT
         sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
@@ -184,31 +188,31 @@ echo "Updating db.override with ipaddr"=${EXTIP} "and date="${DATE}
 sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" data/db.override
 sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" data/db.override
 
-echo "Installing python-pip and docker-compose"
+printf "Installing python-pip and docker-compose\n"
 sudo apt-get -y update && \
   sudo apt-get -y install python-pip sqlite3 && \
   sudo pip install --upgrade pip && \
   sudo pip install docker-compose
 
-echo "Configuring admin back-end"
+printf "Configuring admin back-end\n"
 sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt && \
   sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db && \
   PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
   HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
   sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;"
 
-echo "Configuring Caddy"
+printf "Configuring Caddy\n"
 sudo cp ${BUILD_ROOT}/Caddyfile.template ${BUILD_ROOT}/Caddyfile
 printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header Host {host}\n\tproxy_header X-Forwarded-For {remote}\n\tproxy_header X-Real-IP {remote}\n\tproxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile
 
 if [[ ${d} == 0 ]]; then
     if [[ "${b}" == "1" ]]; then
-        echo "Building docker containers"
+        printf "Building docker containers\n"
         sudo $(which docker) build -t bind docker-bind && \
           sudo $(which docker) build -t sniproxy docker-sniproxy
     fi
 
-    echo "Creating and starting Docker containers"
+    printf "Creating and starting Docker containers\n"
     sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d && \
       sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
 fi
@@ -245,13 +249,13 @@ sudo iptables-restore < /etc/iptables/rules.v4
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
-    echo "No specific steps to execute for Ubuntu at this time."
+    printf "No specific steps to execute for Ubuntu at this time.\n"
 elif [[ `cat /etc/os-release | grep '^ID='` =~ debian ]]; then
-    echo "No specific steps to execute for Debian at this time."
+    printf "No specific steps to execute for Debian at this time.\n"
 fi
 
 if [[ ${t} == 0 ]]; then
-    echo "Testing DNS"
+    printf "Testing DNS\n"
     $(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
       $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
