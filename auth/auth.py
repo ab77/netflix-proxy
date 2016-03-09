@@ -195,11 +195,11 @@ def get_form(name='add'):
     return frm
 
 
-def redirect_to_google():
+def get_redirect_page():
     content = web.form.Form()
     content.title = 'Redirect to Google'
     content.redirect_url = 'http://google.com/'
-    return render.redirect(content)
+    return content
                 
 
 # Set a custom 404 not found error message
@@ -279,7 +279,7 @@ class Index:
                 web.debug('iptables_update: %s' % [result])
                 if result[0] == 0: 
                     flash('success', 'automatically authorized %s' % ipaddr)
-                    redirect_to_google()
+                    return render.redirect(get_redirect_page())
                 else:
                     flash('error', 'unable to automatically authorize %s' % ipaddr)
                     raise web.seeother('/add')
@@ -387,7 +387,7 @@ class Add:
                 flash('success', 'succesfully authorized %s' % auth_form['ipaddr'].value)
                 if is_redirected():
                     web.debug('is_redirected()=%s' % is_redirected()) 
-                    redirect_to_google()
+                    return render.redirect(get_redirect_page())
                 else:
                     return render.form(get_form())
             
