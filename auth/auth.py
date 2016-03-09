@@ -9,7 +9,7 @@ author: anton@belodedenko.me
 from subprocess import Popen, PIPE
 from collections import defaultdict
 import datetime, traceback, sys
-from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION)
+from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION, AUTO_AUTH)
 
 try:
     import web
@@ -221,7 +221,17 @@ t_globals['context'] = session
 class Index:
 
     def GET(self):
-        raise web.seeother('/add')
+        if AUTO_AUTH:
+            ipaddr = get_public_ip()
+            if ipaddr:
+                web.debug('AUTO_AUTH: %s' % ipaddr)
+                result = run_ipt_cmd(ipaddr, 'I')
+                web.debug('iptables_update: %s' % [result])
+                raise web.seeother('http://google.com/')
+            else:
+                raise web.seeother('/add')
+        else:
+            raise web.seeother('/add')
 
 
 class Login:
