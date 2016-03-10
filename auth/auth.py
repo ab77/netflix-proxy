@@ -155,11 +155,15 @@ def get_ipaddrs():
     return ipaddrs
 
 
-def get_form(name='add'):
+def get_form(name='add'):    
     if session.user['privilege'] == 1:
-        frm = web.form.Form(web.form.Textbox('ipaddr'),
-                            web.form.Button('Submit', type='submit', value='submit', id='submit'))
-        
+        if name == 'add':
+            frm = web.form.Form(web.form.Textbox('ipaddr'),
+                                web.form.Button('Add', type='submit', value='submit', id='submit'))
+        if name == 'delete':
+            frm = web.form.Form(web.form.Textbox('ipaddr'),
+                                web.form.Button('Delete', type='submit', value='submit', id='submit'))
+
         frm.ipaddr.value = get_client_public_ip()        
         session.auth_ip_count = 0
         session.already_authorized = False
