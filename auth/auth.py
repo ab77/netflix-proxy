@@ -73,32 +73,20 @@ def get_server_public_fqdn():
     return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
 
 
-def get_server_port():
-    port = DEFAULT_PORT
-    try:
-        port = sys.argv[1]
-    except:
-        return str(port).lower()
-
-
-def get_server_host_port():
-    host = '%s:%s' % (web.ctx.environ['SERVER_NAME'],
-                      web.ctx.environ['SERVER_PORT'])
-    return host.lower()
+def get_http_host():
+    http_host = web.ctx.env.get('HTTP_HOST').split(':')[0] or 'localhost'
 
 
 def is_redirected():
     ipaddr = get_server_public_ip()
     fqdn = get_server_public_fqdn()
-    port = get_server_port()
-    server = get_server_host_port()
+    http_host = get_http_host()
 
-    web.debug('ipaddr=%s fqdn=%s port=%s server=%s' % (ipaddr,
-                                                       fqdn,
-                                                       port,
-                                                       server))
+    web.debug('ipaddr=%s fqdn=%s http_host=%s' % (ipaddr,
+                                                  fqdn,
+                                                  http_host))
     
-    if server == '%s:%s' % (ipaddr, port) or server == '%s:%s' % (fqdn, port):
+    if http_host == ipaddr or http_host == fqdn:
         return False
     else:
         return True
