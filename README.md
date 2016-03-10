@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker bind restart`:
+**Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
 
 ```
 zone "nflxvideo.net." {
