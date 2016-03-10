@@ -18,3 +18,6 @@ AUTO_AUTH = False
 
 # web debug output dump
 DEBUG = False
+
+# default web.py server port
+DEFAULT_PORT = 8080

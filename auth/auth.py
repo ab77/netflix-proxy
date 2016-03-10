@@ -9,7 +9,7 @@ author: anton@belodedenko.me
 from subprocess import Popen, PIPE
 from collections import defaultdict
 import datetime, traceback, sys, socket
-from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION, AUTO_AUTH)
+from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION, AUTO_AUTH, DEFAULT_PORT)
 
 try:
     import web
@@ -64,7 +64,7 @@ def get_client_public_ip():
 def get_server_public_ip():
     reslvr = resolver.Resolver()
     reslvr.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
-    return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).rstrip('.').lower()
+    return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).lower()
 
 
 def get_server_public_fqdn():
@@ -74,7 +74,7 @@ def get_server_public_fqdn():
 
 
 def get_server_port():
-    port = '8080'
+    port = DEFAULT_PORT
     try:
         port = sys.argv[1]
     except:
@@ -92,6 +92,12 @@ def is_redirected():
     fqdn = get_server_public_fqdn()
     port = get_server_port()
     server = get_server_host_port()
+
+    web.debug('ipaddr=%s fqdn=%s port=%s server=%s' % (ipaddr,
+                                                       fqdn,
+                                                       port,
+                                                       server))
+    
     if server == '%s:%s' % (ipaddr, port) or server == '%s:%s' % (fqdn, port):
         return False
     else:

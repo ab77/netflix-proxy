@@ -1,1 +1,4 @@
 *~
+*.py[cod]
+sessions/
+auth/db/auth.db
