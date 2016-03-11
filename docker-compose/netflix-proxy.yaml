@@ -7,6 +7,16 @@ bind:
     - ${BUILD_ROOT}/data:/data
   restart: always
 
+caching-resolver:
+  image: andyshinn/dnsmasq
+  container_name: caching-resolver
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - ${BUILD_ROOT}/data:/data
+  command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/data/conf/resolv.dnsmasq --no-poll
+  restart: always
+
 dnsmasq:
   image: andyshinn/dnsmasq
   container_name: dnsmasq
@@ -21,10 +31,21 @@ dnsmasq:
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
-  net: host
+  links:
+    - caching-resolver
   ports:
     - "80:80"
     - "443:443"
   volumes:
     - ${BUILD_ROOT}/data:/data
+  restart: always
+
+reverse-proxy:
+  image: abiosoft/caddy
+  container_name: caddy
+  net: host
+  volumes:
+    - ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile
+    - ${BUILD_ROOT}/wwwroot:/srv
+    - ${HOME}/.caddy:/root/.caddy
   restart: always

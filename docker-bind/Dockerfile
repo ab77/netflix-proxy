@@ -2,7 +2,7 @@
 
 FROM centos
 
-MAINTAINER anton.belodedenko@gmail.com
+MAINTAINER anton@belodedenko.me
 
 ADD named.conf /etc/named.conf
 

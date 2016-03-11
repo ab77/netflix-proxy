@@ -1,9 +1,0 @@
-reverse-proxy:
-  image: abiosoft/caddy
-  container_name: caddy
-  net: host
-  volumes:
-    - ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile
-    - ${BUILD_ROOT}/wwwroot:/srv
-    - ${HOME}/.caddy:/root/.caddy
-  restart: always

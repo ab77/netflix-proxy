@@ -142,11 +142,12 @@ if [[ ${i} == 0 ]]; then
     sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
 	
     # check if public IPv6 access is available
+    sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
         printf "enabling IPv6 priority\n"
-        printf "\nresolver {\n  nameserver 2001:4860:4860::8888\n  nameserver 2001:4860:4860::8844\n  mode ipv6_first\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
+        printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
+          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
 	                
         printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
@@ -156,8 +157,8 @@ if [[ ${i} == 0 ]]; then
         sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
         fi
     else
-        printf "\nresolver {\n  nameserver 8.8.8.8\n  nameserver 8.8.4.4\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/sniproxy.conf
+        printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | \
+          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
@@ -184,9 +185,10 @@ if [[ ${i} == 0 ]]; then
     fi	
 fi
 
-echo "Updating db.override with ipaddr"=${EXTIP} "and date="${DATE}
-sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" data/db.override
-sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" data/db.override
+echo "Updating db.override with EXTIP"=${EXTIP} "and DATE="${date}
+sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override
+sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override
+sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override
 
 printf "Installing python-pip and docker-compose\n"
 sudo apt-get -y update && \
@@ -208,13 +210,12 @@ printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n\texcept /static\n\tproxy_header
 if [[ ${d} == 0 ]]; then
     if [[ "${b}" == "1" ]]; then
         printf "Building docker containers\n"
-        sudo $(which docker) build -t bind docker-bind && \
-          sudo $(which docker) build -t sniproxy docker-sniproxy
+        sudo $(which docker) build -t ab77/bind docker-bind && \
+          sudo $(which docker) build -t ab77/sniproxy docker-sniproxy
     fi
 
     printf "Creating and starting Docker containers\n"
-    sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d && \
-      sudo BUILD_ROOT=${BUILD_ROOT} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/reverse-proxy.yaml up -d
+    sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
 fi
 
 # disable Docker iptables control and configure appropriate init system
@@ -226,7 +227,7 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
       sudo service docker restart && \
       sudo service docker-caddy start && \
       sudo service docker-dnsmasq start && \
-      sudo service sdns-admin start
+      sudo service netflix-proxy-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
@@ -238,12 +239,12 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl enable docker-sniproxy && \
       sudo systemctl enable docker-caddy && \
       sudo systemctl enable docker-dnsmasq && \
-      sudo systemctl enable sdns-admin && \
+      sudo systemctl enable netflix-proxy-admin && \
       sudo systemctl enable systemd-networkd && \
       sudo systemctl enable systemd-networkd-wait-online && \
       sudo systemctl start docker-caddy && \
       sudo systemctl start docker-dnsmasq && \
-      sudo systemctl start sdns-admin
+      sudo systemctl start netflix-proxy-admin
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
