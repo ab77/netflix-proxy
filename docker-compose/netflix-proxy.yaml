@@ -7,18 +7,6 @@ bind:
     - ${BUILD_ROOT}/data:/data
   restart: always
 
-sniproxy:
-  image: ab77/sniproxy:new-auth
-  container_name: sniproxy
-  links:
-    - caching-resolver
-  ports:
-    - "80:80"
-    - "443:443"
-  volumes:
-    - ${BUILD_ROOT}/data:/data
-  restart: always
-
 caching-resolver:
   image: andyshinn/dnsmasq
   container_name: caching-resolver
@@ -48,4 +36,16 @@ reverse-proxy:
     - ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile
     - ${BUILD_ROOT}/wwwroot:/srv
     - ${HOME}/.caddy:/root/.caddy
+  restart: always
+  
+  sniproxy:
+  image: ab77/sniproxy:new-auth
+  container_name: sniproxy
+  links:
+    - caching-resolver
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - ${BUILD_ROOT}/data:/data
   restart: always
