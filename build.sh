@@ -248,6 +248,10 @@ elif [[ `systemctl` =~ -\.mount ]]; then
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
+# restart Docker containers
+printf "Restarting Docker containers\n"
+sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
+
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
     printf "No specific steps to execute for Ubuntu at this time.\n"
