@@ -38,7 +38,7 @@ reverse-proxy:
     - ${HOME}/.caddy:/root/.caddy
   restart: always
   
-  sniproxy:
+sniproxy:
   image: ab77/sniproxy:new-auth
   container_name: sniproxy
   links:
