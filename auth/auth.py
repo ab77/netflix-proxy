@@ -305,6 +305,7 @@ class Login:
             
         except Exception, e:
             web.debug(traceback.print_exc())
+            flash('success', 'welcome, please login to authorize %s' % ipaddr)                
             return render.login(self.get_login_form())
 
 
