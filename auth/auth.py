@@ -295,6 +295,7 @@ class Login:
 
 
     def GET(self):
+        ipaddr = get_client_public_ip()
         web.config.session_parameters['cookie_domain'] = web.ctx.environ['HTTP_HOST']
         try:
             if session.user:
