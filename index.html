@@ -35,7 +35,7 @@
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
-<p><strong>Update March/2016</strong>: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker bind restart</code>:</p>
+<p><strong>Update March/2016</strong>: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker restart bind</code>:</p>
 
 <pre><code>zone "nflxvideo.net." {
     type master;
@@ -46,6 +46,8 @@
 <p>Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.</p>
 
 <p><strong>Unblocked Netflix?</strong> Great success! <a href="http://www.poll-maker.com/poll604485xBF6c4fd9-25">Vote</a> now and see the <a href="http://www.poll-maker.com/results604485x0978D169-25">results</a>.</p>
+
+<p><a href="http://www.poll-maker.com/results604485x0978D169-25"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/poll_results.png" alt=""></a></p>
 
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
@@ -71,8 +73,7 @@
 
 <p>The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.</p>
 
-<h2>
-<a id="digitalocean" class="anchor" href="#digitalocean" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DigitalOcean</h2>
+<p><a href="https://m.do.co/c/937b01397c94"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png" alt=""></a></p>
 
 <p>The following is based on a standard Ubuntu Docker image provided by <code>DigitalOcean</code>, but should in theory work on any Linux distribution <strong>with</strong> Docker pre-installed.</p>
 
@@ -85,8 +86,8 @@
 <li>Make sure you create the <code>Droplet</code> in the right region, for example if you want to watch US content, create in the US.</li>
 <li>SSH to your <code>Droplet</code> and run: <code>git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
-<li>Point your DNS at the Droplet IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
-<li>Turn off IPv6 on your network (or relevant devices).[n6]</li>
+<li>Point your DNS at the Droplet IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your Droplet IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code> and others out of region.</li>
 <li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
@@ -140,8 +141,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <h2>
 <a id="other-cloud-providers" class="anchor" href="#other-cloud-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other Cloud Providers</h2>
 
-<h2>
-<a id="vultr" class="anchor" href="#vultr" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Vultr</h2>
+<p><a href="http://www.vultr.com/?ref=6871746"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png" alt=""></a></p>
 
 <p>The following is based on a Debian image provided by <code>Vultr</code>, but should in theory work on any Debian distribution.</p>
 
@@ -153,8 +153,9 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>Make sure you deploy the server in the right region, for example if you want to watch US content, create in one of the US DCs.</li>
 <li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
-<li>Point your DNS at the server IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
-<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+<li>Point your DNS at the server IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your server IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code> and others out of region.</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
 <p><a href="https://clientarea.ramnode.com/aff.php?aff=3079"><img src="http://www.ramnode.com/images/banners/affbannerdarknewlogo.png" alt=""></a></p>
@@ -167,12 +168,12 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>Log into the <code>VPS Control Panel</code> and (re)install the OS using <code>Ubuntu 14.04 x86_64 Server Minimal</code> or <code>Debian 8.0 x86_64 Minimal</code> image.</li>
 <li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
-<li>Point your DNS at the server IP and watch <code>Netflix</code>, <code>Hulu</code> and <code>HBO Now</code> out of region.</li>
-<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+<li>Point your DNS at the server IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your server IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code> and others out of region.</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
-<h3>
-<a id="linode" class="anchor" href="#linode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linode</h3>
+<p><a href="https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9"><img src="https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png" alt=""></a></p>
 
 <p>The following is based on a standard Ubuntu image provided by <code>Linode</code>, but should work on any Linux distribution <strong>without</strong> Docker installed.</p>
 
@@ -184,13 +185,12 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>Make sure you create the Linode in the right location, as there a few to pick from.</li>
 <li>SSH to your <code>Linode</code> and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
-<li>Point your DNS at the <code>Linode</code> IP and watch <code>Netflix</code>, <code>Hulu</code> and/or <code>HBO Now</code> out of region.</li>
-<li>Turn off IPv6 on your network (or relevant devices). </li>
-<li>Binge. Not that there is anything wrong with that or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+<li>Point your DNS at your Linode IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your Linode IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code> and others out of region.</li>
+<li>Binge. Not that there is anything wrong with that or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
-<h3>
-<a id="dreamcompute-by-dreamhost" class="anchor" href="#dreamcompute-by-dreamhost" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DreamCompute by DreamHost</h3>
+<p><a href="http://www.dreamhost.com/r.cgi?2124700"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png" alt=""></a></p>
 
 <p>The following is based on a standard Ubuntu image provided by <code>DreamHost</code>, but should work on any Linux distribution <strong>without</strong> Docker installed and running under <strong>non-root</strong> user (e.g. <code>Amazon Web Services</code>).</p>
 
@@ -204,9 +204,23 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <li>Also add a <code>Floating IP</code> to your instance, otherwise it will only have an IPv6 IP.</li>
 <li>SSH to your instance and run the following command: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
-<li>Turn off IPv6 on your network (or relevant devices). </li>
-<li>Point your DNS at the instance IP and watch <code>Netflix</code>, <code>Hulu</code> and/or <code>HBO Now</code> out of region.</li>
-<li>Well done, enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right..</li>
+<li>Point your DNS at the instance IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your instance IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code> and others out of region.</li>
+<li>Well done, enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
+</ol>
+
+<p><a href="https://www.gandi.net/hosting/iaas/buy"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png" alt=""></a></p>
+
+<p>The following is based on a Debian or Ubuntu OS images provided by <code>Gandi</code>.</p>
+
+<ol>
+<li>Head over to <a href="https://www.gandi.net/hosting/iaas/buy">Gandi</a> to create a virtual server.</li>
+<li>Make sure you buy your server in the right region, for example if you want to watch US content, select the Baltimore DC.</li>
+<li>SSH to your server and run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+</li>
+<li>Point your DNS at the server IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your server IP is displayed.</li>
+<li>Finally, watch <code>Netflix</code>, <code>Hulu</code> and others out of region.</li>
+<li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
 </ol>
 
 <h3>
@@ -285,7 +299,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy <code>Netflix</code> and don't forget to turn off IPv6.</p>
 
 <h3>
-<a id="continuous-integration-ci" class="anchor" href="#continuous-integration-ci" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Continuous Integration (CI)</h3>
+<a id="automated-tests" class="anchor" href="#automated-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Automated Tests</h3>
 
 <p>I've linked this project with <code>Travis CI</code> to automatically test the build. The helper Python script <code>__testbuild.py</code> now runs automatically after every commit. This script deploys a test <code>Droplet</code> and then runs a serious of tests to verify (a) that both <code>Docker</code> containers start; and (b) the <code>built.sh</code> script outputs the correct message at the end. The test <code>Droplet</code> is destroyed and the end of the run.</p>
 
@@ -319,12 +333,12 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 +----------+                  +-----------+                 +-----------------+
 </code></pre>
 
-<p>If IPv6 is not enabled, the VPS is built with IPv4 support only.</p>
+<p>If IPv6 is not enabled, the VPS is built with IPv4 support only. You may need to turn off IPv6 on your local network (or relevant devices).[n6]</p>
 
 <h3>
 <a id="further-work" class="anchor" href="#further-work" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Further Work</h3>
 
-<p>This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a <code>smart DNS proxy</code>, the only <code>smart</code> bit is in the <code>zones.override</code> file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a <code>dumb/transparrent DNS proxy</code>, by replacing the contents of <code>zones.override</code> with a simple[n4] statement:</p>
+<p>This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a <code>smart DNS proxy</code>, the only <code>smart</code> bit is in the <code>zones.override</code> file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a <code>dumb/transparent DNS proxy</code>, by replacing the contents of <code>zones.override</code> with a simple[n4] statement:</p>
 
 <pre><code>zone "." {
     type master;
@@ -336,7 +350,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 
 <p>There is a <a href="https://github.com/trick77/dockerflix">similar</a> project to this, which automates the Dnsmasq configuration.</p>
 
-<p>If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. netflix.com to your VPS IP by creating a file at <code>/etc/resolver/netflix.com</code> with these contents:</p>
+<p>If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. <code>netflix.com</code> to your VPS IP by creating a file at <code>/etc/resolver/netflix.com</code> with these contents:</p>
 
 <pre><code>nameserver xxx.yyy.zzz.ttt
 </code></pre>
@@ -351,7 +365,7 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <h3>
 <a id="donate" class="anchor" href="#donate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Donate</h3>
 
-<p>If you find this useful you can make a small donation with <a href="https://www.paypal.me/belodetech">PayPal</a> or Bitcoin.</p>
+<p>If you find this useful, please feel free to make a small donation with <a href="https://www.paypal.me/belodetech">PayPal</a> or Bitcoin.</p>
 
 <table>
 <thead>
