@@ -279,8 +279,7 @@ class Index:
             else:
                 flash('error', 'something went wrong, please login to authorize')
                 raise web.seeother('/add')
-        else:            
-            flash('success', 'welcome, please login to authorize %s' % ipaddr)
+        else:       
             raise web.seeother('/add')
 
 
@@ -301,6 +300,7 @@ class Login:
             if session.user:
                 raise web.seeother('/add')
             else:
+                flash('success', 'welcome, please login to authorize %s' % ipaddr)                
                 return render.login(self.get_login_form())
             
         except Exception, e:
