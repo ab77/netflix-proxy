@@ -9,7 +9,7 @@ fi
 
 # update sniproxy config
 printf "Setting sniproxy resolver to ${RESOLVER_IP}\n"
-sed -i "s/8.8.8.8/${RESOLVER_IP}/" /data/conf/sniproxy.conf
+sed -i -r "s/([0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3})/${RESOLVER_IP}/" /data/conf/sniproxy.conf
 
 # launch sniproxy
 /usr/sbin/sniproxy -c /data/conf/sniproxy.conf -f
