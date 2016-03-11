@@ -6,7 +6,7 @@
 set -e
 
 # gobals
-TIMEOUT=3
+TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
 
