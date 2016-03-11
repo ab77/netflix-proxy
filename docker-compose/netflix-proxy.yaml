@@ -1,8 +1,20 @@
 bind:
-  image: ab77/bind
+  image: ab77/bind:new-auth
   container_name: bind
   ports:
     - "53:53/udp"
+  volumes:
+    - ${BUILD_ROOT}/data:/data
+  restart: always
+
+sniproxy:
+  image: ab77/sniproxy:new-auth
+  container_name: sniproxy
+  links:
+    - caching-resolver
+  ports:
+    - "80:80"
+    - "443:443"
   volumes:
     - ${BUILD_ROOT}/data:/data
   restart: always
@@ -26,18 +38,6 @@ dnsmasq:
     - "5353:5353"
     - "5353:5353/udp"
   command: --port=5353 --log-facility=- -A /#/${EXTIP}
-  restart: always
-
-sniproxy:
-  image: ab77/sniproxy
-  container_name: sniproxy
-  links:
-    - caching-resolver
-  ports:
-    - "80:80"
-    - "443:443"
-  volumes:
-    - ${BUILD_ROOT}/data:/data
   restart: always
 
 reverse-proxy:
