@@ -185,7 +185,7 @@ if [[ ${i} == 0 ]]; then
     fi	
 fi
 
-echo "Updating db.override with EXTIP"=${EXTIP} "and DATE="${date}
+echo "Updating db.override with EXTIP"=${EXTIP} "and DATE="${DATE}
 sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override
 sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override
 sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override
