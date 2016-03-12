@@ -254,14 +254,14 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl enable netflix-proxy-admin && \
       sudo systemctl enable systemd-networkd && \
       sudo systemctl enable systemd-networkd-wait-online && \
-      sudo systemctl start netflix-proxy-admin && \
+      sudo systemctl start netflix-proxy-admin
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
 # restart Docker containers
 printf "Restarting Docker containers and updated NDP proxy info\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
-sudo service docker-sniproxy restart # used to update NDP neighbour info
+sudo service docker-sniproxy restart # used to update NDP neighbour info, needs to change
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
