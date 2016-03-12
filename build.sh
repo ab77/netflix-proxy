@@ -145,9 +145,13 @@ if [[ ${i} == 0 ]]; then
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+        # disable Docker iptables control and enable ipv6 dual-stack support
+        # http://unix.stackexchange.com/a/164092/78029 
+        # https://github.com/docker/docker/issues/9889
         printf "enabling IPv6 priority\n"
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
+          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
+          echo 'DOCKER_OPTS="--iptables=false --ipv6"' | sudo tee -a /etc/default/docker
 	                
         printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
@@ -157,8 +161,10 @@ if [[ ${i} == 0 ]]; then
         sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
         fi
     else
+        # disable Docker iptables control
         printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
+          echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
@@ -218,10 +224,7 @@ if [[ ${d} == 0 ]]; then
     sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
 fi
 
-# disable Docker iptables control and configure appropriate init system
-# http://unix.stackexchange.com/a/164092/78029 
-# https://github.com/docker/docker/issues/9889
-echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
+# configure appropriate init system
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
       sudo service docker restart && \
