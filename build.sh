@@ -158,7 +158,7 @@ if [[ ${i} == 0 ]]; then
         printf 'enabling Docker IPv6 dual-stack support\n'
         sudo apt-get -y install sipcalc
         printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
-          sudo tee -a /etc/default/dockeri && \
+          sudo tee -a /etc/default/docker && \
           printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
           sudo sysctl -p
 
