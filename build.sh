@@ -10,6 +10,9 @@ TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
 
+# import functions
+. ${BUILD_ROOT}/scripts/functions
+
 # obtain the interface with the default gateway
 IFACE=$(ip route | grep default | awk '{print $5}')
 
@@ -148,11 +151,17 @@ if [[ ${i} == 0 ]]; then
         # disable Docker iptables control and enable ipv6 dual-stack support
         # http://unix.stackexchange.com/a/164092/78029 
         # https://github.com/docker/docker/issues/9889
-        printf "enabling IPv6 priority\n"
+        printf 'enabling IPv6 priority\n'
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
-          echo 'DOCKER_OPTS="--iptables=false --ipv6"' | sudo tee -a /etc/default/docker
-	                
+        
+        printf 'enabling Docker IPv6 dual-stack support\n'
+        sudo apt-get -y install sipcalc
+        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
+          sudo tee -a /etc/default/dockeri && \
+          printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+          sudo sysctl -p
+
         printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
         sudo ip6tables -A INPUT -i lo -j ACCEPT
@@ -227,6 +236,7 @@ fi
 # configure appropriate init system
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /etc/init/docker-sniproxy.conf && \
       sudo service docker restart && \
       sudo service docker-caddy start && \
       sudo service docker-dnsmasq start && \
@@ -235,6 +245,7 @@ elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /lib/systemd/system/docker-sniproxy.service && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \

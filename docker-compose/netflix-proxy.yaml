@@ -41,7 +41,8 @@ reverse-proxy:
 sniproxy:
   image: ab77/sniproxy:new-auth
   container_name: sniproxy
-  net: host
+  links:
+    - caching-resolver
   ports:
     - "80:80"
     - "443:443"
