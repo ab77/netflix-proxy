@@ -245,8 +245,8 @@ elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
-      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /lib/systemd/system/docker-sniproxy.service && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /lib/systemd/system/docker-sniproxy.service && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \
       sudo systemctl enable docker-bind && \
