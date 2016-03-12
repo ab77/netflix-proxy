@@ -259,9 +259,9 @@ fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
 # restart Docker containers
-printf "Restarting Docker containers and updated NDP proxy info\n"
+printf "Restarting Docker containers and updating IPv6 NDP info\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
-sudo service docker-sniproxy restart # used to update NDP neighbour info, needs to change
+sudo service docker-sniproxy restart # used to update IPv6 Neighbor Discovery Protocol (NDP) info, needs to change
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
