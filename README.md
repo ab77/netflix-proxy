@@ -1,7 +1,7 @@
 # netflix-proxy [![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
 `Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1]. Works for blocked sites too, such as [PornHub](http://www.pornhub.com/).
 
-This is the `bleeding-edge` version, which among other things, adds automatic IP address authorisation via dynamic DNS/HTTP redirect. This version also adds a caching `dnsmasq` DNS resolver behind `sniproxy`, to speed up DNS resolution and improve security[n9] as well as Docker IPv6 dual-stack support. The code will eventually be merged into the `master` branch, once it is deemed stable enough.
+This is the [new-auth](https://github.com/ab77/netflix-proxy/tree/new-auth) version, which among other things, adds automatic IP address authorisation via dynamic DNS/HTTP redirect. This version also adds a caching `dnsmasq` DNS resolver behind `sniproxy`, to speed up DNS resolution and improve security[n9] as well as Docker IPv6 dual-stack support. The code will eventually be merged into the [master](https://github.com/ab77/netflix-proxy/tree/master) branch, once it is deemed stable enough.
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
