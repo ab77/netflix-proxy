@@ -238,8 +238,6 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /etc/init/docker-sniproxy.conf && \
       sudo service docker restart && \
-      sudo service docker-caddy start && \
-      sudo service docker-dnsmasq start && \
       sudo service netflix-proxy-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
@@ -256,8 +254,6 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl enable netflix-proxy-admin && \
       sudo systemctl enable systemd-networkd && \
       sudo systemctl enable systemd-networkd-wait-online && \
-      sudo systemctl start docker-caddy && \
-      sudo systemctl start docker-dnsmasq && \
       sudo systemctl start netflix-proxy-admin
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
