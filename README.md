@@ -5,12 +5,12 @@ This is the [new-auth](https://github.com/ab77/netflix-proxy/tree/new-auth) vers
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
+**Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/conf/zones.override` and run `docker restart bind`:
 
 ```
 zone "nflxvideo.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 ```
 Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
@@ -32,7 +32,7 @@ The following are supported out of the box, however adding additional services i
 * Vudu
 * blinkbox
 * BBC iPlayer[n5]
-* NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/master/data/zones.override)
+* NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/new-auth/data/conf/zones.override)
 
 # Instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
@@ -249,7 +249,7 @@ This solution is meant to be a quick and dirty (but functional) method of bypass
 
     zone "." {
         type master;
-        file "/data/db.override";
+        file "/data/conf/db.override";
     };
 
 This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. This will unfortunately invalidate the original purpose of this project. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
