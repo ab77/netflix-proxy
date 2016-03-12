@@ -1,6 +1,8 @@
 # netflix-proxy [![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
 `Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1]. Works for blocked sites too, such as [PornHub](http://www.pornhub.com/).
 
+This is the `bleeding-edge` version, which among other things, adds automatic IP address authorisation via dynamic DNS/HTTP redirect. This version also adds a caching `dnsmasq` DNS resolver behind `sniproxy`, to speed up DNS resolution and improve security[n9] as well as Docker IPv6 dual-stack support. The code will eventually be merged into the `master` branch, once it is deemed stable enough.
+
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
 **Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
@@ -11,8 +13,9 @@ zone "nflxvideo.net." {
     file "/data/db.override";
 };
 ```
+Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
-Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.
+Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
 **Unblocked Netflix?** Great success! [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
 
@@ -226,8 +229,8 @@ The `__testbuild.py` script can also be used to programatically deploy `Droplets
 
 Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
 
-### IPv6
-This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled:
+### IPv6 and Docker
+This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled, although you may need to turn off IPv6 on your local network (or relevant devices).[n6]
 
 ```
 +----------+                  +-----------+                 +-----------------+
@@ -237,7 +240,9 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-If IPv6 is not enabled, the VPS is built with IPv4 support only. You may need to turn off IPv6 on your local network (or relevant devices).[n6]
+When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by diving the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address.
+
+If IPv6 is not enabled, the VPS is built with IPv4 support only.
 
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
@@ -285,3 +290,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n7] See, https://en.wikipedia.org/wiki/Server_Name_Indication.
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
+
+[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/).
+
+[n10] See notes in https://github.com/dlundquist/sniproxy/blob/master/sniproxy.conf.
