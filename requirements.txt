@@ -2,3 +2,4 @@ web.py
 requests
 termcolor
 dnspython
+pyopenssl

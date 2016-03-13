@@ -1,26 +1,29 @@
 #!/usr/bin/env python
 
-import time, sys, socket, inspect, traceback, argparse, json, uuid, requests
+import time, inspect, traceback, argparse, json, uuid, requests
 from pprint import pprint
 from subprocess import Popen, PIPE
+from sys import argv, stdout, stderr
+from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
+from socket import socket, gethostbyname
 
 try:
     import dns.resolver
 except ImportError:
-    sys.stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
-    sys.exit(1)
+    stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
+    exit(1)
     
 try:
     from termcolor import colored
 except ImportError:
-    sys.stderr.write('ERROR: Python module "termcolor" not found, please run "pip install termcolor".\n')
-    sys.exit(1)
+    stderr.write('ERROR: Python module "termcolor" not found, please run "pip install termcolor".\n')
+    exit(1)
 
 try:
     import requests
 except ImportError:
-    sys.stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
-    sys.exit(1)
+    stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
+    exit(1)
 
 PROXY_HOST = None
 PROXY_PORT = None
@@ -32,12 +35,14 @@ DEFAULT_MEMORY_SIZE_SLUG = '512mb'
 DEFAULT_VCPUS = 1
 DEFAULT_DISK_SIZE = 20
 DEFAULT_SLEEP = 5
+DEFAULT_BRANCH = 'master'
 
 from functools import wraps
 
 DEFAULT_TRIES = 4
 DEFAULT_DELAY = 30
 DEFAULT_BACKOFF = 2
+
 
 def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, cdata=None):
     '''Retry calling the decorated function using an exponential backoff.
@@ -74,13 +79,16 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
         return f_retry  # true decorator
     return deco_retry
 
+
 def logger(message=None):
     print '%s\n' % repr(message)
 
+
 def get_public_ip():
     resolver = dns.resolver.Resolver()
-    resolver.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
-    return resolver.query('myip.opendns.com', 'A').rrset[0]
+    resolver.nameservers=[gethostbyname('resolver1.opendns.com')]
+    return str(resolver.query('myip.opendns.com', 'A').rrset[0])
+
 
 def get_regions(s):
     response = s.get('%s/regions' % BASE_API_URL)
@@ -91,6 +99,7 @@ def get_regions(s):
             
     return slugs
 
+
 def args():   
     parser = argparse.ArgumentParser()
     sp = parser.add_subparsers()    
@@ -100,18 +109,20 @@ def args():
     digitalocean.add_argument('--client_ip', type=str, required=False, default=get_public_ip(), help='client IP to secure Droplet')
     digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
     digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
+    digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: %s)' % DEFAULT_BRANCH)
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
     args = parser.parse_args()
     return args
 
-def create_droplet(s, name, cip, fps, region):
+
+def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
     user_data = '''
 #cloud-config
 
 runcmd:
-  - git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s
-''' % cip
+  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s
+''' % (branch, cip)
 
     json_data = {'name': name,
                  'region': region,
@@ -149,6 +160,7 @@ runcmd:
     else:
         return wait_for_vm_provisioning_completion_retry(d['links']['actions'][0]['href'])
 
+
 def destroy_droplet(s, droplet_id):
 
     @retry(AssertionError)
@@ -166,6 +178,7 @@ def destroy_droplet(s, droplet_id):
 
     return wait_for_vm_deletion_completion_retry(s, droplet_id)
 
+
 def get_droplet_id_by_name(s, name):
     response = s.get('%s/droplets' % BASE_API_URL)
     d = json.loads(response.text)
@@ -176,6 +189,7 @@ def get_droplet_id_by_name(s, name):
             
     return droplet_id
 
+
 def get_droplet_ip_by_name(s, name):
     response = s.get('%s/droplets' % BASE_API_URL)
     d = json.loads(response.text)
@@ -185,6 +199,7 @@ def get_droplet_ip_by_name(s, name):
             droplet_ip = droplet['networks']['v4'][0]['ip_address']
             
     return droplet_ip
+
 
 def ssh_run_command(ip, command):
     result = None
@@ -202,11 +217,12 @@ def ssh_run_command(ip, command):
                  'rc': ssh.returncode,
                  'pid': ssh.pid})
 
+
 @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
 def docker_test_retry(ip):
     stdout = ssh_run_command(ip, 'docker ps')['stdout']
     # https://docs.docker.com/reference/commandline/ps/
-    if len(stdout) < 3: # quick and dirty check (3 lines of output = header + bind + sniproxy), needs improvement..
+    if len(stdout) < 5: # quick and dirty check (5 lines of output = header + containers), needs improvement..
         print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
                                                              stdout,
                                                              len(stdout)), 'red')
@@ -219,8 +235,10 @@ def docker_test_retry(ip):
         assert True
         return True
 
+
 def docker_test(ip):
     return docker_test_retry(ip)
+
 
 def netflix_proxy_test(ip):
 
@@ -239,11 +257,39 @@ def netflix_proxy_test(ip):
             
     return netflix_proxy_test_retry(ip)
 
+
+def netflix_openssl_test(ip=None, port=443, hostname='netflix.com'):
+    """
+    Connect to an SNI-enabled server and request a specific hostname
+    """
+    if not ip: ip = get_public_ip()
+    client = socket()
+    
+    print 'Connecting...',
+    stdout.flush()
+    client.connect((ip, port))
+    print 'connected', client.getpeername()
+    
+    client_ssl = Connection(Context(TLSv1_METHOD), client)
+    client_ssl.set_connect_state()
+    client_ssl.set_tlsext_host_name(hostname)
+    client_ssl.do_handshake()
+    cert = client_ssl.get_peer_certificate().get_subject()
+    cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
+    client_ssl.close()
+    print cn
+    if hostname in cn[0][1]:
+        return True
+    else:
+        return False
+
+
 def reboot_test(ip):
     stdout = ssh_run_command(ip, 'sudo reboot')['stdout']
     print colored('%s: stdout = %s' % (inspect.stack()[0][3], stdout), 'grey')
     time.sleep(DEFAULT_SLEEP)
     return docker_test_retry(ip)
+
 
 if __name__ == '__main__':
     arg = args()
@@ -259,11 +305,11 @@ if __name__ == '__main__':
 
         if arg.list_regions:
             pprint(get_regions(s))
-            sys.exit(0)
+            exit(0)
         
         try:
             print colored('Creating Droplet %s...' % name, 'yellow')
-            d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region)                
+            d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region, branch=arg.branch)                
             pprint(d)
             
             droplet_ip = get_droplet_ip_by_name(s, name)
@@ -271,22 +317,26 @@ if __name__ == '__main__':
 
             print colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             result = docker_test(droplet_ip)
-            if not result: sys.exit(1)
+            if not result: exit(1)
             
             print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             rc = netflix_proxy_test(droplet_ip)
-            if rc > 0: sys.exit(rc)
-
+            if rc > 0: exit(rc)
+    
             print colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             result = reboot_test(droplet_ip)
-            if not result: sys.exit(1)
+            if not result: exit(1)
+
+            print colored('Testing remote connectivity on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+            rc = netflix_openssl_test(ip=droplet_ip)
+            if not rc: exit(1)
 
             print colored('Tested, OK..', 'green')
-            sys.exit(0)
+            exit(0)
             
         except Exception as e:
             print colored(traceback.print_exc(), 'red')
-            sys.exit(1)
+            exit(1)
             
         finally:
             if arg.destroy:
