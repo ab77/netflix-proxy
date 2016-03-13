@@ -1,4 +1,6 @@
 *~
+.DS_Store
 *.py[cod]
 sessions/
 auth/db/auth.db
+id_rsa.travis
