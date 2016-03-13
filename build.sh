@@ -10,6 +10,9 @@ TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
 
+# import functions
+. ${BUILD_ROOT}/scripts/functions
+
 # obtain the interface with the default gateway
 IFACE=$(ip route | grep default | awk '{print $5}')
 
@@ -145,10 +148,20 @@ if [[ ${i} == 0 ]]; then
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
-        printf "enabling IPv6 priority\n"
+        # disable Docker iptables control and enable ipv6 dual-stack support
+        # http://unix.stackexchange.com/a/164092/78029 
+        # https://github.com/docker/docker/issues/9889
+        printf 'enabling IPv6 priority\n'
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
-	                
+          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
+        
+        printf 'enabling Docker IPv6 dual-stack support\n'
+        sudo apt-get -y install sipcalc
+        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
+          sudo tee -a /etc/default/docker && \
+          printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+          sudo sysctl -p
+
         printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
         sudo ip6tables -A INPUT -i lo -j ACCEPT
@@ -157,8 +170,10 @@ if [[ ${i} == 0 ]]; then
         sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
         fi
     else
+        # disable Docker iptables control
         printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
+          echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
@@ -218,21 +233,18 @@ if [[ ${d} == 0 ]]; then
     sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d
 fi
 
-# disable Docker iptables control and configure appropriate init system
-# http://unix.stackexchange.com/a/164092/78029 
-# https://github.com/docker/docker/issues/9889
-echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
+# configure appropriate init system
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /etc/init/docker-sniproxy.conf && \
       sudo service docker restart && \
-      sudo service docker-caddy start && \
-      sudo service docker-dnsmasq start && \
       sudo service netflix-proxy-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /lib/systemd/system/docker-sniproxy.service && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \
       sudo systemctl enable docker-bind && \
@@ -242,15 +254,14 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl enable netflix-proxy-admin && \
       sudo systemctl enable systemd-networkd && \
       sudo systemctl enable systemd-networkd-wait-online && \
-      sudo systemctl start docker-caddy && \
-      sudo systemctl start docker-dnsmasq && \
       sudo systemctl start netflix-proxy-admin
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
 # restart Docker containers
-printf "Restarting Docker containers\n"
+printf "Restarting Docker containers and updating IPv6 NDP info\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
+sudo service docker-sniproxy restart # used to update IPv6 Neighbor Discovery Protocol (NDP) info, needs to change
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then

@@ -1,0 +1,37 @@
+function get_iface() {
+    local iface=$($(which ip) route | grep default | awk '{print $5}')
+    echo ${iface}
+}
+
+function get_first_words() {
+    local first_words=$(ip -6 addr show dev eth0 scope global | \
+      grep inet6 | awk '{print $2}' | \
+      sed 's/\/64/\/125/' | xargs sipcalc --v6split=125 | \
+      tail -n 3 | head -n 1 | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
+    echo ${first_words}
+}
+
+function get_last_word() {
+    local last_word=$(ip -6 addr show dev eth0 scope global | grep inet6 | awk '{print $2}' | \
+      sed 's/\/64/\/125/' | xargs sipcalc --v6split=125 | \
+      tail -n 3 | head -n 1 | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}' | awk -F':' '{print $8}')
+    echo ${last_word}
+}
+
+function get_docker_ipv6_subnet() {
+    local subnet=$(printf '%s:%x/125\n' $(get_first_words) $((0x$(get_last_word) + 1)))
+    echo ${subnet}
+}
+
+function ndp_proxy_add_delete () {
+    IFACE=$(get_iface)
+    FIRST_WORDS=$(get_first_words)
+    LAST_WORD=$(get_last_word)
+    for (( i=0x${LAST_WORD}+2; i<=0x${LAST_WORD}+8; i++ ))
+    do
+        printf "${1}: proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}\n"
+        $(which ip) -6 neigh ${1} proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}
+    done
+}
