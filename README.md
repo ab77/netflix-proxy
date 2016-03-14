@@ -13,6 +13,16 @@ zone "nflxvideo.net." {
     file "/data/conf/db.override";
 };
 ```
+
+BBC iPlayer seems to be geo-fencing on their CDN hosts. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
+
+```
+zone "bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/db.override";
+};
+```
+
 Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
 Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
