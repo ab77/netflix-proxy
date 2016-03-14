@@ -3,6 +3,21 @@ function get_iface() {
     echo ${iface}
 }
 
+function get_ipaddr() {
+    IFACE=$(get_iface)
+    local ipaddr=$(ip addr show dev ${IFACE} | \
+      grep inet | \
+      grep -v inet6 | \
+      awk '{print $2}' | \
+      grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
+    echo $(echo ${ipaddr} | awk '{print $1}')
+}
+
+function get_ext_ipaddr() {
+    local extip=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
+    echo $(echo ${extip} | awk '{print $1}')
+}
+
 function get_first_words() {
     local first_words=$(ip -6 addr show dev eth0 scope global | \
       grep inet6 | awk '{print $2}' | \
@@ -10,6 +25,11 @@ function get_first_words() {
       tail -n 3 | head -n 1 | \
       grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
     echo ${first_words}
+}
+
+function get_client_ipaddr() {
+    local clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
+    echo ${clientip}
 }
 
 function get_last_word() {
