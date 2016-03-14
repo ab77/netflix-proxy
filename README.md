@@ -23,7 +23,7 @@ zone "bbcfmt.vo.llnwd.net." {
 };
 ```
 
-Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.
+Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
 **Unblocked Netflix?** Great success! [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
 
