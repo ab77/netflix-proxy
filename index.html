@@ -35,6 +35,8 @@
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
+<p>If you want to try the <strong>new version</strong>, with integrated secure authorisation/authentication back-end and local caching DNS resolver, go <a href="https://github.com/ab77/netflix-proxy/tree/new-auth">here</a>.</p>
+
 <p><strong>Update March/2016</strong>: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker restart bind</code>:</p>
 
 <pre><code>zone "nflxvideo.net." {
@@ -43,7 +45,15 @@
 };
 </code></pre>
 
-<p>Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS.</p>
+<p>BBC iPlayer seems to be geo-fencing on their CDN hosts. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker restart bind</code>:</p>
+
+<pre><code>zone "bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/db.override";
+};
+</code></pre>
+
+<p>Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.</p>
 
 <p><strong>Unblocked Netflix?</strong> Great success! <a href="http://www.poll-maker.com/poll604485xBF6c4fd9-25">Vote</a> now and see the <a href="http://www.poll-maker.com/results604485x0978D169-25">results</a>.</p>
 
