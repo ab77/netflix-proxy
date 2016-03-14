@@ -23,7 +23,7 @@ zone "bbcfmt.vo.llnwd.net." {
 };
 ```
 
-Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
+Note, this will potentially land you with a large bandwidth bill from your VPS provider as all Netflix and/or BBC iPlayer video will now be running through your VPS. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
 Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
@@ -250,7 +250,7 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by diving the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address.
+When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by dividing the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address.
 
 If IPv6 is not enabled, the VPS is built with IPv4 support only.
 
