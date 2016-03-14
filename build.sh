@@ -14,21 +14,14 @@ SDNS_ADMIN_PORT=43867
 . ${BUILD_ROOT}/scripts/functions
 
 # obtain the interface with the default gateway
-IFACE=$(ip route | grep default | awk '{print $5}')
+IFACE=$(get_iface)
 
 # obtain IP address of the Internet facing interface
-IPADDR=$(ip addr show dev ${IFACE} | \
-  grep inet | \
-  grep -v inet6 | \
-  awk '{print $2}' | \
-  grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
-
-IPADDR=$(echo ${IPADDR} | awk '{print $1}')
-EXTIP=$($(which dig) +short myip.opendns.com @resolver1.opendns.com)
-EXTIP=`echo ${EXTIP} | awk '{print $1}'`
+IPADDR=$(get_ipaddr)
+EXTIP=$(get_ext_ipaddr)
 
 # obtain client (home) ip address
-CLIENTIP=$(echo ${SSH_CONNECTION} | awk '{print $1}')
+CLIENTIP=$(get_client_ipaddr)
 
 # get the current date
 DATE=$(/bin/date +'%Y%m%d')
