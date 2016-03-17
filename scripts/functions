@@ -52,6 +52,6 @@ function ndp_proxy_add_delete () {
     for (( i=0x${LAST_WORD}+2; i<=0x${LAST_WORD}+8; i++ ))
     do
         printf "${1}: proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}\n"
-        $(which ip) -6 neigh ${1} proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}
+        sudo $(which ip) -6 neigh ${1} proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}
     done
 }

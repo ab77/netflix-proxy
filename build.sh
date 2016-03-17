@@ -229,7 +229,6 @@ fi
 # configure appropriate init system
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
-      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /etc/init/docker-sniproxy.conf && \
       sudo service docker restart && \
       sudo service netflix-proxy-admin start
 elif [[ `systemctl` =~ -\.mount ]]; then
@@ -237,7 +236,6 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
-      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#" /lib/systemd/system/docker-sniproxy.service && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \
       sudo systemctl enable docker-bind && \
@@ -254,7 +252,7 @@ sudo iptables-restore < /etc/iptables/rules.v4
 # restart Docker containers
 printf "Restarting Docker containers and updating IPv6 NDP info\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
-sudo service docker-sniproxy restart # used to update IPv6 Neighbor Discovery Protocol (NDP) info, needs to change
+sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
