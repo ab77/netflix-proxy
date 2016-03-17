@@ -62,16 +62,26 @@ def get_client_public_ip():
 
 
 def get_server_public_ip():
-    reslvr = resolver.Resolver()
-    reslvr.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
-    return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).lower()
+    try:
+        reslvr = resolver.Resolver()
+        reslvr.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
+        return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).lower()
+    
+    except IndexError, e:
+        web.debug('get_server_public_fqdn(): %s' % repr(e))
+        return web.ctx.env['SERVER_NAME']
 
 
 def get_server_public_fqdn():
-    reslvr = resolver.Resolver()
-    ipaddr = reversename.from_address(get_server_public_ip())
-    return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
-
+    try:
+        reslvr = resolver.Resolver()
+        ipaddr = reversename.from_address(get_server_public_ip())
+        return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
+    
+    except IndexError, e:
+        web.debug('get_server_public_fqdn(): %s' % repr(e))
+        return ipaddr
+    
 
 def get_http_host():
     return web.ctx.environ['HTTP_HOST'].split(':')[0] or 'localhost'
@@ -288,7 +298,7 @@ class Login:
     loginform = web.form.Form(web.form.Textbox('username', web.form.notnull),
                               web.form.Password('password', web.form.notnull))
 
-    def get_login_form(self):    
+    def get_login_form(self):
         login_form = Login.loginform()
         login_form.title = 'login'
         return login_form
