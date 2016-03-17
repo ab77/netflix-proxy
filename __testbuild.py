@@ -121,7 +121,7 @@ runcmd:
                  'image': DOCKER_IMAGE_SLUG,
                  'ssh_keys': fps,
                  'backups': False,
-                 'ipv6': False,
+                 'ipv6': True,
                  'private_networking': False,
                  'user_data': user_data}
     
