@@ -29,22 +29,6 @@ except ImportError:
     sys.stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
     sys.exit(1)
 
-    
-def get_iface():
-    cmd = "ip route | grep default | awk '{print $5}'"
-    web.debug('DEBUG: getting public iface name cmd=%s' % cmd)
-    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
-    output, err = p.communicate()
-    rc = p.returncode
-    web.debug('DEBUG: get_iface()=%s' % [rc, err, output])
-    if rc == 0:
-        iface = output.rstrip()
-    else:
-        iface = 'eth0'
-        web.debug('WARNING: get_iface() failed, guessing iface=%s' % iface)
-        
-    return iface
-
 
 def run_ipt_cmd(ipaddr, op):
     iface = get_iface()
@@ -61,24 +45,62 @@ def get_client_public_ip():
     return web.ctx.env.get('HTTP_X_FORWARDED_FOR') or web.ctx.get('ip', None)
 
 
-def get_server_public_ip():
+def get_iface():
+    cmd = "ip route | grep default | awk '{print $5}'"
+    web.debug('DEBUG: getting public iface name cmd=%s' % cmd)
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    rc = p.returncode
+    web.debug('DEBUG: get_iface()=%s' % [rc, err, output])
+    if rc == 0:
+        iface = output.rstrip()
+    else:
+        iface = 'eth0'
+        web.debug('WARNING: get_iface() failed, guessing iface=%s' % iface)
+        
+    return iface
+
+
+def get_server_iface_ip():
+    iface = get_iface()
+    cmd = """ip addr show dev %s | \
+      grep inet | \
+      grep -v inet6 | \
+      awk '{print $2}' | \
+      grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)'""" % iface
+    
+    web.debug('DEBUG: getting ipaddr from iface=%s cmd=%s' % (iface, cmd))
+    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    rc = p.returncode
+    web.debug('DEBUG: get_server_iface_ip()=%s' % [rc, err, output])
+    if rc == 0:
+        ipaddr = output[0].rstrip()
+    else:
+        ipaddr = web.ctx.env['SERVER_NAME']
+        web.debug('WARNING: get_server_iface_ip() failed, guessing ipaddr=%s' % ipaddr)
+        
+    return ipaddr
+
+
+def get_server_external_ip():
     try:
         reslvr = resolver.Resolver()
         reslvr.nameservers=[socket.gethostbyname('resolver1.opendns.com')]
         return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).lower()
     
-    except IndexError, e:
+    except Exception, e:
         web.debug('get_server_public_fqdn(): %s' % repr(e))
-        return web.ctx.env['SERVER_NAME']
+        return get_server_iface_ip()
 
 
 def get_server_public_fqdn():
     try:
         reslvr = resolver.Resolver()
-        ipaddr = reversename.from_address(get_server_public_ip())
+        ipaddr = reversename.from_address(get_server_external_ip())
         return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
     
-    except IndexError, e:
+    except Exception, e:
         web.debug('get_server_public_fqdn(): %s' % repr(e))
         return ipaddr
     
