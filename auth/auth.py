@@ -90,7 +90,7 @@ def get_server_external_ip():
         return str(reslvr.query('myip.opendns.com', 'A').rrset[0]).lower()
     
     except Exception, e:
-        web.debug('get_server_public_fqdn(): %s' % repr(e))
+        web.debug('DEBUG: get_server_external_ip(): %s' % repr(e))
         return get_server_iface_ip()
 
 
@@ -101,7 +101,7 @@ def get_server_public_fqdn():
         return str(reslvr.query(ipaddr, 'PTR')[0]).rstrip('.').lower()
     
     except Exception, e:
-        web.debug('get_server_public_fqdn(): %s' % repr(e))
+        web.debug('DEBUG: get_server_public_fqdn(): %s' % repr(e))
         return ipaddr
     
 
@@ -110,7 +110,7 @@ def get_http_host():
 
 
 def is_redirected():
-    ipaddr = get_server_public_ip()
+    ipaddr = get_server_external_ip()
     fqdn = get_server_public_fqdn()
     http_host = get_http_host()
     if http_host == ipaddr or http_host == fqdn:
