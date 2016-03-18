@@ -145,6 +145,7 @@ if [[ ${i} == 0 ]]; then
         # http://unix.stackexchange.com/a/164092/78029 
         # https://github.com/docker/docker/issues/9889
         printf 'enabling IPv6 priority\n'
+        IPV6=1
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
         
@@ -164,6 +165,7 @@ if [[ ${i} == 0 ]]; then
         fi
     else
         # disable Docker iptables control
+        IPV6=0
         printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
           echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
@@ -250,9 +252,14 @@ fi
 sudo iptables-restore < /etc/iptables/rules.v4
 
 # restart Docker containers
-printf "Restarting Docker containers and updating IPv6 NDP info\n"
+printf "Restarting Docker containers\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
-sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
+
+# update IPv6 NDP info
+if [[ ${IPV6} == 1 ]]; then
+    printf "Updating IPv6 NDP info\n"
+    sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
+fi
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
@@ -282,6 +289,13 @@ fi
 
 # change back to original directory
 popd
+
+# display IPv6 status
+if [[ ${IPV6} == 1 ]]; then
+    printf "IPv6=\e[32mEnabled\033[0m\n"
+else
+    printf "\e[1WARNING\033[0m IPv6=\e[31mDisabled\033[0m\n"    
+fi
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
 printf "Done!\n"
