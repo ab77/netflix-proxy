@@ -158,11 +158,11 @@ if [[ ${i} == 0 ]]; then
               sudo tee -a /etc/default/docker && \
               printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
               sudo sysctl -p && \
-              printf "links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+              printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
         else
             # stop Docker from messing around with iptables
             printf "DOCKER_OPTS='--iptables=false'\n" | sudo tee -a /etc/default/docker && \
-              printf "net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+              printf "  net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
         fi
 
         printf "adding IPv6 iptables rules\n"
@@ -177,7 +177,7 @@ if [[ ${i} == 0 ]]; then
         IPV6=0
         printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
           echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker && \
-          printf "net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+          printf "  net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
