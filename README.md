@@ -111,6 +111,8 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
+**Update March/2016**: `new-auth` does not currently work on RamNode.
+
 The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
