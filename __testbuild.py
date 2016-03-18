@@ -8,6 +8,12 @@ from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
 from socket import socket, gethostbyname
 
 try:
+    import requests
+except ImportError:
+    stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
+    exit(1)
+
+try:
     import dns.resolver
 except ImportError:
     stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
@@ -262,26 +268,46 @@ def netflix_openssl_test(ip=None, port=443, hostname='netflix.com'):
     """
     Connect to an SNI-enabled server and request a specific hostname
     """
+
+    @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
+    def netflix_openssl_test_retry(ip):
+        client = socket()
+        
+        print 'Connecting...',
+        stdout.flush()
+        client.connect((ip, port))
+        print 'connected', client.getpeername()
+        
+        client_ssl = Connection(Context(TLSv1_METHOD), client)
+        client_ssl.set_connect_state()
+        client_ssl.set_tlsext_host_name(hostname)
+        client_ssl.do_handshake()
+        cert = client_ssl.get_peer_certificate().get_subject()
+        cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
+        client_ssl.close()
+        print cn
+        if hostname in cn[0][1]:
+            return True
+        else:
+            return False
+
     if not ip: ip = get_public_ip()
-    client = socket()
-    
-    print 'Connecting...',
-    stdout.flush()
-    client.connect((ip, port))
-    print 'connected', client.getpeername()
-    
-    client_ssl = Connection(Context(TLSv1_METHOD), client)
-    client_ssl.set_connect_state()
-    client_ssl.set_tlsext_host_name(hostname)
-    client_ssl.do_handshake()
-    cert = client_ssl.get_peer_certificate().get_subject()
-    cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
-    client_ssl.close()
-    print cn
-    if hostname in cn[0][1]:
-        return True
-    else:
-        return False
+    return netflix_openssl_test_retry(ip)
+
+
+def netflix_test(ip=None, host='www.netflix.com'):
+
+    @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
+    def netflix_openssl_test_retry(ip):
+        status_code = requests.get('http://%s' % ip, headers={'Host': host}).status_code
+        print '%s: status_code=%s' % (host, status_code)
+        if not status_code == 200:
+            return False
+        else:
+            return True
+
+    if not ip: ip = get_public_ip()
+    return netflix_openssl_test_retry(ip)
 
 
 def reboot_test(ip):
@@ -327,8 +353,12 @@ if __name__ == '__main__':
             result = reboot_test(droplet_ip)
             if not result: exit(1)
 
-            print colored('Testing remote connectivity on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+            print colored('sniproxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
             rc = netflix_openssl_test(ip=droplet_ip)
+            if not rc: exit(1)
+
+            print colored('sniproxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+            rc = netflix_test(ip=droplet_ip)
             if not rc: exit(1)
 
             print colored('Tested, OK..', 'green')

@@ -9,6 +9,7 @@ set -e
 TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
+CACHING_RESOLVER=0 # experimental, requires Docker IPv6 dual-stack (problematic with some VPS providers)
 
 # import functions
 . ${BUILD_ROOT}/scripts/functions
@@ -138,7 +139,8 @@ if [[ ${i} == 0 ]]; then
     sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
 	
     # check if public IPv6 access is available
-    sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf
+    sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
+      sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
         # disable Docker iptables control and enable ipv6 dual-stack support
@@ -149,12 +151,19 @@ if [[ ${i} == 0 ]]; then
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
         
-        printf 'enabling Docker IPv6 dual-stack support\n'
-        sudo apt-get -y install sipcalc
-        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
-          sudo tee -a /etc/default/docker && \
-          printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
-          sudo sysctl -p
+        if [[ ${CACHING_RESOLVER} == 1 ]]; then
+            printf 'enabling Docker IPv6 dual-stack support\n'
+            sudo apt-get -y install sipcalc
+            printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
+              sudo tee -a /etc/default/docker && \
+              printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+              sudo sysctl -p && \
+              printf "links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+        else
+            # stop Docker from messing around with iptables
+            printf "DOCKER_OPTS='--iptables=false'\n" | sudo tee -a /etc/default/docker && \
+              printf "net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+        fi
 
         printf "adding IPv6 iptables rules\n"
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
@@ -164,11 +173,11 @@ if [[ ${i} == 0 ]]; then
         sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
         fi
     else
-        # disable Docker iptables control
+        # stop Docker from messing around with iptables
         IPV6=0
-        printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf
-          echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
+        printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
+          echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker && \
+          printf "net: host\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
@@ -256,7 +265,7 @@ printf "Restarting Docker containers\n"
 sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
 
 # update IPv6 NDP info
-if [[ ${IPV6} == 1 ]]; then
+if [[ ${IPV6} == 1 ]] && [[ ${CACHING_RESOLVER} == 1 ]]; then
     printf "Updating IPv6 NDP info\n"
     sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
 fi
