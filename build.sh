@@ -294,7 +294,7 @@ popd
 if [[ ${IPV6} == 1 ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
-    printf "\e[1WARNING\033[0m IPv6=\e[31mDisabled\033[0m\n"    
+    printf "\e[1mWARNING\033[0m IPv6=\e[31mDisabled\033[0m\n"    
 fi
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
