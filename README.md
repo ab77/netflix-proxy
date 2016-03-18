@@ -27,9 +27,9 @@ Note, this will potentially land you with a large bandwidth bill from your VPS p
 
 Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
-**Unblocked Netflix?** Great success! [Vote](http://www.poll-maker.com/poll604485xBF6c4fd9-25) now and see the [results](http://www.poll-maker.com/results604485x0978D169-25).
+**Unblocked Netflix?** Great success! [Vote](http://www.poll-maker.com/poll622505x596e406D-26) now and see the [results](http://www.poll-maker.com/results622505xfcC7F6aA-26).
 
-[![](https://raw.githubusercontent.com/ab77/netflix-proxy/new-auth/static/poll_results.png)](http://www.poll-maker.com/results604485x0978D169-25)
+[![](https://raw.githubusercontent.com/ab77/netflix-proxy/new-auth/static/poll_results.png)](http://www.poll-maker.com/results622505xfcC7F6aA-26)
 
 # Supported Services
 The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart bind`:
