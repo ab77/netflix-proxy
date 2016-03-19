@@ -276,7 +276,8 @@ sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_
 # update IPv6 NDP info
 if [[ ${IPV6} == 1 ]] && [[ ${CACHING_RESOLVER} == 1 ]]; then
     printf "Updating IPv6 NDP info\n"
-    sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
+    sudo service docker restart || sudo systemctl restart docker && \
+      sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
 fi
 
 # OS specific steps
