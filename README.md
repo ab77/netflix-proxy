@@ -117,8 +117,6 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
-**Update March/2016**: RamNode IPv6 configuration is broken. Do **NOT** set `CACHING_RESOLVER=1` in the build script as you'll end up with a non-working configuraion.
-
 The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
@@ -309,6 +307,6 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 
-[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to issues with IPv6 configurations provided by some hosting providers (i.e. RamNode). To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
+[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode). To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
 
 [n10] See notes in https://github.com/dlundquist/sniproxy/blob/master/sniproxy.conf.
