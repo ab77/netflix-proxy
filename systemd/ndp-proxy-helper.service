@@ -6,7 +6,6 @@ After=docker-sniproxy.service
 [Service]
 Restart=always
 ExecStart={{BUILD_ROOT}}/scripts/proxy-add-ndp.sh -a
-ExecStop={{BUILD_ROOT}}/scripts/proxy-add-ndp.sh -d
 
 [Install]
 WantedBy=multi-user.target
