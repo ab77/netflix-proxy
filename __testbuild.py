@@ -297,9 +297,9 @@ def netflix_openssl_test(ip=None, port=443, hostname='netflix.com'):
 
 def netflix_test(ip=None, host='www.netflix.com'):
 
-    @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(Exception, tries=3, delay=10, backoff=2, cdata='method=%s()' % inspect.stack()[0][3])
     def netflix_openssl_test_retry(ip):
-        status_code = requests.get('http://%s' % ip, headers={'Host': host}).status_code
+        status_code = requests.get('http://%s' % ip, headers={'Host': host}, timeout=10).status_code
         print '%s: status_code=%s' % (host, status_code)
         if not status_code == 200:
             return False
