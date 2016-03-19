@@ -1,7 +1,7 @@
 # netflix-proxy [![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=new-auth)](https://travis-ci.org/ab77/netflix-proxy) [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
 `Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[n2], `HBO Now` and others out of region using `BIND` and `sniproxy`[n1]. Works for blocked sites too, such as [PornHub](http://www.pornhub.com/).
 
-This is the [new-auth](https://github.com/ab77/netflix-proxy/tree/new-auth) version, which among other things, adds automatic IP address authorisation via dynamic DNS/HTTP redirect. This version also adds a caching `dnsmasq` DNS resolver behind `sniproxy`, to speed up DNS resolution and improve security as well as Docker IPv6 dual-stack support[n9]. The code will eventually be merged into the [master](https://github.com/ab77/netflix-proxy/tree/master) branch, once it is deemed stable enough.
+This is the [new-auth](https://github.com/ab77/netflix-proxy/tree/new-auth) version, which among other things, adds automatic IP address authorisation via dynamic DNS/HTTP redirect. This version also adds a caching `dnsmasq` DNS resolver behind `sniproxy` to speed up DNS resolution and improve security as well as enables Docker IPv6 dual-stack support. The later two features are disabled by default[n9].
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
@@ -116,6 +116,8 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 10. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
+
+**Update March/2016**: RamNode IPv6 configuration is broken. Do **NOT** set `CACHING_RESOLVER=1` in the build script as you'll end up with a non-working configuraion.
 
 The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
@@ -307,6 +309,6 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 
-[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to issues with IPv6 configurations provided by various hosting providers. To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
+[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to issues with IPv6 configurations provided by some hosting providers (i.e. RamNode). To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
 
 [n10] See notes in https://github.com/dlundquist/sniproxy/blob/master/sniproxy.conf.
