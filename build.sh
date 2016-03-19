@@ -249,13 +249,16 @@ fi
 # configure appropriate init system
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ./upstart/* /etc/init/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/init/ndp-proxy-helper.conf && \
       sudo service docker restart && \
-      sudo service netflix-proxy-admin start
+      sudo service netflix-proxy-admin start && \
+      sudo service ndp-proxy-helper start
 elif [[ `systemctl` =~ -\.mount ]]; then
     sudo mkdir -p /lib/systemd/system/docker.service.d && \
       printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
       sudo tee /lib/systemd/system/docker.service.d/custom.conf && \
       sudo cp ./systemd/* /lib/systemd/system/ && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/ndp-proxy-helper.service && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \
       sudo systemctl enable docker-bind && \
@@ -263,22 +266,13 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl enable docker-caddy && \
       sudo systemctl enable docker-dnsmasq && \
       sudo systemctl enable netflix-proxy-admin && \
+      sudo systemctl enable ndp-proxy-helper && \
       sudo systemctl enable systemd-networkd && \
       sudo systemctl enable systemd-networkd-wait-online && \
-      sudo systemctl start netflix-proxy-admin
+      sudo systemctl start netflix-proxy-admin && \
+      sudo systemctl start ndp-proxy-helper
 fi
 sudo iptables-restore < /etc/iptables/rules.v4
-
-# restart Docker containers
-printf "Restarting Docker containers\n"
-sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml restart
-
-# update IPv6 NDP info
-if [[ ${IPV6} == 1 ]] && [[ ${CACHING_RESOLVER} == 1 ]]; then
-    printf "Updating IPv6 NDP info\n"
-    sudo service docker restart || sudo systemctl restart docker && \
-      sudo ${BUILD_ROOT}/scripts/proxy-add-ndp.sh -a
-fi
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
