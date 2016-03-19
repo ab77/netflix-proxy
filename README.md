@@ -88,10 +88,16 @@ git clone -b new-auth https://github.com/ab77/netflix-proxy /opt/netflix-proxy &
 ### Command Line Options
 The following command line options can be optionaly passed to `build.sh` for additional control:
 
-    Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>]
+```
+Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1]
         -r      enable (1) or disable (0) DNS recursion (default: 1)
         -b      grab docker images from repository (0) or build locally (1) (default: 0)
         -c      specify client-ip instead of being taken from ssh_connection[n3]
+        -i      skip iptables steps
+        -d      skip Docker steps
+        -t      skip testing steps
+        -z      enable caching resolver (default: 0)
+```
 
 ## Other Cloud Providers
 
@@ -301,6 +307,6 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 
-[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to issues with IPv6 configurations provided by various hosting providers. To enable, set `CACHING_RESOLVER=1` in `build.sh` and re-deploy.
+[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to issues with IPv6 configurations provided by various hosting providers. To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
 
 [n10] See notes in https://github.com/dlundquist/sniproxy/blob/master/sniproxy.conf.
