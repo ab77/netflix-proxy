@@ -22,4 +22,4 @@ before_script:
   - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
   
 script:
-  - python __testbuild.py digitalocean --api_token $do_api_v2_token --branch $TRAVIS_BRANCH --destroy
+  - python __testbuild.py digitalocean --api_token $do_api_v2_token --branch $TRAVIS_BRANCH --region nyc3 --destroy
