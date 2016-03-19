@@ -29,18 +29,19 @@ DATE=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
-    echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1]" 1>&2; \
+    echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1]" 1>&2; \
     printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
     printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
     printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n"; \
     printf "\t-i\tskip iptables steps\n"; \
     printf "\t-d\tskip Docker steps\n"; \
     printf "\t-t\tskip testing steps\n"; \
+    printf "\t-z\tenable caching resolver (default: 0)\n"; \
     exit 1;
 }
 
 # process options
-while getopts ":r:b:c:i:d:t:" o; do
+while getopts ":r:b:c:i:d:t:z:" o; do
     case "${o}" in
         r)
             r=${OPTARG}
@@ -64,6 +65,10 @@ while getopts ":r:b:c:i:d:t:" o; do
         t)
             t=${OPTARG}
             ((t == 0|| t == 1)) || usage
+            ;;
+        z)
+            z=${OPTARG}
+            ((z == 0|| z == 1)) || usage
             ;;
         *)
             usage
@@ -96,8 +101,12 @@ if [[ -z "${t}" ]]; then
     t=0
 fi
 
+if [[ -n "${z}" ]]; then
+    CACHING_RESOLVER=${z}
+fi
+
 # diagnostics info
-echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d}"
+echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d} -t=${t} -z=${CACHING_RESOLVER}"
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
@@ -282,9 +291,13 @@ if [[ ${t} == 0 ]]; then
     $(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
       $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
-    printf "Testing proxy\n"
+    printf "Testing proxy (OpenSSL)\n"
     echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
       echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
+      
+    printf "Testing proxy (cURL)\n"
+    $(which curl) -o /dev/null -L -H "Host: netflix.com" http://${EXTIP} || \
+      $(which curl) -o /dev/null -L -H "Host: netflix.com" http://${IPADDR}
 
     # https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
     printf "Testing Hulu availability\n"
@@ -299,11 +312,14 @@ fi
 # change back to original directory
 popd
 
-# display IPv6 status
 if [[ ${IPV6} == 1 ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
-    printf "\e[1mWARNING\033[0m IPv6=\e[31mDisabled\033[0m\n"    
+    printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"    
+fi
+
+if [[ ${CACHING_RESOLVER} == 1 ]]; then
+    printf "\e[1mWARNING:\033[0m Docker IPv6 dual-stack and CACHING_RESOLVER=\e[1;33mEnabled\033[0m\n"
 fi
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
