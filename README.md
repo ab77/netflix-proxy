@@ -256,9 +256,54 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by dividing the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address.
+When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by dividing the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.
 
-If IPv6 is not enabled, the VPS is built with IPv4 support only.
+#### RamNode
+The exception to the rule is RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n11]). In these cases, even though a `/64` subnet is assigned to the VPS, it isn't routed to the server. Instead, individual addresses must be added in the portal if they are to be used on the host. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to `eth0` is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.
+
+To demonstrate this behavour, follow these steps:
+```
+IPV6_SUBNET=<allocated-ipv6-subnet> (e.g. 2604:180:2:abc)
+IPV6_ADDR=<allocated-ipv6-addr> (e.g. 2604:180:2:abc::abcd)
+
+# re-configure eth0
+ip -6 addr del ${IPV6_ADDR}/64 dev eth0
+ip -6 addr add ${IPV6_ADDR}/80 dev eth0
+
+# install Docker
+apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh
+
+# update DOCKER_OPTS
+# for upstart based systems (e.g. Ubuntu):
+printf "DOCKER_OPTS='--ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}:1::/80\"'\n" > /etc/default/docker && \
+  service docker restart
+
+# -- OR --
+
+# for systemd based systems (e.g. Debian):
+# change "ExecStart" in /lib/systemd/system/docker.service to:
+ExecStart=/usr/bin/docker daemon -H fd:// --ipv6 --fixed-cidr-v6="${IPV6_SUBNET}:1::/80"
+
+systemctl daemon-reload && \
+  systemctl docker restart
+
+
+# verify IPv6 configuration inside Docker containers
+docker run -it ubuntu bash -c "ip -6 addr show dev eth0; ip -6 route show"
+
+# test (this will fail)
+docker run -it ubuntu bash -c "ping6 google.com"
+```
+
+However, if we NAT all IPv6 traffic from this host using `eth0`, communication will be allowed:
+```
+# NAT all IPv6 traffic behind eth0
+ip6tables -t nat -A POSTROUTING -o eth0  -j MASQUERADE
+
+# test (this will succeed)
+docker run -it ubuntu bash -c "ping6 google.com"
+```
+
 
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
@@ -310,3 +355,5 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode). To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
 
 [n10] See notes in https://github.com/dlundquist/sniproxy/blob/master/sniproxy.conf.
+
+[n11] See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
