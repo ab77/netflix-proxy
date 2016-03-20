@@ -9,7 +9,12 @@ author: anton@belodedenko.me
 from subprocess import Popen, PIPE
 from collections import defaultdict
 import datetime, traceback, sys, socket
-from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION, AUTO_AUTH, DEFAULT_PORT)
+from settings import (MAX_AUTH_IP_COUNT,
+                      SQLITE_DB,
+                      DEBUG, VERSION,
+                      AUTO_AUTH,
+                      DEFAULT_PORT,
+                      FORM_INPUTS_HIDDEN)
 
 try:
     import web
@@ -187,13 +192,17 @@ def get_ipaddrs():
     return ipaddrs
 
 
-def get_form(name='add'):    
+def get_form(name='add'):
+    if FORM_INPUTS_HIDDEN:
+        ipaddr_input = web.form.Hidden('ipaddr')
+    else:
+        ipaddr_input = web.form.Textbox('ipaddr')
     if session.user['privilege'] == 1:
         if name == 'add':
-            frm = web.form.Form(web.form.Textbox('ipaddr'),
+            frm = web.form.Form(ipaddr_input,
                                 web.form.Button('Add', type='submit', value='submit', id='submit'))
         if name == 'delete':
-            frm = web.form.Form(web.form.Textbox('ipaddr'),
+            frm = web.form.Form(ipaddr_input,
                                 web.form.Button('Delete', type='submit', value='submit', id='submit'))
 
         frm.ipaddr.value = get_client_public_ip()        
@@ -354,7 +363,7 @@ class Login:
         if user:
             session.user = user
             web.debug(web.config.session_parameters)
-            flash('success', """you are now logged in, "Add" to authorize your IP""")
+            flash('success', """you are now logged in, "Add" to authorize %s""" % get_client_public_ip())
             raise web.seeother('/add')
         else:
             session.user = None

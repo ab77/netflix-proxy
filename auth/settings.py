@@ -21,3 +21,6 @@ DEBUG = False
 
 # default web.py server port
 DEFAULT_PORT = 8080
+
+# form input mode
+FORM_INPUTS_HIDDEN = False
