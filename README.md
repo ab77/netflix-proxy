@@ -5,6 +5,8 @@ This solution will only work with devices supporting Server Name Indication (SNI
 
 If you want to try the **new version**, with integrated secure authorisation/authentication back-end and local caching DNS resolver, go [here](https://github.com/ab77/netflix-proxy/tree/new-auth).
 
+**Update March/2016**: Netflix seems to be tagging accounts. If your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n9].
+
 **Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
 
 ```
@@ -294,3 +296,5 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n7] See, https://en.wikipedia.org/wiki/Server_Name_Indication.
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
+
+[n9] See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/).
