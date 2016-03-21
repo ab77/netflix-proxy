@@ -164,18 +164,20 @@ def validate_user(f):
                 return user
             else:
                 web.debug('login_failed_hash: incorrect password user=%s, fallback to plaintext' % user.username)
-                
+            
                 if f.password.value == user.password:
                     web.debug('login_success_plaintext: user=%s' % user.username)
                     return user
                 else:
                     web.debug('login_failed_plaintext: incorrect password user=%s' % user.username)
+                    return None
         else:
             web.debug('login_failed: expired account user=%s' % user.username)
-        return None
+            return None
     
     except IndexError, e:
         web.debug('login_failed: not found user=%s' % f.username.value)
+        return None
         
 
 def get_ipaddrs():
@@ -388,6 +390,8 @@ class Add:
         try:
             if session.user:
                 return render.form(get_form())
+            else:
+                raise web.seeother('/login')
 
         except Exception, e:
             web.debug(traceback.print_exc())
@@ -444,6 +448,8 @@ class Delete:
                 frm = get_form(name='delete')
                 if not frm.inputs:flash('success', """all IP addresses de-authorized, please <a href="/add">authorize</a> one""")
                 return render.form(frm)
+            else:
+                raise web.seeother('/login')                
 
         except Exception, e:
             web.debug(traceback.print_exc())
