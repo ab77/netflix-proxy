@@ -141,11 +141,6 @@ if [[ ${i} == 0 ]]; then
     sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
     sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
     sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 5353 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
 	
     # check if public IPv6 access is available
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
