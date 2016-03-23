@@ -278,24 +278,24 @@ fi
 
 if [[ ${t} == 0 ]]; then
     printf "Testing DNS\n"
-    $(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
-      $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
+    with_backoff $(which dig) +time=${TIMEOUT} netflix.com @${EXTIP} || \
+      with_backoff $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
     printf "Testing proxy (OpenSSL)\n"
-    printf "GET / HTTP/1.1\n" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${EXTIP}:443 || \
-      printf "GET / HTTP/1.1\n" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${IPADDR}:443
+    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${EXTIP}:443 || \
+      printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${IPADDR}:443
       
     printf "Testing proxy (cURL)\n"
-    $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${EXTIP} || \
-      $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${IPADDR}
+    with_backoff $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${EXTIP} || \
+      with_backoff $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${IPADDR}
 
     # https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
     printf "Testing Hulu availability\n"
-    printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
+    printf "Hulu region(s) available to you: $(with_backoff curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
     printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
-    ($(which curl) --fail http://${EXTIP}:8080/ || $(which curl) --fail http://${IPADDR}:8080/) && \
-      $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ && \
+    (with_backoff $(which curl) --fail http://${EXTIP}:8080/ || with_backoff $(which curl) --fail http://${IPADDR}:8080/) && \
+      with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ && \
       printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
