@@ -127,7 +127,7 @@ def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
 #cloud-config
 
 runcmd:
-  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s -z 1
+  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s
 ''' % (branch, cip)
 
     json_data = {'name': name,

@@ -3,6 +3,11 @@ zone "netflix.com." {
     file "/data/conf/db.override";
 };
 
+zone "nflxvideo.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "hulu.com." {
     type master;
     file "/data/conf/db.override";
@@ -97,12 +102,6 @@ zone "ip2location.com." {
     type master;
     file "/data/conf/db.override";
 };
-
-# zone not loading for some reason
-#zone "tve_nbc-vh.akamaihd.net." {
-#    type master;
-#    file "/data/conf/db.override";
-#};
 
 zone "pbs.org." {
     type master;
@@ -277,6 +276,31 @@ zone "bbc.co.uk." {
 zone "bbci.co.uk." {
     type master;
     file "/data/conf/db.override";
+};
+
+zone "vs-hds-uk-live.edgesuite.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vs-hds-uk-live.bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vod-hls-uk-live.edgesuite.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "vod-hls-uk-live.bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/db.override";
+};
+
+zone "bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/db.override";
 };
 
 zone "ipinfo.io." {

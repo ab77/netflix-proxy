@@ -9,7 +9,7 @@ set -e
 TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
-CACHING_RESOLVER=0 # experimental, requires Docker IPv6 dual-stack (problematic with some VPS providers)
+CACHING_RESOLVER=1
 
 # import functions
 . ${BUILD_ROOT}/scripts/functions
@@ -146,7 +146,7 @@ if [[ ${i} == 0 ]]; then
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
       sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-        if [[ ! $(curl v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
         # disable Docker iptables control and enable ipv6 dual-stack support
         # http://unix.stackexchange.com/a/164092/78029 
         # https://github.com/docker/docker/issues/9889
@@ -291,7 +291,7 @@ if [[ ${t} == 0 ]]; then
 
     # https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
     printf "Testing Hulu availability\n"
-    printf "Hulu region(s) available to you: $(with_backoff curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
+    printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
     printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
     (with_backoff $(which curl) --fail http://${EXTIP}:8080/ || with_backoff $(which curl) --fail http://${IPADDR}:8080/) && \

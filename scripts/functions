@@ -61,7 +61,7 @@ function get_docker_ipv6_subnet() {
 }
 
 
-function ndp_proxy_add_delete () {
+function ndp_proxy_add_delete() {
     IFACE=$(get_iface)
     FIRST_WORDS=$(get_first_words)
     LAST_WORD=$(get_last_word)

@@ -1,5 +1,5 @@
 bind:
-  image: ab77/bind:new-auth
+  image: ab77/bind
   container_name: bind
   ports:
     - "53:53/udp"
@@ -39,7 +39,7 @@ reverse-proxy:
   restart: always
   
 sniproxy:
-  image: ab77/sniproxy:new-auth
+  image: ab77/sniproxy
   container_name: sniproxy
   ports:
     - "80:80"
