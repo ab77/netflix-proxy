@@ -1,6 +1,3 @@
-requests
-termcolor
 dnspython
 web.py
 passlib
-pyopenssl

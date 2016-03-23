@@ -4,7 +4,6 @@ import time, inspect, traceback, argparse, json, uuid, requests
 from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
-from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
 from socket import socket, gethostbyname
 
 try:
@@ -26,10 +25,11 @@ except ImportError:
     exit(1)
 
 try:
-    import requests
+    from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
 except ImportError:
-    stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
-    exit(1)
+    stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
+    exit(1)    
+
 
 PROXY_HOST = None
 PROXY_PORT = None
