@@ -5,6 +5,8 @@ This solution will only work with devices supporting Server Name Indication (SNI
 
 If you want to try the **new version**, with integrated secure authorisation/authentication back-end and local caching DNS resolver, go [here](https://github.com/ab77/netflix-proxy/tree/new-auth).
 
+**Update March/2016**: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4.
+
 **Update March/2016**: Netflix seems to be tagging accounts. If your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n9].
 
 **Update March/2016**: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to `/opt/netflix-proxy/data/zones.override` and run `docker restart bind`:
