@@ -9,7 +9,7 @@ set -e
 TIMEOUT=10
 BUILD_ROOT="/opt/netflix-proxy"
 SDNS_ADMIN_PORT=43867
-CACHING_RESOLVER=1
+DISABLE_CACHING_RESOLVER=0
 
 # import functions
 . ${BUILD_ROOT}/scripts/functions
@@ -36,7 +36,7 @@ usage() {
     printf "\t-i\tskip iptables steps\n"; \
     printf "\t-d\tskip Docker steps\n"; \
     printf "\t-t\tskip testing steps\n"; \
-    printf "\t-z\tenable caching resolver (default: 0)\n"; \
+    printf "\t-z\tdisable caching resolver (default: 0)\n"; \
     exit 1;
 }
 
@@ -102,11 +102,11 @@ if [[ -z "${t}" ]]; then
 fi
 
 if [[ -n "${z}" ]]; then
-    CACHING_RESOLVER=${z}
+    DISABLE_CACHING_RESOLVER=${z}
 fi
 
 # diagnostics info
-echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d} -t=${t} -z=${CACHING_RESOLVER}"
+echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d} -t=${t} -z=${DISABLE_CACHING_RESOLVER}"
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
@@ -155,7 +155,7 @@ if [[ ${i} == 0 ]]; then
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
         
-        if [[ ${CACHING_RESOLVER} == 1 ]]; then
+        if [[ ${DISABLE_CACHING_RESOLVER} == 0 ]]; then
             printf 'enabling Docker IPv6 dual-stack support\n'
             sudo apt-get -y install sipcalc
             printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
@@ -306,10 +306,6 @@ if [[ ${IPV6} == 1 ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
     printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"    
-fi
-
-if [[ ${CACHING_RESOLVER} == 1 ]]; then
-    printf "\e[1mWARNING:\033[0m Docker IPv6 dual-stack and CACHING_RESOLVER=\e[1;33mEnabled\033[0m\n"
 fi
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
