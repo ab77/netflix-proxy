@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update March/2016**: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix seems to be tagging accounts, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are both geo-fencing on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
+**Update March/2016**: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix could to be "tagging" accounts too, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
 Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
@@ -79,7 +79,7 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
         -i      skip iptables steps
         -d      skip Docker steps
         -t      skip testing steps
-        -z      enable caching resolver (default: 1)
+        -z      disable caching resolver (default: 0)
 ```
 
 ## Other Cloud Providers
@@ -106,18 +106,17 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
-2. Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.
-3. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
-4. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-5. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
-6. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server in the US and click `Create Tunnel`.
-7. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-8. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-9. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-10. Make sure to record the credentials for the `netflix-proxy` admin site.
-11. Set your DNS server to the IP of your RamNode intance, then go to [this](http://ipinfo.io/) site to make sure your RamNode instance IP is displayed.
-12. Finally, enjoy `Netflix` and others out of region.
-13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
+3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+5. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server in the US and click `Create Tunnel`.
+6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
+7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
+8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+9. Make sure to record the credentials for the `netflix-proxy` admin site.
+10. Set your DNS server to the IP of your RamNode intance, then go to [this](http://ipinfo.io/) site to make sure your RamNode instance IP is displayed.
+11. Finally, enjoy `Netflix` and others out of region.
+12. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
@@ -171,7 +170,7 @@ The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
 10. Finally, enjoy `Netflix` and others out of region.
 11. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
-### Microsoft Azure
+### Microsoft Azure (**advanced**)
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
 
 1. Then, if you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
@@ -246,7 +245,7 @@ The `__testbuild.py` script can also be used to programatically deploy `Droplets
 Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
 
 ### IPv6 and Docker
-This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled, although you may also need to turn off IPv6 on your local network (or relevant devices).[n6]
+This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6]
 
 ```
 +----------+                  +-----------+                 +-----------------+
@@ -256,10 +255,10 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by dividing the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.
+When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.
 
 #### RamNode
-The exception to the rule is RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]). In these cases, even though a `/64` subnet is assigned to the VPS, it isn't routed to the server. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to `eth0` is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.
+RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]) assign a `/64` subnet to the VPS, but don't route it. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to `eth0` is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.
 
 To demonstrate this behavour, follow these steps:
 ```
@@ -352,7 +351,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 [n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 
-[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode). To enable, set `CACHING_RESOLVER=1` in `build.sh` or pass `-z 1` from command-line and re-deploy.
+[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).
 
 [n10] See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
 
