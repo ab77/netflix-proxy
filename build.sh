@@ -141,11 +141,6 @@ if [[ ${i} == 0 ]]; then
     sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
     sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
     sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 53 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p udp -m udp --dport 5353 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 80 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 8080 -j ACCEPT
-    sudo iptables -A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport 443 -j ACCEPT
 	
     # check if public IPv6 access is available
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
@@ -287,20 +282,20 @@ if [[ ${t} == 0 ]]; then
       $(which dig) +time=${TIMEOUT} netflix.com @${IPADDR}
 
     printf "Testing proxy (OpenSSL)\n"
-    echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${EXTIP}:443 || \
-      echo "GET /" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -servername netflix.com -connect ${IPADDR}:443
+    printf "GET / HTTP/1.1\n" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${EXTIP}:443 || \
+      printf "GET / HTTP/1.1\n" | $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername netflix.com -connect ${IPADDR}:443
       
     printf "Testing proxy (cURL)\n"
-    $(which curl) -o /dev/null -L -H "Host: netflix.com" http://${EXTIP} || \
-      $(which curl) -o /dev/null -L -H "Host: netflix.com" http://${IPADDR}
+    $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${EXTIP} || \
+      $(which curl) --fail -o /dev/null -L -H "Host: netflix.com" http://${IPADDR}
 
     # https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu (not reliable)
     printf "Testing Hulu availability\n"
     printf "Hulu region(s) available to you: $(curl -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
     printf "Testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/\n"
-    (curl http://${EXTIP}:8080/ || curl http://${IPADDR}:8080/) && \
-      curl http://localhost:${SDNS_ADMIN_PORT}/ && \
+    ($(which curl) --fail http://${EXTIP}:8080/ || $(which curl) --fail http://${IPADDR}:8080/) && \
+      $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ && \
       printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
