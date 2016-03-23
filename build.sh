@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Note, this script assumes Ubuntu or Debian Linux and it will most likely fail on any other distribution.
 
