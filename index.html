@@ -37,6 +37,10 @@
 
 <p>If you want to try the <strong>new version</strong>, with integrated secure authorisation/authentication back-end and local caching DNS resolver, go <a href="https://github.com/ab77/netflix-proxy/tree/new-auth">here</a>.</p>
 
+<p><strong>Update March/2016</strong>: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4.</p>
+
+<p><strong>Update March/2016</strong>: Netflix seems to be tagging accounts. If your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n9].</p>
+
 <p><strong>Update March/2016</strong>: Netflix seems to be testing geo-fencing on their media hosts[n8]. If this is affecting you, add the following block to <code>/opt/netflix-proxy/data/zones.override</code> and run <code>docker restart bind</code>:</p>
 
 <pre><code>zone "nflxvideo.net." {
@@ -413,6 +417,8 @@ iptables-save &gt; /etc/iptables/rules.v4 || iptables-save &gt; /etc/iptables.ru
 <p>[n7] See, <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">https://en.wikipedia.org/wiki/Server_Name_Indication</a>.</p>
 
 <p>[n8] See, <a href="https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/">https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/</a>.</p>
+
+<p>[n9] See, <a href="https://www.facebook.com/GetflixAU/posts/650132888457824">https://www.facebook.com/GetflixAU/posts/650132888457824</a>, <a href="http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5">Netflix Geoblocking - Part 2</a> and read <a href="http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/">How Netflix is blocking VPNs</a>.</p>
       </section>
     </div>
     <footer>
