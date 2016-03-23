@@ -35,13 +35,13 @@
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
-<p><strong>Update March/2016</strong>: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix seems to be tagging accounts, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are both geo-fencing on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.</p>
+<p><strong>Update March/2016</strong>: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix could to be "tagging" accounts too, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.</p>
 
 <p>Please see the <a href="https://github.com/ab77/netflix-proxy/wiki"><strong>Wiki</strong></a> page(s) for some common troubleshooting ideas.</p>
 
 <p><strong>Unblocked Netflix?</strong> Great success! <a href="http://www.poll-maker.com/poll622505x596e406D-26">Vote</a> now and see the <a href="http://www.poll-maker.com/results622505xfcC7F6aA-26">results</a>.</p>
 
-<p><a href="http://www.poll-maker.com/results622505xfcC7F6aA-26"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/static/poll_results.png" alt=""></a></p>
+<p><a href="http://www.poll-maker.com/results622505xfcC7F6aA-26"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/poll_results.png" alt=""></a></p>
 
 <h1>
 <a id="supported-services" class="anchor" href="#supported-services" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Supported Services</h1>
@@ -94,7 +94,7 @@
 
 <p>If you want to share your system with friends and family, you can authorise their home IP address(s) using the <code>netflix-proxy</code> admin site, located at <code>http://&lt;ipaddr&gt;:8080/</code>, where <code>ipaddr</code> is the public IP address of your VPS. Login using <code>admin</code> account with the password you recorded during the build, in step 6.</p>
 
-<p><a href="https://raw.githubusercontent.com/ab77/netflix-proxy/static/admin.png"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/static/admin.png" alt=""></a></p>
+<p><a href="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png" alt=""></a></p>
 
 <h4>
 <a id="dynamic-ips" class="anchor" href="#dynamic-ips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dynamic IPs</h4>
@@ -132,7 +132,7 @@
         -i      skip iptables steps
         -d      skip Docker steps
         -t      skip testing steps
-        -z      enable caching resolver (default: 1)
+        -z      disable caching resolver (default: 0)
 </code></pre>
 
 <h2>
@@ -165,7 +165,6 @@
 
 <ol>
 <li>Head over to <a href="https://clientarea.ramnode.com/aff.php?aff=3079">RamNode</a> to create an account and buy a <strong>KVM</strong> VPS (OpenVZ won't work).</li>
-<li>Make sure you buy your KVM VPS in the right region, for example if you want to watch US content, select one of the US DCs.</li>
 <li>Log into the <code>VPS Control Panel</code> and (re)install the OS using <code>Ubuntu 14.04 x86_64 Server Minimal</code> or <code>Debian 8.0 x86_64 Minimal</code> image.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
@@ -247,7 +246,7 @@
 </ol>
 
 <h3>
-<a id="microsoft-azure" class="anchor" href="#microsoft-azure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Azure</h3>
+<a id="microsoft-azure-advanced" class="anchor" href="#microsoft-azure-advanced" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Azure (<strong>advanced</strong>)</h3>
 
 <p>The following is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription. Probably a bit more complicated than it should be, but whatever :)</p>
 
@@ -346,7 +345,7 @@
 <h3>
 <a id="ipv6-and-docker" class="anchor" href="#ipv6-and-docker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IPv6 and Docker</h3>
 
-<p>This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must have IPv6 support enabled, although you may also need to turn off IPv6 on your local network (or relevant devices).[n6]</p>
+<p>This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6]</p>
 
 <pre><code>+----------+                  +-----------+                 +-----------------+
 |          |                  |           |                 |                 |
@@ -355,12 +354,12 @@
 +----------+                  +-----------+                 +-----------------+
 </code></pre>
 
-<p>When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by dividing the small public IPv6 range allocated to the VPS by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the VPS allocation is usually too small to be properly routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.</p>
+<p>When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.</p>
 
 <h4>
 <a id="ramnode" class="anchor" href="#ramnode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RamNode</h4>
 
-<p>The exception to the rule is RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]). In these cases, even though a <code>/64</code> subnet is assigned to the VPS, it isn't routed to the server. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to <code>eth0</code> is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.</p>
+<p>RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]) assign a <code>/64</code> subnet to the VPS, but don't route it. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to <code>eth0</code> is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.</p>
 
 <p>To demonstrate this behavour, follow these steps:</p>
 
@@ -474,7 +473,7 @@ docker run -it ubuntu bash -c "ping6 google.com"
 
 <p>[n8] See, <a href="https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/">https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/</a>.</p>
 
-<p>[n9] See, <a href="https://docs.docker.com/engine/userguide/networking/default_network/ipv6/">Using NDP proxying</a>. Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode). To enable, set <code>CACHING_RESOLVER=1</code> in <code>build.sh</code> or pass <code>-z 1</code> from command-line and re-deploy.</p>
+<p>[n9] See, <a href="https://docs.docker.com/engine/userguide/networking/default_network/ipv6/">Using NDP proxying</a>. Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).</p>
 
 <p>[n10] See, <a href="http://www.webhostingtalk.com/showthread.php?t=1262537&amp;p=9157381#post9157381">http://www.webhostingtalk.com/showthread.php?t=1262537&amp;p=9157381#post9157381</a>.</p>
 
