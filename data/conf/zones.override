@@ -283,27 +283,17 @@ zone "vs-hds-uk-live.edgesuite.net." {
     file "/data/db.override";
 };
 
+zone "vs-hls-uk-live.edgesuite.net." {
+    type master;
+    file "/data/db.override";
+};
+
 zone "vod-hds-uk-live.edgesuite.net." {
     type master;
     file "/data/db.override";
 };
 
-zone "vs-hds-uk-live.bbcfmt.vo.llnwd.net." {
-    type master;
-    file "/data/db.override";
-};
-
 zone "vod-hls-uk-live.edgesuite.net." {
-    type master;
-    file "/data/db.override";
-};
-
-zone "vod-hls-uk-live.bbcfmt.vo.llnwd.net." {
-    type master;
-    file "/data/db.override";
-};
-
-zone "vs-hds-uk-live.bbcfmt.vo.llnwd.net." {
     type master;
     file "/data/db.override";
 };
