@@ -160,7 +160,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on a Debian or Ubuntu OS images provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo`.
+The following is based on a Debian or Ubuntu OS images provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
@@ -169,7 +169,7 @@ The following is based on a Debian or Ubuntu OS images provided by `Gandi` using
 5. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 6. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
 7. Remove native IPv6 IP(s) from the public network interfaces (i.e. `eth0`)
-8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. Save the file and run: `ifup he-ipv6 && apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 9. Make sure to record the credentials for the `netflix-proxy` admin site.
 10. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
