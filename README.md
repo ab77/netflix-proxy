@@ -33,7 +33,7 @@ The following paragraphs show how to get this solution up and running with a few
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
-The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed.
+The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. Do **not** enable IPv6 on the host.
 
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a Droplet using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
@@ -90,7 +90,7 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png)](http://www.vultr.com/?ref=6871746)
 
-The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution.
+The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. Do **not** enable IPv6 on the host.
 
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
 2. Create a compute instance using `Debian 8 x64 (jessie)` image.
@@ -107,7 +107,7 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
-The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
+The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do **not** enable IPv6 on the host.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
 2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
@@ -124,7 +124,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
-**(untested)** The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed.
+**(untested)** The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. Do **not** enable IPv6 on the host or disable it post-build and before moving onto step 8.
 
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
@@ -141,7 +141,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png)](http://www.dreamhost.com/r.cgi?2124700)
 
-**(untested)** The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`).
+**(untested)** The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`). Do **not** enable IPv6 on the host.
 
 1. Head over to [DreamHost](http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
 2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance.
@@ -160,7 +160,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`.
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on a Debian or Ubuntu OS images provided by `Gandi`.
+The following is based on a Debian or Ubuntu OS images provided by `Gandi`. Do **not** enable IPv6 on the host.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
