@@ -160,7 +160,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on a Debian or Ubuntu OS images provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary.
+The following is based on Ubuntu image provided by `Gandi` (Debian might work too) using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
