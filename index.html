@@ -37,6 +37,10 @@
 
 <p><strong>Update March/2016</strong>: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix could to be "tagging" accounts too, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.</p>
 
+<p>If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix subscription and/or sign the petition:</p>
+
+<p><a href="https://act.openmedia.org/netflix"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png" alt=""></a></p>
+
 <p>Please see the <a href="https://github.com/ab77/netflix-proxy/wiki"><strong>Wiki</strong></a> page(s) for some common troubleshooting ideas.</p>
 
 <p><strong>Unblocked Netflix?</strong> Great success! <a href="http://www.poll-maker.com/poll622505x596e406D-26">Vote</a> now and see the <a href="http://www.poll-maker.com/results622505xfcC7F6aA-26">results</a>.</p>
@@ -69,7 +73,7 @@
 
 <p><a href="https://m.do.co/c/937b01397c94"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png" alt=""></a></p>
 
-<p>The following is based on a standard Ubuntu Docker image provided by <code>DigitalOcean</code>, but should in theory work on any Linux distribution <strong>with</strong> Docker pre-installed.</p>
+<p>The following is based on a standard Ubuntu Docker image provided by <code>DigitalOcean</code>, but should in theory work on any Linux distribution <strong>with</strong> Docker pre-installed. Do <strong>not</strong> enable IPv6 on the host.</p>
 
 <ol>
 <li>Head over to <a href="https://m.do.co/c/937b01397c94">Digital Ocean</a> to get <strong>$10 USD credit</strong>
@@ -140,7 +144,7 @@
 
 <p><a href="http://www.vultr.com/?ref=6871746"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png" alt=""></a></p>
 
-<p>The following is based on a Debian image provided by <code>Vultr</code>, but should in theory work on any Debian distribution.</p>
+<p>The following is based on a Debian image provided by <code>Vultr</code>, but should in theory work on any Debian distribution. Do <strong>not</strong> enable IPv6 on the host.</p>
 
 <ol>
 <li>Head over to <a href="http://www.vultr.com/?ref=6871746">Vultr</a> to create an account.</li>
@@ -161,7 +165,7 @@
 
 <p><a href="https://clientarea.ramnode.com/aff.php?aff=3079"><img src="http://www.ramnode.com/images/banners/affbannerdarknewlogo.png" alt=""></a></p>
 
-<p>The following is based on a Debian or Ubuntu OS images provided by <code>RamNode</code>.</p>
+<p>The following is based on a Debian or Ubuntu OS images provided by <code>RamNode</code>. Do <strong>not</strong> enable IPv6 on the host.</p>
 
 <ol>
 <li>Head over to <a href="https://clientarea.ramnode.com/aff.php?aff=3079">RamNode</a> to create an account and buy a <strong>KVM</strong> VPS (OpenVZ won't work).</li>
@@ -182,7 +186,7 @@
 
 <p><a href="https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9"><img src="https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png" alt=""></a></p>
 
-<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>Linode</code>, but should work on any Linux distribution <strong>without</strong> Docker installed.</p>
+<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>Linode</code>, but should work on any Linux distribution <strong>without</strong> Docker installed. Do <strong>not</strong> enable IPv6 on the host or disable it post-build and before moving onto step 8.</p>
 
 <ol>
 <li>Head over to <a href="https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9">Linode</a> and sign-up for an account.</li>
@@ -203,7 +207,7 @@
 
 <p><a href="http://www.dreamhost.com/r.cgi?2124700"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png" alt=""></a></p>
 
-<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>DreamHost</code>, but should work on any Linux distribution <strong>without</strong> Docker installed and running under <strong>non-root</strong> user (e.g. <code>Amazon Web Services</code>).</p>
+<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>DreamHost</code>, but should work on any Linux distribution <strong>without</strong> Docker installed and running under <strong>non-root</strong> user (e.g. <code>Amazon Web Services</code>). Do <strong>not</strong> enable IPv6 on the host.</p>
 
 <ol>
 <li>Head over to <a href="http://www.dreamhost.com/r.cgi?2124700">DreamHost</a> and sign-up for an account.</li>
@@ -227,7 +231,7 @@
 
 <p><a href="https://www.gandi.net/hosting/iaas/buy"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png" alt=""></a></p>
 
-<p>The following is based on a Debian or Ubuntu OS images provided by <code>Gandi</code>.</p>
+<p>The following is based on a Debian or Ubuntu OS images provided by <code>Gandi</code> using<code>root</code> login with SSH key only (no password). For default non-root <code>admin</code> login, adjust step 8 to use <code>sudo</code> where nesessary.</p>
 
 <ol>
 <li>Head over to <a href="https://www.gandi.net/hosting/iaas/buy">Gandi</a> to create a virtual server.</li>
@@ -237,7 +241,8 @@
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your server, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Remove native IPv6 IP(s) from the public network interfaces (i.e. <code>eth0</code>)</li>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; export LANGUAGE=en_US.UTF-8 &amp;&amp; export LANG=en_US.UTF-8 &amp;&amp; export LC_ALL=en_US.UTF-8 &amp;&amp; locale-gen en_US.UTF-8 &amp;&amp; sudo apt-get -y install language-pack-id &amp;&amp; sudo dpkg-reconfigure locales &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Point your DNS at the server IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your server IP is displayed.</li>
