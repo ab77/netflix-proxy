@@ -53,12 +53,12 @@ zone "blinkbox.com." {
     file "/data/conf/db.override";
 };
 
-zone "tvegolf-i.Akamaihd.net." {
+zone "tvegolf-i.akamaihd.net." {
     type master;
     file "/data/conf/db.override";
 };
 
-zone "tvenbcsn-i.Akamaihd.net." {
+zone "tvenbcsn-i.akamaihd.net." {
     type master;
     file "/data/conf/db.override";
 };
@@ -280,27 +280,27 @@ zone "bbci.co.uk." {
 
 zone "vs-hds-uk-live.edgesuite.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 
 zone "vs-hls-uk-live.edgesuite.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 
 zone "vod-hds-uk-live.edgesuite.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 
 zone "vod-hls-uk-live.edgesuite.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 
 zone "bbcfmt.vo.llnwd.net." {
     type master;
-    file "/data/db.override";
+    file "/data/conf/db.override";
 };
 
 zone "ipinfo.io." {
