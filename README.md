@@ -190,7 +190,7 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 9. [Create](https://github.com/ab77/cloud-harness#create-virtual-network) a virtual network.
 10. [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
 
-
+```
     ./cloud-harness.py azure --action create_virtual_machine_deployment \
     --service <your hosted service name> \
     --deployment <your hosted service name> \
@@ -206,6 +206,7 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
     --ssh_auth \
     --disable_pwd_auth \
     --verbose
+```
 
 11. Use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature.
 12. SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
