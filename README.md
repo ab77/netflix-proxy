@@ -176,10 +176,10 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 11. Finally, enjoy `Netflix` and others out of region.
 12. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
-### Microsoft Azure (**advanced**)
+### Microsoft Azure (**advanced** and **un-tested**)
 The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
 
-1. Then, if you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
+1. If you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
 3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
 4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
@@ -209,32 +209,7 @@ Then, [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-
     --disable_pwd_auth \
     --verbose
 
-Next, add the DockerExtension:
-
-    ./cloud-harness.py azure --action add_resource_extension \
-    --service <your hosted service name> \
-    --deployment <your hosted service name> \
-    --name <your virtual machine name> \
-    --extension DockerExtension \
-    --docker_compose netflix-proxy.yaml \
-    --verbose  
-
-Set `linux_customscript_name` under `[CustomScriptExtensionForLinux]` in `cloud-harness.conf` to `netflix-proxy.sh` and run:
-
-    ./cloud-harness.py azure --action add_resource_extension \
-    --service netflix-proxy \
-    --deployment netflix-proxy \
-    --name netflix-proxy \
-    --extension CustomScript \
-    --verbose  
-
-Once this part finishes, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and test the configuration by running:
-
-    dig netflix.com @localhost && echo "GET /" | openssl s_client -servername netflix.com -connect localhost:443
-
-Lastly, use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. This means you don't have to run `iptables` firewall on your VM.
-
-Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy `Netflix` and don't forget to turn off IPv6.
+Use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. After that, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
 
 ### Automated Tests
 I've linked this project with `Travis CI` to automatically test the build. The helper Python script `__testbuild.py` now runs automatically after every commit. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that both `Docker` containers start; and (b) the `built.sh` script outputs the correct message at the end. The test `Droplet` is destroyed and the end of the run.
