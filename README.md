@@ -96,11 +96,11 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
 2. Create a compute instance using `Debian 8 x64 (jessie)` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 5. Set the `IPv4 Endpoint` to the IP address of your Vultr instance, pick a tunnel server in the US and click `Create Tunnel`.
 6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
 9. Make sure to record the credentials for the `netflix-proxy` admin site.
 10. Set your DNS server to the IP of the Vultr instance, then go to [this](http://ipinfo.io/) site to make sure your Vultr instance IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
@@ -113,11 +113,11 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
 2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 5. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server in the US and click `Create Tunnel`.
 6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
 9. Make sure to record the credentials for the `netflix-proxy` admin site.
 10. Set your DNS server to the IP of your RamNode intance, then go to [this](http://ipinfo.io/) site to make sure your RamNode instance IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
@@ -130,11 +130,11 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 5. Set the `IPv4 Endpoint` to the IP address of your Linode, pick a tunnel server in the US and click `Create Tunnel`.
 6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
 9. Make sure to record the credentials for the `netflix-proxy` admin site.
 10. Set your DNS server to the Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
@@ -149,11 +149,11 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance.
 5. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 7. Set the `IPv4 Endpoint` to the IP address of your instance, pick a tunnel server in the US and click `Create Tunnel`.
 8. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 9. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-10. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+10. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
 11. Make sure to record the credentials for the `netflix-proxy` admin site.
 12. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
 13. Finally, enjoy `Netflix` and others out of region.
@@ -165,12 +165,12 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 4. Set the `IPv4 Endpoint` to the IP address of your server, pick a tunnel server in the US and click `Create Tunnel`.
 5. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 6. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
 7. Remove native IPv6 IP(s) from the public network interfaces (i.e. `eth0`)
-8. Save the file and run: `ifup he-ipv6 && apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. Save the file and run: `ifup he-ipv6 && apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
 9. Make sure to record the credentials for the `netflix-proxy` admin site.
 10. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
@@ -261,7 +261,7 @@ This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled provid
 +----------+                  +-----------+                 +-----------------+
 ```
 
-When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.
+When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. This approach seems to work in most cases where native IPv6 is used. If IPv6 is provided via a tunnel, Docker subnet can not be reliably calculated and must be specified using `-s` parameter to the `build.sh` script. If IPv6 is not enabled at all, the VPS is built with IPv4 support only.
 
 #### RamNode
 RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]) assign a `/64` subnet to the VPS, but don't route it. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to `eth0` is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.
