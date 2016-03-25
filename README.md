@@ -176,10 +176,10 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 11. Finally, enjoy `Netflix` and others out of region.
 12. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
-### Microsoft Azure (**advanced** and **un-tested**)
-The following is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Probably a bit more complicated than it should be, but whatever :)
+### Microsoft Azure (advanced)
+The following **has not been tested** and is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription.
 
-1. If you are still interested, head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
+1. Head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
 3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
 4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
@@ -188,10 +188,7 @@ The following is based on a standard `Ubuntu` image provided by `Microsoft Azure
 7. [Add](https://github.com/ab77/cloud-harness#add-x509-certificate-containing-rsa-public-key-for-ssh-authentication-to-the-hosted-service) a hosted service certificate for SSH public key authentication
 8. [Create](https://github.com/ab77/cloud-harness#create-a-reserved-ip-address-for-the-hosted-service) a reserved ip address.
 9. [Create](https://github.com/ab77/cloud-harness#create-virtual-network) a virtual network.
-10. [Create](http://docs.docker.com/engine/articles/https/) Docker certificates and update `[DockerExtension]` section in `cloud-harness.conf`.
-11. In `cloud-harness.conf` under `[DockerExtension]` section, set `docker_compose = netflix-proxy.yaml`.
-
-Then, [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
+10. [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3) a `Ubuntu 14.04 LTS` virtual machine as follows:
 
     ./cloud-harness.py azure --action create_virtual_machine_deployment \
     --service <your hosted service name> \
@@ -209,7 +206,8 @@ Then, [Create](https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-
     --disable_pwd_auth \
     --verbose
 
-Use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature. After that, you should be able to SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
+11. Use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature.
+12. SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
 
 ### Automated Tests
 I've linked this project with `Travis CI` to automatically test the build. The helper Python script `__testbuild.py` now runs automatically after every commit. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that both `Docker` containers start; and (b) the `built.sh` script outputs the correct message at the end. The test `Droplet` is destroyed and the end of the run.
