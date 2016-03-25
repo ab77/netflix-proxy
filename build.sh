@@ -36,12 +36,13 @@ usage() {
     printf "\t-i\tskip iptables steps\n"; \
     printf "\t-d\tskip Docker steps\n"; \
     printf "\t-t\tskip testing steps\n"; \
+    printf "\t-s\tspecify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)\n"; \
     printf "\t-z\tenable caching resolver (default: 0)\n"; \
     exit 1;
 }
 
 # process options
-while getopts ":r:b:c:i:d:t:z:" o; do
+while getopts ":r:b:c:i:d:t:z:s:" o; do
     case "${o}" in
         r)
             r=${OPTARG}
@@ -54,6 +55,9 @@ while getopts ":r:b:c:i:d:t:z:" o; do
         c)
             c=${OPTARG}
             ;;
+        s)
+            s=${OPTARG}
+            ;;            
         i)
             i=${OPTARG}
             ((i == 0|| i == 1)) || usage
@@ -89,6 +93,10 @@ if [[ -n "${c}" ]]; then
     CLIENTIP="${c}"
 fi
 
+if [[ -n "${s}" ]]; then
+    IPV6_SUBNET="${s}"
+fi
+
 if [[ -z "${i}" ]]; then
     i=0
 fi
@@ -106,7 +114,7 @@ if [[ -n "${z}" ]]; then
 fi
 
 # diagnostics info
-echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d} -t=${t} -z=${CACHING_RESOLVER}"
+echo "clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP} -r=${r} -b=${b} -i=${i} -d=${d} -s=${IPV6_SUBNET} -t=${t} -z=${CACHING_RESOLVER}"
 
 # prepare BIND config
 if [[ ${r} == 0 ]]; then
@@ -157,7 +165,11 @@ if [[ ${i} == 0 ]]; then
         
         printf 'enabling Docker IPv6 dual-stack support\n'
         sudo apt-get -y install sipcalc
-        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"$(get_docker_ipv6_subnet)\"'\n" | \
+        if [[ -z "${IPV6_SUBNET}" ]]; then
+            printf 'WARNING: automatically calculating IPv6 subnet, not supported in tunnel mode\n'
+            IPV6_SUBNET=$(get_docker_ipv6_subnet)
+        fi
+        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
           sudo tee -a /etc/default/docker && \
           printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
           sudo sysctl -p
@@ -167,7 +179,7 @@ if [[ ${i} == 0 ]]; then
             printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
         fi
 
-        printf "adding IPv6 iptables rules\n"
+        printf 'adding IPv6 iptables rules\n'
         sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
         sudo ip6tables -A INPUT -i lo -j ACCEPT
         sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
