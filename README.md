@@ -38,12 +38,12 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a Droplet using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php)
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
 5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in the US and click `Create Tunnel`.
 6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
 7. SSH to your Droplet and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Save the file and run: `ifup he-ipv6 && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
-9. Make sure to record the credentials for the `netflix-proxy` admin site.
+8. Save the file and run: `ifup he-ipv6 && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
+9. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 10. Set your DNS server to the IP of the Droplet, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
 12. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
@@ -83,6 +83,7 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
         -i      skip iptables steps
         -d      skip Docker steps
         -t      skip testing steps
+        -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
         -z      disable caching resolver (default: 0)
 ```
 
