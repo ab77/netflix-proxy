@@ -80,14 +80,13 @@
 </li>
 <li>Create a Droplet using <code>Docker 1.x</code> on <code>Ubuntu 14.04</code> (find in under <code>One-click Apps</code> tab).</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the Droplet IP, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your Droplet and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
-<li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
+<li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP of the Droplet, then go to <a href="http://ipinfo.io/">this</a> site to make sure your Droplet IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
 <li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
@@ -136,6 +135,7 @@
         -i      skip iptables steps
         -d      skip Docker steps
         -t      skip testing steps
+        -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
         -z      disable caching resolver (default: 0)
 </code></pre>
 
@@ -150,12 +150,11 @@
 <li>Head over to <a href="http://www.vultr.com/?ref=6871746">Vultr</a> to create an account.</li>
 <li>Create a compute instance using <code>Debian 8 x64 (jessie)</code> image.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your Vultr instance, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP of the Vultr instance, then go to <a href="http://ipinfo.io/">this</a> site to make sure your Vultr instance IP is displayed.</li>
@@ -171,12 +170,11 @@
 <li>Head over to <a href="https://clientarea.ramnode.com/aff.php?aff=3079">RamNode</a> to create an account and buy a <strong>KVM</strong> VPS (OpenVZ won't work).</li>
 <li>Log into the <code>VPS Control Panel</code> and (re)install the OS using <code>Ubuntu 14.04 x86_64 Server Minimal</code> or <code>Debian 8.0 x86_64 Minimal</code> image.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your RamNode VPS, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP of your RamNode intance, then go to <a href="http://ipinfo.io/">this</a> site to make sure your RamNode instance IP is displayed.</li>
@@ -192,12 +190,11 @@
 <li>Head over to <a href="https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9">Linode</a> and sign-up for an account.</li>
 <li>Create a new <code>Linode</code> and deploy an <code>Ubuntu 14-04 LTS</code> image into it.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your Linode, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the Linode IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your Linode IP is displayed.</li>
@@ -216,12 +213,11 @@
 </li>
 <li>Also add a <code>Floating IP</code> to your instance.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your instance, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Point your DNS at the instance IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your instance IP is displayed.</li>
@@ -231,18 +227,17 @@
 
 <p><a href="https://www.gandi.net/hosting/iaas/buy"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png" alt=""></a></p>
 
-<p>The following is based on a Debian or Ubuntu OS images provided by <code>Gandi</code> using<code>root</code> login with SSH key only (no password). For default non-root <code>admin</code> login, adjust step 8 to use <code>sudo</code> where nesessary.</p>
+<p>The following is based on Ubuntu image provided by <code>Gandi</code> using<code>root</code> login with SSH key only (no password). For default non-root <code>admin</code> login, adjust step 8 to use <code>sudo</code> where nesessary.</p>
 
 <ol>
 <li>Head over to <a href="https://www.gandi.net/hosting/iaas/buy">Gandi</a> to create a virtual server.</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
-<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>
-</li>
+<li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a> and <strong>write-down</strong> your <code>Routed /64</code> prefix/subnet.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your server, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>Select <code>Example Configurations</code> tab, select <code>Debian/Ubuntu</code> from the drop-down and copy the tunnel configuration.</li>
 <li>SSH to your server and add the tunnel configuration to <code>/etc/network/interfaces</code> file.</li>
 <li>Remove native IPv6 IP(s) from the public network interfaces (i.e. <code>eth0</code>)</li>
-<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; export LANGUAGE=en_US.UTF-8 &amp;&amp; export LANG=en_US.UTF-8 &amp;&amp; export LC_ALL=en_US.UTF-8 &amp;&amp; locale-gen en_US.UTF-8 &amp;&amp; sudo apt-get -y install language-pack-id &amp;&amp; sudo dpkg-reconfigure locales &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh</code>
+<li>Save the file and run: <code>ifup he-ipv6 &amp;&amp; apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; export LANGUAGE=en_US.UTF-8 &amp;&amp; export LANG=en_US.UTF-8 &amp;&amp; export LC_ALL=en_US.UTF-8 &amp;&amp; locale-gen en_US.UTF-8 &amp;&amp; sudo apt-get -y install language-pack-id &amp;&amp; sudo dpkg-reconfigure locales &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -s &lt;your-routed-64-prefix-subnet&gt;</code>
 </li>
 <li>Make sure to record the credentials for the <code>netflix-proxy</code> admin site.</li>
 <li>Point your DNS at the server IP, then go to <a href="http://ipinfo.io/">this</a> site to make sure your server IP is displayed.</li>
@@ -251,12 +246,12 @@
 </ol>
 
 <h3>
-<a id="microsoft-azure-advanced" class="anchor" href="#microsoft-azure-advanced" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Azure (<strong>advanced</strong>)</h3>
+<a id="microsoft-azure-advanced" class="anchor" href="#microsoft-azure-advanced" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Azure (advanced)</h3>
 
-<p>The following is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription. Probably a bit more complicated than it should be, but whatever :)</p>
+<p>The following <strong>has not been tested</strong> and is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription.</p>
 
 <ol>
-<li>Then, if you are still interested, head over to <a href="https://azure.microsoft.com/en-gb/">Microsoft Azure</a> and sign-up for an account.</li>
+<li>Head over to <a href="https://azure.microsoft.com/en-gb/">Microsoft Azure</a> and sign-up for an account.</li>
 <li>Get <a href="https://www.python.org/downloads/">Python</a>.</li>
 <li>On your workstation, run <code>git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness</code>.</li>
 <li>Follow <code>cloud-harness</code> <a href="https://github.com/ab77/cloud-harness#installation-and-configuration">Installation and Configuration</a> section to set it up.</li>
@@ -271,58 +266,30 @@
 <li>
 <a href="https://github.com/ab77/cloud-harness#create-virtual-network">Create</a> a virtual network.</li>
 <li>
-<a href="http://docs.docker.com/engine/articles/https/">Create</a> Docker certificates and update <code>[DockerExtension]</code> section in <code>cloud-harness.conf</code>.</li>
-<li>In <code>cloud-harness.conf</code> under <code>[DockerExtension]</code> section, set <code>docker_compose = netflix-proxy.yaml</code>.</li>
+<a href="https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3">Create</a> a <code>Ubuntu 14.04 LTS</code> virtual machine as follows:</li>
 </ol>
 
-<p>Then, <a href="https://github.com/ab77/cloud-harness#create-a-new-linux-virtual-machine-deployment-and-role-with-reserved-ip-ssh-authentication-and-customscript-resource-extensionn3">Create</a> a <code>Ubuntu 14.04 LTS</code> virtual machine as follows:</p>
-
-<pre><code>./cloud-harness.py azure --action create_virtual_machine_deployment \
---service &lt;your hosted service name&gt; \
---deployment &lt;your hosted service name&gt; \
---name &lt;your virtual machine name&gt; \
---label 'Netflix proxy' \
---account &lt;your storage account name&gt; \
---blob b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140414-en-us-30GB \
---os Linux \
---network VNet1 \
---subnet Subnet-1 \
---ipaddr &lt;your reserved ipaddr name&gt; \
---size Medium \
---ssh_auth \
---disable_pwd_auth \
---verbose
+<pre><code>    ./cloud-harness.py azure --action create_virtual_machine_deployment \
+    --service &lt;your hosted service name&gt; \
+    --deployment &lt;your hosted service name&gt; \
+    --name &lt;your virtual machine name&gt; \
+    --label 'Netflix proxy' \
+    --account &lt;your storage account name&gt; \
+    --blob b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140414-en-us-30GB \
+    --os Linux \
+    --network VNet1 \
+    --subnet Subnet-1 \
+    --ipaddr &lt;your reserved ipaddr name&gt; \
+    --size Medium \
+    --ssh_auth \
+    --disable_pwd_auth \
+    --verbose
 </code></pre>
 
-<p>Next, add the DockerExtension:</p>
-
-<pre><code>./cloud-harness.py azure --action add_resource_extension \
---service &lt;your hosted service name&gt; \
---deployment &lt;your hosted service name&gt; \
---name &lt;your virtual machine name&gt; \
---extension DockerExtension \
---docker_compose netflix-proxy.yaml \
---verbose  
-</code></pre>
-
-<p>Set <code>linux_customscript_name</code> under <code>[CustomScriptExtensionForLinux]</code> in <code>cloud-harness.conf</code> to <code>netflix-proxy.sh</code> and run:</p>
-
-<pre><code>./cloud-harness.py azure --action add_resource_extension \
---service netflix-proxy \
---deployment netflix-proxy \
---name netflix-proxy \
---extension CustomScript \
---verbose  
-</code></pre>
-
-<p>Once this part finishes, you should be able to SSH to your VM as <code>azureuser</code> using custom public TCP port (not <code>22</code>) and test the configuration by running:</p>
-
-<pre><code>dig netflix.com @localhost &amp;&amp; echo "GET /" | openssl s_client -servername netflix.com -connect localhost:443
-</code></pre>
-
-<p>Lastly, use the <a href="https://manage.windowsazure.com/">Azure Management Portal</a> to add <code>DNS (UDP)</code>, <code>HTTP (TCP)</code> and <code>HTTPS (TCP)</code> endpoints and secure them to your home/work/whatever IPs using the Azure <code>ACL</code> feature. This means you don't have to run <code>iptables</code> firewall on your VM.</p>
-
-<p>Now you are all set, set DNS server on your device(s) to your Azure public IP and enjoy <code>Netflix</code> and don't forget to turn off IPv6.</p>
+<ol>
+<li>Use the <a href="https://manage.windowsazure.com/">Azure Management Portal</a> to add <code>DNS (UDP)</code>, <code>HTTP (TCP)</code> and <code>HTTPS (TCP)</code> endpoints and secure them to your home/work/whatever IPs using the Azure <code>ACL</code> feature.</li>
+<li>SSH to your VM as <code>azureuser</code> using custom public TCP port (not <code>22</code>) and use any non-root user Ubuntu instructions to build/install <code>netflix-proxy</code>.</li>
+</ol>
 
 <h3>
 <a id="automated-tests" class="anchor" href="#automated-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Automated Tests</h3>
@@ -359,7 +326,7 @@
 +----------+                  +-----------+                 +-----------------+
 </code></pre>
 
-<p>When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. If IPv6 is not enabled, the VPS is built with IPv4 support only.</p>
+<p>When IPv6 public address is present on the host, Docker is configured with public IPv6 support. This is done by assuming the smallest possible IPv6 allocation, dividing it further by two and assigning the second half to the Docker system. Network Discovery Protocol (NDP) proxying is required for this to work, since the second subnet can not be routed[n9]. Afterwards, Docker is running in dual-stack mode, with each container having a public IPv6 address. This approach seems to work in most cases where native IPv6 is used. If IPv6 is provided via a tunnel, Docker subnet can not be reliably calculated and must be specified using <code>-s</code> parameter to the <code>build.sh</code> script. If IPv6 is not enabled at all, the VPS is built with IPv4 support only.</p>
 
 <h4>
 <a id="ramnode" class="anchor" href="#ramnode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RamNode</h4>
@@ -482,7 +449,7 @@ docker run -it ubuntu bash -c "ping6 google.com"
 
 <p>[n10] See, <a href="http://www.webhostingtalk.com/showthread.php?t=1262537&amp;p=9157381#post9157381">http://www.webhostingtalk.com/showthread.php?t=1262537&amp;p=9157381#post9157381</a>.</p>
 
-<p>[n11] See, <a href="https://www.facebook.com/GetflixAU/posts/650132888457824">https://www.facebook.com/GetflixAU/posts/650132888457824</a>, <a href="http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5">Netflix Geoblocking - Part 2</a> and read <a href="http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/">How Netflix is blocking VPNs</a>.</p>
+<p>[n11] See, <a href="https://www.facebook.com/GetflixAU/posts/650132888457824">https://www.facebook.com/GetflixAU/posts/650132888457824</a>, <a href="http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5">Netflix Geoblocking - Part 2</a> and read <a href="http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/">How Netflix is blocking VPNs</a> and <a href="https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..">Wiki</a>.</p>
       </section>
     </div>
     <footer>
