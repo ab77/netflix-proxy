@@ -1,0 +1,144 @@
+# common functions
+
+function get_iface() {
+    local iface=$(ip -4 route | grep default | awk '{print $5}')
+    echo ${iface}
+}
+
+
+function get_iface6() {
+    local iface6=$(ip -6 route | grep default | awk '{print $5}')
+    echo ${iface6}
+}
+
+
+function get_ipaddr() {
+    IFACE=$(get_iface)
+    local ipaddr=$(ip addr show dev ${IFACE} | \
+      grep inet | \
+      grep -v inet6 | \
+      awk '{print $2}' | \
+      grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+(?=\/)')
+    echo $(echo ${ipaddr} | awk '{print $1}')
+}
+
+
+function get_ext_ipaddr() {
+    local extip=$(dig +short myip.opendns.com @resolver1.opendns.com)
+    echo $(echo ${extip} | awk '{print $1}')
+}
+
+
+function get_first_words() {
+    IFACE6=$(get_iface6)
+    local first_words=$(ip -6 addr show dev ${IFACE6} scope global | \
+      grep inet6 | \
+      awk '{print $2}' | \
+      sed 's/\/64/\/125/' | \
+      xargs sipcalc --v6split=125 | \
+      tail -n 3 | head -n 1 | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
+    echo ${first_words}
+}
+
+
+function get_client_ipaddr() {
+    local clientip=$(echo ${SSH_CONNECTION} | awk '{print $1}')
+    echo ${clientip}
+}
+
+
+function get_last_word() {
+    IFACE6=$(get_iface6)
+    local last_word=$(ip -6 addr show dev ${IFACE6} scope global | \
+      grep inet6 | awk '{print $2}' | \
+      sed 's/\/64/\/125/' | \
+      xargs sipcalc --v6split=125 | \
+      tail -n 3 | head -n 1 | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}' | \
+      awk -F':' '{print $8}')
+    echo ${last_word}
+}
+
+
+function get_docker_ipv6_subnet() {
+    local subnet=$(printf '%s:%x/125\n' $(get_first_words) $((0x$(get_last_word) + 1)))
+    echo ${subnet}
+}
+
+
+function ndp_proxy_add_delete() {
+    IFACE=$(get_iface)
+    FIRST_WORDS=$(get_first_words)
+    LAST_WORD=$(get_last_word)
+    for (( i=0x${LAST_WORD}+2; i<=0x${LAST_WORD}+8; i++ ))
+    do
+        printf "${1}: proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}\n"
+        sudo ip -6 neigh ${1} proxy ${FIRST_WORDS}:$(printf '%x' $i) dev ${IFACE}
+    done
+}
+
+
+function get_ip_first_words() {
+    IFACE6=$(get_iface6)
+    local first_words=$(ip -6 addr show dev ${IFACE6} scope global | \
+      grep inet6 | awk '{print $2}' | \
+      xargs sipcalc | \
+      grep Expanded | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
+    echo ${first_words}
+}
+
+
+function add_source_ipv6_lb() {
+    IFACE6=$(get_iface6)
+    FIRST_WORDS=$(get_ip_first_words)
+    for (( x=0; x<=${1}; x++ ))
+    do
+        local random_words=$(printf '%x:%x:%x\n' $RANDOM $RANDOM $RANDOM)
+        local ip6addr=${FIRST_WORDS}:${random_words}
+        printf "Adding ip=${ip6addr} on dev=${IFACE6}\n"
+        ip -6 addr add ${ip6addr} dev ${IFACE6}
+        ip6tables -t nat -A POSTROUTING -m state --state NEW -m statistic --mode nth --every 1 --packet 0 -j SNAT --to-source ${ip6addr}
+    done
+}
+
+
+# Retries a command a with backoff.
+#
+# The retry count is given by ATTEMPTS (default 5), the
+# initial backoff timeout is given by TIMEOUT in seconds
+# (default 1.)
+#
+# Successive backoffs double the timeout.
+#
+# Beware of set -e killing your whole script!
+function with_backoff {
+  local max_attempts=${ATTEMPTS-5}
+  local timeout=${TIMEOUT-1}
+  local attempt=0
+  local exitCode=0
+
+  while [[ $attempt < $max_attempts ]]
+  do
+    "$@"
+    exitCode=$?
+
+    if [[ $exitCode == 0 ]]
+    then
+      break
+    fi
+
+    echo "Failure! Retrying in $timeout.." 1>&2
+    sleep $timeout
+    attempt=$(( attempt + 1 ))
+    timeout=$(( timeout * 2 ))
+  done
+
+  if [[ $exitCode != 0 ]]
+  then
+    echo "You've failed me for the last time! ($@)" 1>&2
+  fi
+
+  return $exitCode
+}
