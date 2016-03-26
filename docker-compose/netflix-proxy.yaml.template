@@ -41,6 +41,7 @@ reverse-proxy:
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
+  privileged: true
   ports:
     - "80:80"
     - "443:443"
