@@ -215,7 +215,8 @@ if [[ ${i} == 0 ]]; then
             sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent && \
               sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent
         fi
-    fi	
+    fi
+    sudo service ${SERVICE}-persistent save
 fi
 
 echo "Updating db.override with EXTIP"=${EXTIP} "and DATE="${DATE}
@@ -277,7 +278,7 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo systemctl start netflix-proxy-admin && \
       sudo systemctl start ndp-proxy-helper
 fi
-sudo iptables-restore < /etc/iptables/rules.v4
+sudo service ${SERVICE}-persistent reload
 
 # OS specific steps
 if [[ `cat /etc/os-release | grep '^ID='` =~ ubuntu ]]; then
