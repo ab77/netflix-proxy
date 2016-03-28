@@ -40,7 +40,7 @@ usage() {
     printf "\t-z\tenable caching resolver (default: 0)\n"; \
     printf "\t-u\tHE tunnel broker username\n"; \
     printf "\t-p\tHE tunnel broker password\n"; \
-    printf "\t-p\tHE tunnel index (default: 1)\n"; \
+    printf "\t-n\tHE tunnel index (default: 1)\n"; \
     exit 1;
 }
 
