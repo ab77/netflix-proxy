@@ -33,21 +33,19 @@ The following paragraphs show how to get this solution up and running with a few
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
-The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. Do **not** enable IPv6 on the host.
+The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. Do **not** enable native IPv6 on the host.
 
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a Droplet using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in the US and click `Create Tunnel`.
-6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-7. SSH to your Droplet and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Run `ping6 netflix.com` and if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-9. Save the file and run: `ifup he-ipv6 && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-10. Make sure to **record the credentials** for the `netflix-proxy` admin site.
-11. Set your DNS server to the IP of the Droplet, then go to [this](http://ipinfo.io/) site to make sure your Droplet IP is displayed.
-12. Finally, enjoy `Netflix` and others out of region.
-13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+7. Run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+9. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+10. Finally, enjoy `Netflix` and others out of region.
+11. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Authorising Additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build, in step 6.
@@ -77,109 +75,102 @@ git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/ne
 The following command line options can be optionaly passed to `build.sh` for additional control:
 
 ```
-Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1]
+Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1] [-u <username>] [-p <password>] [-n <1..N>] [-s <subnet>]
         -r      enable (1) or disable (0) DNS recursion (default: 1)
         -b      grab docker images from repository (0) or build locally (1) (default: 0)
-        -c      specify client-ip instead of being taken from ssh_connection[n3]
+        -c      specify client-ip instead of being taken from ssh_connection
         -i      skip iptables steps
         -d      skip Docker steps
         -t      skip testing steps
         -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
-        -z      disable caching resolver (default: 0)
+        -z      enable caching resolver (default: 0)
+        -u      HE tunnel broker username
+        -p      HE tunnel broker password
+        -p      HE tunnel index (default: 1)
 ```
 
 ## Other Cloud Providers
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png)](http://www.vultr.com/?ref=6871746)
 
-The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. Do **not** enable IPv6 on the host.
+The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. Do **not** enable native IPv6 on the host.
 
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
 2. Create a compute instance using `Debian 8 x64 (jessie)` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 5. Set the `IPv4 Endpoint` to the IP address of your Vultr instance, pick a tunnel server in the US and click `Create Tunnel`.
-6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Run `ping6 netflix.com` and if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-9. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-10. Make sure to record the credentials for the `netflix-proxy` admin site.
-11. Set your DNS server to the IP of the Vultr instance, then go to [this](http://ipinfo.io/) site to make sure your Vultr instance IP is displayed.
-12. Finally, enjoy `Netflix` and others out of region.
-13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+7. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+9. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+10. Finally, enjoy `Netflix` and others out of region.
+11. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
-The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do **not** enable IPv6 on the host.
+The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do **not** enable native IPv6 on the host.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
 2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 5. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server in the US and click `Create Tunnel`.
-6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Run `ping6 netflix.com` and if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-9. Save the file and run: `ifup he-ipv6 && apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-10. Make sure to record the credentials for the `netflix-proxy` admin site.
-11. Set your DNS server to the IP of your RamNode intance, then go to [this](http://ipinfo.io/) site to make sure your RamNode instance IP is displayed.
-12. Finally, enjoy `Netflix` and others out of region.
-13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+7. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+9. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+10. Finally, enjoy `Netflix` and others out of region.
+11. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
-**(untested)** The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. Do **not** enable IPv6 on the host or disable it post-build and before moving onto step 8.
+**(untested)** The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. Do **not** enable native IPv6 on the host or disable it post-build and before moving onto step 7.
 
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
 2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 5. Set the `IPv4 Endpoint` to the IP address of your Linode, pick a tunnel server in the US and click `Create Tunnel`.
-6. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-7. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-8. Run `ping6 netflix.com` and if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-9. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-10. Make sure to record the credentials for the `netflix-proxy` admin site.
-11. Set your DNS server to the Linode IP, then go to [this](http://ipinfo.io/) site to make sure your Linode IP is displayed.
-12. Finally, enjoy `Netflix` and others out of region.
-13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+7. Run: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+9. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+10. Finally, enjoy `Netflix` and others out of region.
+11. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png)](http://www.dreamhost.com/r.cgi?2124700)
 
-**(untested)** The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`). Do **not** enable IPv6 on the host.
+**(untested)** The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`). Do **not** enable native IPv6 on the host.
 
 1. Head over to [DreamHost](http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
 2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance.
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance.
 5. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 7. Set the `IPv4 Endpoint` to the IP address of your instance, pick a tunnel server in the US and click `Create Tunnel`.
-8. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-9. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-10. Run `ping6 netflix.com` and if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-11. Save the file and run: `ifup he-ipv6 && curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-12. Make sure to record the credentials for the `netflix-proxy` admin site.
-13. Point your DNS at the instance IP, then go to [this](http://ipinfo.io/) site to make sure your instance IP is displayed.
-14. Finally, enjoy `Netflix` and others out of region.
-15. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+8. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+9. Run: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+10. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+11. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+12. Finally, enjoy `Netflix` and others out of region.
+13. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on (slightly broken) Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary.
+The following is based on (slightly broken) Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary. Disable native IPv6 on the host as Gandi enable it by default.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
-3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php) and **write-down** your `Routed /64` prefix/subnet.
+3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 4. Set the `IPv4 Endpoint` to the IP address of your server, pick a tunnel server in the US and click `Create Tunnel`.
-5. Select `Example Configurations` tab, select `Debian/Ubuntu` from the drop-down and copy the tunnel configuration.
-6. SSH to your server and add the tunnel configuration to `/etc/network/interfaces` file.
-7. Remove native IPv6 IP(s) from the public network interfaces (i.e. `eth0`)
-8. Save the file and run: `ifup he-ipv6 && apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -s <your-routed-64-prefix-subnet>`
-9. Make sure to record the credentials for the `netflix-proxy` admin site.
-10. Point your DNS at the server IP, then go to [this](http://ipinfo.io/) site to make sure your server IP is displayed.
-11. Finally, enjoy `Netflix` and others out of region.
-12. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
+5. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
+6. Run: `apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+7. Make sure to **record the credentials** for the `netflix-proxy` admin site.
+8. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
+9. Finally, enjoy `Netflix` and others out of region.
+10. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Microsoft Azure (advanced)
 The following **has not been tested** and is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription.
