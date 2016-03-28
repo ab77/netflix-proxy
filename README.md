@@ -86,7 +86,7 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
         -z      enable caching resolver (default: 0)
         -u      HE tunnel broker username
         -p      HE tunnel broker password
-        -p      HE tunnel index (default: 1)
+        -n      HE tunnel index (default: 1)
 ```
 
 ## Other Cloud Providers
