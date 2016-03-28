@@ -36,10 +36,10 @@ The following paragraphs show how to get this solution up and running with a few
 The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. Do **not** enable native IPv6 on the host.
 
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
-2. Create a Droplet using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
+2. Create a Droplet in a location closest to you using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in the US and click `Create Tunnel`.
+5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in a location closest to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 7. Run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -96,10 +96,10 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
 The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. Do **not** enable native IPv6 on the host.
 
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
-2. Create a compute instance using `Debian 8 x64 (jessie)` image.
+2. Create a compute instance in a location closest to you using `Debian 8 x64 (jessie)` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-5. Set the `IPv4 Endpoint` to the IP address of your Vultr instance, pick a tunnel server in the US and click `Create Tunnel`.
+5. Set the `IPv4 Endpoint` to the IP address of your Vultr instance, pick a tunnel server closest to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 7. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -111,11 +111,11 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 
 The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do **not** enable native IPv6 on the host.
 
-1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS (OpenVZ won't work).
+1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS in a location closest to you (OpenVZ won't work).
 2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-5. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server in the US and click `Create Tunnel`.
+5. Set the `IPv4 Endpoint` to the IP address of your RamNode VPS, pick a tunnel server closest to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 7. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -128,10 +128,10 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 **(untested)** The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. Do **not** enable native IPv6 on the host or disable it post-build and before moving onto step 7.
 
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
-2. Create a new `Linode` and deploy an `Ubuntu 14-04 LTS` image into it.
+2. Create a new `Linode` in a location closest to you and deploy an `Ubuntu 14-04 LTS` image into it.
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-5. Set the `IPv4 Endpoint` to the IP address of your Linode, pick a tunnel server in the US and click `Create Tunnel`.
+5. Set the `IPv4 Endpoint` to the IP address of your Linode, pick a tunnel server closest to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 7. Run: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -144,12 +144,12 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 **(untested)** The following is based on a standard Ubuntu image provided by `DreamHost`, but should work on any Linux distribution **without** Docker installed and running under **non-root** user (e.g. `Amazon Web Services`). Do **not** enable native IPv6 on the host.
 
 1. Head over to [DreamHost](http://www.dreamhost.com/r.cgi?2124700) and sign-up for an account.
-2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance.
+2. Find the `DreamCompute` or `Public Cloud Computing` section and launch an `Ubuntu 14-04-Trusty` instance in a location closest to you.
 3. Make sure to add an additional firewall rule to allow DNS: `Ingress	IPv4	UDP	53	0.0.0.0/0 (CIDR)`
 4. Also add a `Floating IP` to your instance.
 5. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-7. Set the `IPv4 Endpoint` to the IP address of your instance, pick a tunnel server in the US and click `Create Tunnel`.
+7. Set the `IPv4 Endpoint` to the IP address of your instance, pick a tunnel server closest to you and click `Create Tunnel`.
 8. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 9. Run: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 10. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -222,7 +222,7 @@ The `__testbuild.py` script can also be used to programatically deploy `Droplets
 Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
 
 ### IPv6 and Docker
-This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6]
+This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6] Having said that, the current iteration uses `HE Eectric's` free tunnel broker service to provide IPv6 connectivity, since `HE Electric` is geo-located in the US, Netflix geoblocking (or `geo-bollocking`, if you like), allows the traffic through.
 
 ```
 +----------+                  +-----------+                 +-----------------+
@@ -333,3 +333,5 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n10] See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
 
 [n11] See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/) and [Wiki](https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..).
+
+[n12] [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
