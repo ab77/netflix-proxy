@@ -213,11 +213,6 @@ if [[ ${i} == 0 ]]; then
             fi
             printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
               sudo tee -a /etc/default/docker
-       
-            if [[ ${CACHING_RESOLVER} == 1 ]]; then
-                printf 'enabling caching-resolver support\n'
-                printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
-            fi
 
             printf 'adding IPv6 iptables rules\n'
             sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
@@ -234,6 +229,11 @@ if [[ ${i} == 0 ]]; then
           printf "DOCKER_OPTS=\"--iptables=false\"\n" | sudo tee -a /etc/default/docker
     fi
 
+    if [[ ${CACHING_RESOLVER} == 1 ]]; then
+        printf 'enabling caching-resolver support\n'
+        printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+    fi
+    
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
     sudo apt-get -y install iptables-persistent
