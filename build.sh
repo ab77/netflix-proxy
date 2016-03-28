@@ -193,8 +193,8 @@ if [[ ${i} == 0 ]]; then
     # check if public IPv6 access is available
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
       sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
-    if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]] then
-        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]] then
+    if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
+        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
             # disable Docker iptables control and enable ipv6 dual-stack support
             # http://unix.stackexchange.com/a/164092/78029 
             # https://github.com/docker/docker/issues/9889
@@ -205,7 +205,7 @@ if [[ ${i} == 0 ]]; then
         
             printf 'enabling Docker IPv6 dual-stack support\n'
             sudo apt-get -y install sipcalc
-            if [[ -z "${IPV6_SUBNET}" ]] then
+            if [[ -z "${IPV6_SUBNET}" ]]; then
                 printf 'WARNING: automatically calculating IPv6 subnet, not supported in tunnel mode\n'
                 IPV6_SUBNET=$(get_docker_ipv6_subnet)
                 printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
@@ -214,7 +214,7 @@ if [[ ${i} == 0 ]]; then
             printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
               sudo tee -a /etc/default/docker
        
-            if [[ ${CACHING_RESOLVER} == 1 ]] then
+            if [[ ${CACHING_RESOLVER} == 1 ]]; then
                 printf 'enabling caching-resolver support\n'
                 printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
             fi
