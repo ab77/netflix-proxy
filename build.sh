@@ -193,45 +193,45 @@ if [[ ${i} == 0 ]]; then
     # check if public IPv6 access is available
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
       sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
-    if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
-        # disable Docker iptables control and enable ipv6 dual-stack support
-        # http://unix.stackexchange.com/a/164092/78029 
-        # https://github.com/docker/docker/issues/9889
-        IPV6=1
-        printf 'enabling sniproxy IPv6 priority\n'
-        printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
-          sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
+    if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]] then
+        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]] then
+            # disable Docker iptables control and enable ipv6 dual-stack support
+            # http://unix.stackexchange.com/a/164092/78029 
+            # https://github.com/docker/docker/issues/9889
+            IPV6=1
+            printf 'enabling sniproxy IPv6 priority\n'
+            printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
+              sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
         
-        printf 'enabling Docker IPv6 dual-stack support\n'
-        sudo apt-get -y install sipcalc
-        if [[ -z "${IPV6_SUBNET}" ]]; then
-            printf 'WARNING: automatically calculating IPv6 subnet, not supported in tunnel mode\n'
-            IPV6_SUBNET=$(get_docker_ipv6_subnet)
-            printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
-              sudo sysctl -p
-        fi
-        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
-          sudo tee -a /etc/default/docker
+            printf 'enabling Docker IPv6 dual-stack support\n'
+            sudo apt-get -y install sipcalc
+            if [[ -z "${IPV6_SUBNET}" ]] then
+                printf 'WARNING: automatically calculating IPv6 subnet, not supported in tunnel mode\n'
+                IPV6_SUBNET=$(get_docker_ipv6_subnet)
+                printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+                  sudo sysctl -p
+            fi
+            printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
+              sudo tee -a /etc/default/docker
        
-        if [[ ${CACHING_RESOLVER} == 1 ]]; then
-            printf 'enabling caching-resolver support\n'
-            printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
-        fi
+            if [[ ${CACHING_RESOLVER} == 1 ]] then
+                printf 'enabling caching-resolver support\n'
+                printf "  links:\n    - caching-resolver\n" | sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
+            fi
 
-        printf 'adding IPv6 iptables rules\n'
-        sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
-        sudo ip6tables -A INPUT -i lo -j ACCEPT
-        sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-        sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-        sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
+            printf 'adding IPv6 iptables rules\n'
+            sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT
+            sudo ip6tables -A INPUT -i lo -j ACCEPT
+            sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+            sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+            sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
         fi
     else
         # stop Docker from messing around with iptables
         IPV6=0
         printf 'WARNING: IPv4-only mode\n'
         printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf && \
-          echo 'DOCKER_OPTS="--iptables=false"' | sudo tee -a /etc/default/docker
+          printf "DOCKER_OPTS=\"--iptables=false\"\n" | sudo tee -a /etc/default/docker
     fi
 
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
