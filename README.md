@@ -91,6 +91,18 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1
 
 ## Other Cloud Providers
 
+### Locale Issues
+
+Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get `locale` issues reported by `Python` and/or `pip` durin the build, try running the following first:
+
+```
+export LANGUAGE=en_US.UTF-8 && \
+  export LANG=en_US.UTF-8 && \
+  export LC_ALL=en_US.UTF-8 && \
+  locale-gen en_US.UTF-8 && \
+  sudo dpkg-reconfigure locales
+```
+
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png)](http://www.vultr.com/?ref=6871746)
 
 The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. Do **not** enable native IPv6 on the host.
