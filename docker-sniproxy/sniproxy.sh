@@ -18,8 +18,11 @@ fi
 printf "Setting sniproxy resolver to ${RESOLVER_IP}\n"
 sed -i -r "s/nameserver ([0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3})/nameserver ${RESOLVER_IP}/" /data/conf/sniproxy.conf
 
-# add source IP loadbalancing
-#add_source_ipv6_lb ${RANDOM_IPS}
+# add source IP loadbalancing (if using IPv6)
+IP6ADDR=$(get_ip6addr)
+if [[ -n "${IP6ADDR}" ]]; then
+    add_source_ipv6_lb ${RANDOM_IPS}
+else
 
 # launch sniproxy
 /usr/sbin/sniproxy -c /data/conf/sniproxy.conf -f
