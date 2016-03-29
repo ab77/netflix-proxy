@@ -143,6 +143,18 @@
 <h2>
 <a id="other-cloud-providers" class="anchor" href="#other-cloud-providers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other Cloud Providers</h2>
 
+<h3>
+<a id="locale-issues" class="anchor" href="#locale-issues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Locale Issues</h3>
+
+<p>Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get <code>locale</code> issues reported by <code>Python</code> and/or <code>pip</code> durin the build, try running the following first:</p>
+
+<pre><code>export LANGUAGE=en_US.UTF-8 &amp;&amp; \
+  export LANG=en_US.UTF-8 &amp;&amp; \
+  export LC_ALL=en_US.UTF-8 &amp;&amp; \
+  locale-gen en_US.UTF-8 &amp;&amp; \
+  sudo dpkg-reconfigure locales
+</code></pre>
+
 <p><a href="http://www.vultr.com/?ref=6871746"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png" alt=""></a></p>
 
 <p>The following is based on a Debian image provided by <code>Vultr</code>, but should in theory work on any Debian distribution. Do <strong>not</strong> enable native IPv6 on the host.</p>
