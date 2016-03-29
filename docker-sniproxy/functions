@@ -35,6 +35,19 @@ function get_ipaddr() {
 }
 
 
+function get_ip6addr() {
+    IFACE6=$(get_iface6)
+    local ip6addr=$(ip -6 addr show dev ${IFACE6} | \
+      grep inet6 |
+      grep -v link | \
+      grep "scope global" | \
+      grep "/64" | \
+      awk '{print $2}' | \
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
+    echo $(echo ${ip6addr} | awk '{print $1}')
+}
+
+
 function get_ext_ipaddr() {
     local extip=$(dig +short myip.opendns.com @resolver1.opendns.com)
     echo $(echo ${extip} | awk '{print $1}')
@@ -105,13 +118,14 @@ function get_ip_first_words() {
 function add_source_ipv6_lb() {
     IFACE6=$(get_iface6)
     FIRST_WORDS=$(get_ip_first_words)
+    local prob=$(awk -v m=$m "BEGIN {print (1/${1})}")
     for (( x=0; x<=${1}; x++ ))
     do
         local random_words=$(printf '%x:%x:%x\n' $RANDOM $RANDOM $RANDOM)
         local ip6addr=${FIRST_WORDS}:${random_words}
         printf "Adding ip=${ip6addr} on dev=${IFACE6}\n"
         ip -6 addr add ${ip6addr} dev ${IFACE6}
-        ip6tables -t nat -A POSTROUTING -m state --state NEW -m statistic --mode nth --every 1 --packet 0 -j SNAT --to-source ${ip6addr}
+        ip6tables -t nat -A POSTROUTING -m statistic --mode random --probability ${prob} -j SNAT --to-source ${ip6addr}
     done
 }
 
