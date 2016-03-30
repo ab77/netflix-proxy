@@ -194,7 +194,7 @@ if [[ ${i} == 0 ]]; then
     sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf && \
       sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml
     if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-        if [[ ! $(with_backoff $(which curl) --fail v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+        if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
             # disable Docker iptables control and enable ipv6 dual-stack support
             # http://unix.stackexchange.com/a/164092/78029 
             # https://github.com/docker/docker/issues/9889
