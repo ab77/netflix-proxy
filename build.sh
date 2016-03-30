@@ -157,6 +157,9 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
     if [[ ${EXTIP} == ${CLIENTV4} ]]; then
         printf "bringing up IPv6 tunnel interface\n"
         sudo ifup he-ipv6
+        printf "testing IPv6 tunnel interface, this could take a while...\n"
+        ping6 -c 10 -I he-ipv6 netflix.com
+        with_backoff $(which curl) -6 --fail -L -o /dev/null http://netflix.com/
     else
         printf "\e[1mERROR:\033[0m \e[31mtunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}\033[0m\n"    
         exit 1
