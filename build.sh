@@ -317,10 +317,6 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/ndp-proxy-helper.service && \
       sudo systemctl daemon-reload && \
       sudo systemctl restart docker && \
-      sudo systemctl enable docker-bind && \
-      sudo systemctl enable docker-sniproxy && \
-      sudo systemctl enable docker-caddy && \
-      sudo systemctl enable docker-dnsmasq && \
       sudo systemctl enable netflix-proxy-admin && \
       sudo systemctl enable ndp-proxy-helper && \
       sudo systemctl enable systemd-networkd && \
