@@ -152,8 +152,14 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
       apt-get -y install libxml-xpath-perl && \
       mkdir -p /etc/network/interfaces.d && \
       printf "source-directory interfaces.d\n" | sudo tee -a /etc/network/interfaces && \
-      IPV6_SUBNET=$(add_tunnel_iface_config ${HE_TUNNEL_BROKER_UNAME} ${HE_TUNNEL_BROKER_PASSWD} ${HE_TUNNEL_INDEX}) && \
-      ifup he-ipv6
+      IPV6_SUBNET=$(add_tunnel_iface_config ${HE_TUNNEL_BROKER_UNAME} ${HE_TUNNEL_BROKER_PASSWD} ${HE_TUNNEL_INDEX})
+    CLIENTV4=$(get_tunnel_clientv4)
+    if [[ ${EXTIP} == ${CLIENTV4} ]]; then
+        sudo ifup he-ipv6
+    else
+        printf "\e[1mERROR:\033[0m\e[31mtunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}\033[0m\n"    
+        exit 1
+    fi   
 fi
 
 # prepare BIND config
@@ -356,7 +362,7 @@ popd
 if [[ ${IPV6} == 1 ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
-    printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"    
+    printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"
 fi
 
 if [[ ${CACHING_RESOLVER} == 1 ]]; then
