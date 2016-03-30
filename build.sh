@@ -153,7 +153,7 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
       mkdir -p /etc/network/interfaces.d && \
       printf "source-directory interfaces.d\n" | sudo tee -a /etc/network/interfaces && \
       IPV6_SUBNET=$(add_tunnel_iface_config ${HE_TUNNEL_BROKER_UNAME} ${HE_TUNNEL_BROKER_PASSWD} ${HE_TUNNEL_INDEX})
-    CLIENTV4=$(get_tunnel_clientv4)
+    CLIENTV4=$(get_tunnel_clientv4 ${HE_TUNNEL_INDEX})
     if [[ ${EXTIP} == ${CLIENTV4} ]]; then
         sudo ifup he-ipv6
     else
