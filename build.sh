@@ -155,9 +155,10 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
       IPV6_SUBNET=$(add_tunnel_iface_config ${HE_TUNNEL_BROKER_UNAME} ${HE_TUNNEL_BROKER_PASSWD} ${HE_TUNNEL_INDEX})
     CLIENTV4=$(get_tunnel_clientv4 ${HE_TUNNEL_INDEX})
     if [[ ${EXTIP} == ${CLIENTV4} ]]; then
+        printf "bringing up IPv6 tunnel interface\n"
         sudo ifup he-ipv6
     else
-        printf "\e[1mERROR:\033[0m\e[31mtunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}\033[0m\n"    
+        printf "\e[1mERROR:\033[0m \e[31mtunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}\033[0m\n"    
         exit 1
     fi   
 fi
