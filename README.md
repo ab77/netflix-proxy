@@ -29,7 +29,7 @@ The following are supported out of the box, however adding additional services i
 * NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/data/conf/zones.override)
 
 # Instructions
-The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.
+The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. These are all based on the assumption that access to the US region access is desired. If a different region is required (e.g. France), HE tunnel broker can not be used, as HE's entire network appears to be [geo-located](https://www.maxmind.com/en/geoip-demo) in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to `build.sh`.
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
@@ -99,6 +99,7 @@ Some pre-requisites require the locale to be set correctly and some provider OS 
 export LANGUAGE=en_US.UTF-8 && \
   export LANG=en_US.UTF-8 && \
   export LC_ALL=en_US.UTF-8 && \
+  export LC_CTYPE="en_US.UTF-8" && \
   locale-gen en_US.UTF-8 && \
   sudo dpkg-reconfigure locales
 ```
