@@ -1,7 +1,7 @@
 [Unit]
 Description=NDP proxy helper service
-Requires=docker-sniproxy.service
-After=docker-sniproxy.service
+Requires=docker.service
+After=docker.service
 
 [Service]
 Restart=always
