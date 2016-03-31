@@ -101,6 +101,7 @@ export LANGUAGE=en_US.UTF-8 && \
   export LC_ALL=en_US.UTF-8 && \
   export LC_CTYPE="en_US.UTF-8" && \
   locale-gen en_US.UTF-8 && \
+  sudo apt-get -y install language-pack-en-base && \
   sudo dpkg-reconfigure locales
 ```
 
@@ -172,14 +173,14 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on (slightly broken) Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 8 to use `sudo` where nesessary. Disable native IPv6 on the host as Gandi enable it by default.
+The following is based on Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 6 to use `sudo` where nesessary. [Disable](http://askubuntu.com/a/484487/412107) native IPv6 on the host if using HE tunnel broker, as it is enabled by defualt.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 4. Set the `IPv4 Endpoint` to the IP address of your server, pick a tunnel server in the US and click `Create Tunnel`.
 5. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-6. Run: `apt-get -y update && apt-get -y install vim dnsutils curl sudo git && export LANGUAGE=en_US.UTF-8 && export LANG=en_US.UTF-8 && export LC_ALL=en_US.UTF-8 && locale-gen en_US.UTF-8 && sudo apt-get -y install language-pack-id && sudo dpkg-reconfigure locales && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+6. Run: `apt-get -y update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 7. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 8. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 9. Finally, enjoy `Netflix` and others out of region.
