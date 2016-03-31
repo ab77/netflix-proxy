@@ -173,7 +173,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png)](https://www.gandi.net/hosting/iaas/buy)
 
-The following is based on Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 6 to use `sudo` where nesessary. You will need to [Disable](http://askubuntu.com/a/484487/412107) native IPv6, as it is enabled by default.
+The following is based on Ubuntu image provided by `Gandi` using` root` login with SSH key only (no password). For default non-root `admin` login, adjust step 6 to use `sudo` where nesessary. If using HE tunnel borker, you will definitely need to [disable](http://askubuntu.com/a/484487/412107) native IPv6, as it is enabled by default.
 
 1. Head over to [Gandi](https://www.gandi.net/hosting/iaas/buy) to create a virtual server.
 2. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
