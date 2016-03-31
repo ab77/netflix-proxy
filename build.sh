@@ -218,7 +218,8 @@ if [[ ${i} == 0 ]]; then
             if [[ -z "${IPV6_SUBNET}" ]]; then
                 printf 'WARNING: automatically calculating IPv6 subnet, not supported in tunnel mode\n'
                 IPV6_SUBNET=$(get_docker_ipv6_subnet)
-                printf 'net.ipv6.conf.eth0.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+                printf 'net.ipv6.conf.${IFACE}.proxy_ndp=1\n' | sudo tee -a /etc/sysctl.conf && \
+                printf 'net.ipv6.conf.${IFACE}.accept_ra=2\n' | sudo tee -a /etc/sysctl.conf && \
                   sudo sysctl -p
             fi
             printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
