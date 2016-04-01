@@ -227,6 +227,7 @@ log_action_end_msg $?
 log_action_begin_msg "checking IPv6 connectivity"
 if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
     if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+        log_action_end_msg $?
         # disable Docker iptables control and enable ipv6 dual-stack support
         # http://unix.stackexchange.com/a/164092/78029 
         # https://github.com/docker/docker/issues/9889
@@ -324,9 +325,9 @@ sudo apt-get -y update &>> ${BUILD_ROOT}/netflix-proxy.log && \
 log_action_end_msg $?
 
 log_action_begin_msg "configuring netflix-proxy-admin backend"
-PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')
-HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}')
 sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}' &>> ${BUILD_ROOT}/netflix-proxy.log) && \
+  HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}' &>> ${BUILD_ROOT}/netflix-proxy.log) && \
   sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db &>> ${BUILD_ROOT}/netflix-proxy.log && \
   sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
@@ -407,11 +408,11 @@ log_action_begin_msg "testing Hulu availability (not reliable)"
 printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 log_action_end_msg $?
 
-log_action_begin_msg "testing netflix-proxy admin site: http://${EXTIP}:8080/ || http://${IPADDR}:8080/"
+log_action_begin_msg "testing netflix-proxy admin site"
 (with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
   with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
-printf "netflix-proxy admin site credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+printf "netflix-proxy-admin site=http://${EXT_IP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 
 # change back to original directory
 popd &>> ${BUILD_ROOT}/netflix-proxy.log
