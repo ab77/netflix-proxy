@@ -12,6 +12,12 @@ function get_tunnel_routed64() {
 }
 
 
+function get_tunnel_id() {
+    local tunnelid=$(cat ${BUILD_ROOT}/tunnelInfo.xml | $(which xpath) -q -e "//tunnel[${1}]/@id" | grep -Po '[-0-9]+')
+    echo ${tunnelid}
+}
+
+
 function add_tunnel_iface_config() {
     with_backoff $(which curl) --fail https://${1}:${2}@tunnelbroker.net/tunnelInfo.php | sudo tee ${BUILD_ROOT}/tunnelInfo.xml 1>&2
     local routed64=$(cat ${BUILD_ROOT}/tunnelInfo.xml | $(which xpath) -q -e "//tunnel[${3}]/routed64/text()" | grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}::\/64')

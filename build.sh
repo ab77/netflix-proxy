@@ -32,7 +32,7 @@ DATE=$(/bin/date +'%Y%m%d')
 
 # display usage
 usage() {
-    echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <password>] [-n <1..N>] [-s <subnet>]" 1>&2; \
+    echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <password>] [-k <update-key>] [-n <1..N>] [-s <subnet>]" 1>&2; \
     printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n"; \
     printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n"; \
     printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n"; \
@@ -40,12 +40,13 @@ usage() {
     printf "\t-z\tenable caching resolver (default: 0)\n"; \
     printf "\t-u\tHE tunnel broker username\n"; \
     printf "\t-p\tHE tunnel broker password\n"; \
+    printf "\t-k\tHE tunnel broker update key\n"; \
     printf "\t-n\tHE tunnel index (default: ${HE_TUNNEL_INDEX})\n"; \
     exit 1;
 }
 
 # process options
-while getopts ":r:b:c:z:s:u:p:n:" o; do
+while getopts ":r:b:c:z:s:u:p:n:k:" o; do
     case "${o}" in
         r)
             r=${OPTARG}
@@ -70,6 +71,9 @@ while getopts ":r:b:c:z:s:u:p:n:" o; do
             ;;
         p)
             p=${OPTARG}
+            ;;
+        k)
+            k=${OPTARG}
             ;;
         n)
             n=${OPTARG}
@@ -102,11 +106,15 @@ if [[ -n "${s}" ]]; then
 fi
 
 if [[ -n "${u}" ]]; then
-    HE_TUNNEL_BROKER_UNAME="${u}"
+    HE_TB_UNAME="${u}"
 fi
 
 if [[ -n "${p}" ]]; then
-    HE_TUNNEL_BROKER_PASSWD="${p}"
+    HE_TB_PASSWD="${p}"
+fi
+
+if [[ -n "${k}" ]]; then
+    HE_TB_UPDATE_KEY="${k}"
 fi
 
 if [[ -n "${n}" ]]; then
@@ -116,10 +124,10 @@ fi
 # diagnostics info
 sudo touch ${BUILD_ROOT}/netflix-proxy.log
 printf "resolved params: clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP}\n"
-printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TUNNEL_BROKER_UNAME} -p [secret]\n\n"
+printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n"
 
 # automatically enable IPv6 (tunnel)
-if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]; then
+if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
     log_action_begin_msg "disabling native IPv6 on ${IFACE}"
     sudo sysctl -w net.ipv6.conf.${IFACE}.disable_ipv6=1 && \
       printf "net.ipv6.conf.${IFACE}.disable_ipv6=1\n" | sudo tee -a /etc/sysctl.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
@@ -133,7 +141,7 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
     log_action_begin_msg "enabling ${HE_IFACE} interface"
     mkdir -p /etc/network/interfaces.d &>> ${BUILD_ROOT}/netflix-proxy.log && \
       printf "source-directory interfaces.d\n" | sudo tee -a /etc/network/interfaces &>> ${BUILD_ROOT}/netflix-proxy.log && \
-      add_tunnel_iface_config ${HE_TUNNEL_BROKER_UNAME} ${HE_TUNNEL_BROKER_PASSWD} ${HE_TUNNEL_INDEX} &>> ${BUILD_ROOT}/netflix-proxy.log
+      add_tunnel_iface_config ${HE_TB_UNAME} ${HE_TB_PASSWD} ${HE_TUNNEL_INDEX} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 
     IPV6_SUBNET=$(get_tunnel_routed64 ${HE_TUNNEL_INDEX})
@@ -144,17 +152,23 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
         log_action_end_msg $?
     else
         log_action_cont_msg "tunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}"
-        log_action_cont_msg "attempting to update tunnel configuration"
-        # https://forums.he.net/index.php?topic=3153.0
-        with_backoff $(which curl) -4 --fail \
-          "https://${HE_TUNNEL_BROKER_UNAME}:${HE_TUNNEL_BROKER_PASSWD}@ipv4.tunnelbroker.net/nic/update?hostname=${HE_TUNNEL_INDEX}&myip=${EXTIP}" &>> ${BUILD_ROOT}/netflix-proxy.log
-        log_action_end_msg $?
-        log_action_cont_msg "bringing up IPv6 tunnel"
-        sudo ifup ${HE_IFACE} &>> ${BUILD_ROOT}/netflix-proxy.log
-        log_action_end_msg $?
+        if [[ -n "${HE_TB_UPDATE_KEY}" ]]; then
+            log_action_cont_msg "attempting to update tunnel configuration"
+            # https://forums.he.net/index.php?topic=3153.0
+            TUNNEL_ID=$(get_tunnel_id)
+            with_backoff $(which curl) -4 --fail \
+              "https://${HE_TB_UNAME}:${HE_TB_UPDATE_KEY}@ipv4.tunnelbroker.net/nic/update?hostname=${TUNNEL_ID}" &>> ${BUILD_ROOT}/netflix-proxy.log
+            log_action_end_msg $?
+            log_action_cont_msg "bringing up IPv6 tunnel"
+            sudo ifup ${HE_IFACE} &>> ${BUILD_ROOT}/netflix-proxy.log
+            log_action_end_msg $?
+        else
+            log_action_cont_msg "unable to update clientv4 without update key"
+            exit 1
+        fi
     fi
     log_action_cont_msg "testing IPv6 tunnel (ICMP)"
-    with_backoff $(which ping6) -c 3 -I ${HE_IFACE} ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
+    with_backoff $(which ping6) -c 5 -I ${HE_IFACE} ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 
     log_action_cont_msg "testing IPv6 tunnel (HTTP/S)"
