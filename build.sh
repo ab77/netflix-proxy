@@ -6,8 +6,9 @@
 set -e
 
 # gobals
+VERSION=2.3
 TIMEOUT=10
-BUILD_ROOT="/opt/netflix-proxy"
+BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 SDNS_ADMIN_PORT=43867
 HE_TUNNEL_INDEX=1
 HE_IFACE=he-ipv6
@@ -46,8 +47,12 @@ usage() {
 }
 
 # process options
-while getopts ":r:b:c:z:s:u:p:n:k:" o; do
+while getopts ":r:b:c:z:s:u:p:n:k:v" o; do
     case "${o}" in
+        v)
+            printf "${VERSION}\n"
+            exit
+            ;;
         r)
             r=${OPTARG}
             ((r == 0|| r == 1)) || usage
