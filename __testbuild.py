@@ -42,6 +42,7 @@ DEFAULT_VCPUS = 1
 DEFAULT_DISK_SIZE = 20
 DEFAULT_SLEEP = 5
 DEFAULT_BRANCH = 'master'
+DEFAULT_HE_TB_INDEX = 1
 
 from functools import wraps
 
@@ -116,19 +117,30 @@ def args():
     digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
     digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
     digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: %s)' % DEFAULT_BRANCH)
+    digitalocean.add_argument('--tb_user', type=str, required=False, help='HE tunnel broker username')
+    digitalocean.add_argument('--tb_passwd', type=str, required=False, help='HE tunnel broker password')
+    digitalocean.add_argument('--tb_key', type=str, required=False, help='HE tunnel broker update key')
+    digitalocean.add_argument('--tb_index', type=int, required=False, default=DEFAULT_HE_TB_INDEX, help='HE tunnel broker tunnel index (default: %s)' % str(DEFAULT_HE_TB_INDEX))
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
     args = parser.parse_args()
     return args
 
 
-def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
+def create_droplet(s, name, cip,
+                   fps, region, branch=DEFAULT_BRANCH,
+                   tb_user=None, tb_passwd=None, tb_key=None, tb_index=DEFAULT_HE_TB_INDEX):
+
+    tunnel_params = None
+    if tb_user and tb_passwd and tb_key:
+        tunnel_params = '-u %s -p %s -k %s -n %s' % (tb_user, tb_passwd, tb_key, str(tb_index))
+
     user_data = '''
 #cloud-config
 
 runcmd:
-  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s -z 1
-''' % (branch, cip)
+  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s -z 1 %s
+''' % (branch, cip, tunnel_params)
 
     json_data = {'name': name,
                  'region': region,
@@ -138,7 +150,7 @@ runcmd:
                  'image': DOCKER_IMAGE_SLUG,
                  'ssh_keys': fps,
                  'backups': False,
-                 'ipv6': True,
+                 'ipv6': False,
                  'private_networking': False,
                  'user_data': user_data}
     
@@ -335,7 +347,9 @@ if __name__ == '__main__':
         
         try:
             print colored('Creating Droplet %s...' % name, 'yellow')
-            d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region, branch=arg.branch)                
+            d = create_droplet(s, name, arg.client_ip,
+                               arg.fingerprint, arg.region, branch=arg.branch,
+                               tb_user=arg.tb_user, tb_passwd=arg.tb_passwd, tb_key=arg.tb_key, tb_index=arg.tb_index)                
             pprint(d)
             
             droplet_ip = get_droplet_ip_by_name(s, name)
