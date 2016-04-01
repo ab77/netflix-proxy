@@ -146,7 +146,8 @@ if [[ -n "${HE_TUNNEL_BROKER_UNAME}" ]] && [[ -n "${HE_TUNNEL_BROKER_PASSWD}" ]]
         log_action_cont_msg "tunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}"
         log_action_cont_msg "attempting to update tunnel configuration"
         # https://forums.he.net/index.php?topic=3153.0
-        with_backoff $(which curl) -4 --fail "https://ipv4.tunnelbroker.net/nic/update?username=${HE_TUNNEL_BROKER_UNAME}&password=${HE_TUNNEL_BROKER_PASSWD}&hostname=${HE_TUNNEL_INDEX}&myip=${EXTIP}" &>> ${BUILD_ROOT}/netflix-proxy.log
+        with_backoff $(which curl) -4 --fail \
+          "https://${HE_TUNNEL_BROKER_UNAME}:${HE_TUNNEL_BROKER_PASSWD}@ipv4.tunnelbroker.net/nic/update?hostname=${HE_TUNNEL_INDEX}&myip=${EXTIP}" &>> ${BUILD_ROOT}/netflix-proxy.log
         log_action_end_msg $?
         log_action_cont_msg "bringing up IPv6 tunnel"
         sudo ifup ${HE_IFACE} &>> ${BUILD_ROOT}/netflix-proxy.log
