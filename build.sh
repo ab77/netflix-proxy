@@ -168,11 +168,7 @@ if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
             exit 1
         fi
     fi
-    log_action_cont_msg "testing IPv6 tunnel (ICMP)"
-    $(which ping6) -c 10 -I ${HE_IFACE} ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
-    log_action_end_msg $?
-
-    log_action_cont_msg "testing IPv6 tunnel (HTTP/S)"
+    log_action_cont_msg "testing IPv6 tunnel (this may take a while)"
     with_backoff $(which curl) -6 --fail -L ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $? 
 fi
@@ -326,8 +322,8 @@ log_action_end_msg $?
 
 log_action_begin_msg "configuring netflix-proxy-admin backend"
 sudo $(which pip) install -r ${BUILD_ROOT}/auth/requirements.txt &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}' &>> ${BUILD_ROOT}/netflix-proxy.log) && \
-  HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}' &>> ${BUILD_ROOT}/netflix-proxy.log) && \
+  PLAINTEXT=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py | awk '{print $1}') && \
+  HASH=$(${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}') && \
   sudo cp ${BUILD_ROOT}/auth/db/auth.default.db ${BUILD_ROOT}/auth/db/auth.db &>> ${BUILD_ROOT}/netflix-proxy.log && \
   sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
@@ -412,7 +408,7 @@ log_action_begin_msg "testing netflix-proxy admin site"
 (with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
   with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
-printf "netflix-proxy-admin site=http://${EXT_IP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+printf "\nnetflix-proxy-admin site=http://${EXT_IP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 
 # change back to original directory
 popd &>> ${BUILD_ROOT}/netflix-proxy.log
