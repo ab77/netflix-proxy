@@ -161,7 +161,8 @@ if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
             log_action_end_msg $?
 
             log_action_cont_msg "bringing up IPv6 tunnel"
-            sudo ifup ${HE_IFACE} &>> ${BUILD_ROOT}/netflix-proxy.log
+            add_tunnel_iface_config ${HE_TB_UNAME} ${HE_TB_PASSWD} ${HE_TUNNEL_INDEX} &>> ${BUILD_ROOT}/netflix-proxy.log && \
+              sudo ifup ${HE_IFACE} &>> ${BUILD_ROOT}/netflix-proxy.log
             log_action_end_msg $?
         else
             log_action_cont_msg "unable to update clientv4 without update key"
@@ -399,11 +400,6 @@ with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" htt
   with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
-# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu
-log_action_begin_msg "testing Hulu availability (not reliable)"
-printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
-log_action_end_msg $?
-
 log_action_begin_msg "testing netflix-proxy admin site"
 (with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
   with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -424,6 +420,9 @@ if [[ ${z} == 1 ]]; then
 else
     printf "caching-resolver=\e[33mDisabled\033[0m\n"
 fi
+
+# https://www.lowendtalk.com/discussion/40101/recommended-vps-provider-to-watch-hulu
+printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
 printf "Done!\n"
