@@ -15,7 +15,7 @@ NETFLIX_HOST=netflix.com
 
 # import functions
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
-. ${BUILD_ROOT}/scripts/functions
+[ -e "${BUILD_ROOT}/scripts/functions" ] && . ${BUILD_ROOT}/scripts/functions
 
 # obtain the interface with the default gateway
 IFACE=$(get_iface)
@@ -154,7 +154,7 @@ if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
         log_action_cont_msg "tunnel endpoint clientv4=${CLIENTV4} does not match extip=${EXTIP}"
         if [[ -n "${HE_TB_UPDATE_KEY}" ]]; then
             log_action_cont_msg "attempting to update tunnel configuration"            
-            TUNNEL_ID=$(get_tunnel_id)
+            TUNNEL_ID=$(get_tunnel_id ${HE_TUNNEL_INDEX})
             # https://forums.he.net/index.php?topic=3153.0
             with_backoff $(which curl) -4 --fail \
               "https://${HE_TB_UNAME}:${HE_TB_UPDATE_KEY}@ipv4.tunnelbroker.net/nic/update?hostname=${TUNNEL_ID}" &>> ${BUILD_ROOT}/netflix-proxy.log
