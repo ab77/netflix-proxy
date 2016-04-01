@@ -169,7 +169,7 @@ if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
         fi
     fi
     log_action_cont_msg "testing IPv6 tunnel (ICMP)"
-    with_backoff $(which ping6) -c 5 -I ${HE_IFACE} ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
+    $(which ping6) -c 10 -I ${HE_IFACE} ${NETFLIX_HOST} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 
     log_action_cont_msg "testing IPv6 tunnel (HTTP/S)"
