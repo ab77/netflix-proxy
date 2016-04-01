@@ -75,17 +75,15 @@ git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/ne
 The following command line options can be optionaly passed to `build.sh` for additional control:
 
 ```
-Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1] [-u <username>] [-p <password>] [-n <1..N>] [-s <subnet>]
+Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <password>] [-k <update-key>] [-n <1..N>] [-s <subnet>]
         -r      enable (1) or disable (0) DNS recursion (default: 1)
         -b      grab docker images from repository (0) or build locally (1) (default: 0)
         -c      specify client-ip instead of being taken from ssh_connection
-        -i      skip iptables steps
-        -d      skip Docker steps
-        -t      skip testing steps
         -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
         -z      enable caching resolver (default: 0)
         -u      HE tunnel broker username
         -p      HE tunnel broker password
+        -k      HE tunnel broker update key
         -n      HE tunnel index (default: 1)
 ```
 
@@ -349,3 +347,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n11] See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/) and [Wiki](https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..).
 
 [n12] [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
+
+```
+-- v2.3
+```
