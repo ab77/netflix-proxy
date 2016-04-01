@@ -185,7 +185,7 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 10. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
 ### Microsoft Azure (advanced)
-The following **has not been tested** and is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription.
+The following **has not been tested** and is based on a standard `Ubuntu` image provided by `Microsoft Azure` using `cloud-harness` automation tool I wrote a while back and assumes an empty `Microsoft Azure` subscription. Also, because Azure [block ICMP](https://blogs.msdn.microsoft.com/mast/2014/06/22/use-port-pings-instead-of-icmp-to-test-azure-vm-connectivity/) thorough the load-balancer, IPv6 tunnelling through HE tunnel broker isn't going to work.
 
 1. Head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
