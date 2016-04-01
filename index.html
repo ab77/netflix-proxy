@@ -69,7 +69,7 @@
 <h1>
 <a id="instructions" class="anchor" href="#instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instructions</h1>
 
-<p>The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far.</p>
+<p>The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. These are all based on the assumption that access to the US region access is desired. If a different region is required (e.g. France), HE tunnel broker can not be used, as HE's entire network appears to be <a href="https://www.maxmind.com/en/geoip-demo">geo-located</a> in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to <code>build.sh</code>.</p>
 
 <p><a href="https://m.do.co/c/937b01397c94"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png" alt=""></a></p>
 
@@ -126,17 +126,15 @@
 
 <p>The following command line options can be optionaly passed to <code>build.sh</code> for additional control:</p>
 
-<pre><code>Usage: ./build.sh [-r 0|1] [-b 0|1] [-c &lt;ip&gt;] [-i 0|1] [-d 0|1] [-t 0|1] [-z 0|1] [-u &lt;username&gt;] [-p &lt;password&gt;] [-n &lt;1..N&gt;] [-s &lt;subnet&gt;]
+<pre><code>Usage: ./build.sh [-r 0|1] [-b 0|1] [-c &lt;ip&gt;] [-z 0|1] [-u &lt;username&gt;] [-p &lt;password&gt;] [-k &lt;update-key&gt;] [-n &lt;1..N&gt;] [-s &lt;subnet&gt;]
         -r      enable (1) or disable (0) DNS recursion (default: 1)
         -b      grab docker images from repository (0) or build locally (1) (default: 0)
         -c      specify client-ip instead of being taken from ssh_connection
-        -i      skip iptables steps
-        -d      skip Docker steps
-        -t      skip testing steps
         -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
         -z      enable caching resolver (default: 0)
         -u      HE tunnel broker username
         -p      HE tunnel broker password
+        -k      HE tunnel broker update key
         -n      HE tunnel index (default: 1)
 </code></pre>
 
@@ -146,12 +144,14 @@
 <h3>
 <a id="locale-issues" class="anchor" href="#locale-issues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Locale Issues</h3>
 
-<p>Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get <code>locale</code> issues reported by <code>Python</code> and/or <code>pip</code> durin the build, try running the following first:</p>
+<p>The build script has been designed to work on <code>Ubuntu 14.x</code> and <code>Debian 8.x</code>. It will most likely fail on all other distributions. Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get <code>locale</code> issues reported by <code>Python</code> and/or <code>pip</code> durin the build, try running the following first:</p>
 
 <pre><code>export LANGUAGE=en_US.UTF-8 &amp;&amp; \
   export LANG=en_US.UTF-8 &amp;&amp; \
   export LC_ALL=en_US.UTF-8 &amp;&amp; \
+  export LC_CTYPE="en_US.UTF-8" &amp;&amp; \
   locale-gen en_US.UTF-8 &amp;&amp; \
+  sudo apt-get -y install language-pack-en-base &amp;&amp; \
   sudo dpkg-reconfigure locales
 </code></pre>
 
@@ -232,7 +232,7 @@
 
 <p><a href="https://www.gandi.net/hosting/iaas/buy"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/gandi.png" alt=""></a></p>
 
-<p>The following is based on (slightly broken) Ubuntu image provided by <code>Gandi</code> using<code>root</code> login with SSH key only (no password). For default non-root <code>admin</code> login, adjust step 8 to use <code>sudo</code> where nesessary. Disable native IPv6 on the host as Gandi enable it by default.</p>
+<p>The following is based on Ubuntu image provided by <code>Gandi</code> using<code>root</code> login with SSH key only (no password). For default non-root <code>admin</code> login, adjust step 6 to use <code>sudo</code> where nesessary. If using HE tunnel borker, you will definitely need to <a href="http://askubuntu.com/a/484487/412107">disable</a> native IPv6, as it is enabled by default.</p>
 
 <ol>
 <li>Head over to <a href="https://www.gandi.net/hosting/iaas/buy">Gandi</a> to create a virtual server.</li>
@@ -240,7 +240,7 @@
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your server, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
-<li>Run: <code>apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; export LANGUAGE=en_US.UTF-8 &amp;&amp; export LANG=en_US.UTF-8 &amp;&amp; export LC_ALL=en_US.UTF-8 &amp;&amp; locale-gen en_US.UTF-8 &amp;&amp; sudo apt-get -y install language-pack-id &amp;&amp; sudo dpkg-reconfigure locales &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
+<li>Run: <code>apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
 <li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP given at the end of the script, then go to <a href="http://ipinfo.io/">this</a> site to make sure the same IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
@@ -454,6 +454,9 @@ docker run -it ubuntu bash -c "ping6 google.com"
 <p>[n11] See, <a href="https://www.facebook.com/GetflixAU/posts/650132888457824">https://www.facebook.com/GetflixAU/posts/650132888457824</a>, <a href="http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5">Netflix Geoblocking - Part 2</a> and read <a href="http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/">How Netflix is blocking VPNs</a> and <a href="https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..">Wiki</a>.</p>
 
 <p>[n12] <a href="https://www.ubermotive.com/?p=344">Bypass Netflix Geoblocks with IPv6</a>.</p>
+
+<pre><code>-- v2.3
+</code></pre>
       </section>
     </div>
     <footer>
