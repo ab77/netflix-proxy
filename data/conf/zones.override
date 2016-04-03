@@ -303,6 +303,11 @@ zone "bbcfmt.vo.llnwd.net." {
     file "/data/conf/db.override";
 };
 
+zone "crunchyroll.com." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "ipinfo.io." {
     type master;
     file "/data/conf/db.override";
