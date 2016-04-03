@@ -131,6 +131,15 @@ sudo touch ${BUILD_ROOT}/netflix-proxy.log
 printf "resolved params: clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP}\n"
 printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n"
 
+# fix terminfo
+# http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
+log_action_begin_msg "fixing terminfo"
+($(which infocmp); printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
+  $(which tic) -s tmp-$$.tic -o /etc/terminfo &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  rm tmp-$$.tic && \
+  $(which tset) && $(which reset)
+log_action_end_msg $?
+
 # automatically enable IPv6 (tunnel)
 if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
     log_action_begin_msg "disabling native IPv6 on ${IFACE}"
@@ -221,7 +230,7 @@ sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --t
 log_action_end_msg $?
 	
 # check if public IPv6 access is available
-log_action_begin_msg "creating configuration templates"
+log_action_begin_msg "creating Docker and sniproxy configuration templates"
 sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
   sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
@@ -229,7 +238,6 @@ log_action_end_msg $?
 log_action_begin_msg "checking IPv6 connectivity"
 if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
     if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
-        log_action_end_msg $?
         # disable Docker iptables control and enable ipv6 dual-stack support
         # http://unix.stackexchange.com/a/164092/78029 
         # https://github.com/docker/docker/issues/9889
@@ -266,8 +274,9 @@ if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         log_action_end_msg $?
     fi
 else
+    log_action_end_msg $?
     IPV6=0
-    log_action_begin_msg "running in IPv4 only mode"
+    log_action_begin_msg "configuring sniproxy and Docker"
     printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       printf "DOCKER_OPTS=\"--iptables=false\"\n" | sudo tee -a /etc/default/docker &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
@@ -295,8 +304,8 @@ fi
 	
 # socialise Docker with iptables-persistent
 # https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
-log_action_begin_msg "socialising Docker with iptables-persistent service"
 if [ ! -f "/etc/init/docker.conf.bak" ]; then    
+    log_action_begin_msg "socialising Docker with iptables-persistent service"
     sudo $(which sed) -i.bak "s/ and net-device-up IFACE!=lo)/ and net-device-up IFACE!=lo and started ${SERVICE}-persistent)/" /etc/init/docker.conf &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
@@ -431,4 +440,3 @@ printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: 
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
 printf "Done!\n"
-log_action_end_msg $?
