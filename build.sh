@@ -5,6 +5,15 @@
 # bomb on any error
 set -e
 
+# fix terminfo
+# http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
+if [[ $(infocmp | grep 'hpa=') == "" ]]; then
+  (infocmp; printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
+    tic -s tmp-$$.tic -o /etc/terminfo && \
+    rm tmp-$$.tic && \
+    exec ${0} $@
+fi
+
 # gobals
 VERSION=2.3
 TIMEOUT=10
@@ -130,14 +139,6 @@ fi
 sudo touch ${BUILD_ROOT}/netflix-proxy.log
 printf "resolved params: clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP}\n"
 printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n"
-
-# fix terminfo
-# http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
-log_action_begin_msg "fixing terminfo"
-($(which infocmp); printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
-  $(which tic) -s tmp-$$.tic -o /etc/terminfo &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  rm tmp-$$.tic && \
-log_action_end_msg $?
 
 # automatically enable IPv6 (tunnel)
 if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
@@ -311,6 +312,7 @@ fi
 	
 if [[ ${SERVICE} == "iptables" ]]; then
     if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
+        log_action_begin_msg "updating iptables-persistent init script"
         sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent &>> ${BUILD_ROOT}/netflix-proxy.log && \
           sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent &>> ${BUILD_ROOT}/netflix-proxy.log
         log_action_end_msg $?
