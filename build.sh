@@ -137,7 +137,6 @@ log_action_begin_msg "fixing terminfo"
 ($(which infocmp); printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
   $(which tic) -s tmp-$$.tic -o /etc/terminfo &>> ${BUILD_ROOT}/netflix-proxy.log && \
   rm tmp-$$.tic && \
-  $(which tset) && $(which reset)
 log_action_end_msg $?
 
 # automatically enable IPv6 (tunnel)
