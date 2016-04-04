@@ -1,32 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# This script will assist in creating new users.
-
-# Feel free to enhance this script further
-
-USERNAME=
-PASSWORD=
-EXPIRES=
-PRIVILEGE=
-BUILD_ROOT=/opt/netflix-proxy
-SQLITE_DB=${BUILD_ROOT}/auth/db/auth.db
-
-
-
-echo "This script will assist in creating new users for the netflix-proxy admin page"
-echo "Please answer the following questions:"
+# globals
+BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+SQLITE_DB=${BUILD_ROOT}/db/auth.db
 
 read -p "Please enter a username: " USERNAME
-read -p "Please enter a password: " PASSWORD
+read -sp "Please enter a password: " PASSWORD && printf "\n"
 read -p "Expiry date? (YYYY-MM-DD): " EXPIRES
-read -p "Please specify a PRIVILEGE level (0=user 1=admin): " PRIVILEGE
+read -p "Please specify access group (0=user 1=admin): " PRIVILEGE
 
+if [[ ! ${EXPIRES} =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
+    printf "invalid date=${EXPIRES} (e.g. YYYY-MM-DD)\n"
+    exit 1
+fi
 
-# This will add a new user to the DB based on value provided above
-
-pushd ${BUILD_ROOT} && \
-  export HASH=`${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PASSWORD}` && \
-  sqlite3 ${SQLITE_DB} "INSERT INTO USERS (privilege, expires, username, password) VALUES (${PRIVILEGE}, '${EXPIRES}', '${USERNAME}', '${HASH}');" && \
-  popd
-
-# Perhaps add a way to remove the user as well? Then again there are expiry dates.
+if [[ -n "${USERNAME}" && -n "${PASSWORD}" && -n "${EXPIRES}" && -n "${PRIVILEGE}" ]]; then
+    printf "adding username=${USERNAME} expires=${EXPIRES} privilege=${PRIVILEGE}\n"
+    pushd ${BUILD_ROOT} && \
+      HASH=`${BUILD_ROOT}/pbkdf2_sha256_hash.py ${PASSWORD}` \
+      sqlite3 ${SQLITE_DB} "INSERT INTO USERS (privilege, expires, username, password) VALUES (${PRIVILEGE}, '${EXPIRES}', '${USERNAME}', '${HASH}');" && \
+      popd
+else
+    printf "invalid input user=\"${USERNAME}\" password=\"${PASSWORD}\" expires=\"${EXPIRES}\" privilege=\"${PRIVILEGE}\"\n"
+    exit 1
+fi
