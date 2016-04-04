@@ -52,25 +52,7 @@ If you want to share your system with friends and family, you can authorise thei
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)
 
-The `admin` account does not restrict the entry or removal of IPs. If you want to restrict the entry of IPs to the current client IP using an automatically populated drop-down, create a standard user account as follows:
-
-```
-# setup parameters
-export USERNAME=[username]
-export PASSWORD=[password_plaintext]
-export EXPIRES=YYYY-MM-DD # user access expiry
-export PRIVILEGE=0 # 0 = user; 1 = admin
-export BUILD_ROOT=/opt/netflix-proxy # adjust path if nesessary
-export SQLITE_DB=${BUILD_ROOT}/auth/db/auth.db
-
-# add the user to SQLite DB
-pushd ${BUILD_ROOT} && \
-  export HASH=`${BUILD_ROOT}/auth/pbkdf2_sha256_hash.py ${PASSWORD}` && \
-  sqlite3 ${SQLITE_DB} "INSERT INTO USERS (privilege, expires, username, password) VALUES (${PRIVILEGE}, '${EXPIRES}', '${USERNAME}', '${HASH}');" && \
-  popd
-```
-
-Alternatively, you can use the `account-creator.sh` script located in the `auth` directory, which will prompt you for the input and create the user account.
+The `admin` account does not restrict the entry or removal of IPs. If you want to restrict the entry of IPs to the current client IP using an automatically populated drop-down, create a standard user account using the `account-creator.sh` script located in the `auth` directory, which will prompt you for the input and create the user account.
 
 #### Dynamic IPs
 You can also use the `netflix-proxy` admin site to update your IP address, should your ISP assign you a new one (e.g. via DHCP). If your IP address does change, all HTTP/HTTPS requests will automatically be redirected to the admin site on port `8080`. All DNS requests will be redirected to `dnsmasq` instance running on port `5353`. You will most likely need to purge your browser and system DNS caches after this (e.g. `ipconfig /flushdns` and `chrome://net-internals/#dns`) and/or reboot the relevant devices. This mechanism should work on browsers, but will most likely cause errors on other devices, such as Apple TVs and smart TVs. If you Internet stops working all of a sudden, try loading a browser and going to `netflix.com`.
