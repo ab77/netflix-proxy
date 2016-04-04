@@ -13,6 +13,11 @@ zone "hulu.com." {
     file "/data/conf/db.override";
 };
 
+zone "huluim.com." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "hbonow.com." {
     type master;
     file "/data/conf/db.override";

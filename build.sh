@@ -323,6 +323,10 @@ log_action_begin_msg "saving iptables rules"
 sudo service ${SERVICE}-persistent save &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
+log_action_begin_msg "creating zones.override from template"
+sudo cp ${BUILD_ROOT}/data/conf/zones.override.template ${BUILD_ROOT}/data/conf/zones.override &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
 log_action_begin_msg "updating db.override with extip=${EXTIP} and date=${DATE}"
 sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
   sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
