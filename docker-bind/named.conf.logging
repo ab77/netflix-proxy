@@ -1,0 +1,121 @@
+logging {
+    channel default_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel general_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel database_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel security_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel config_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel resolver_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel xfer-in_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel xfer-out_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel notify_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel client_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel unmatched_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel queries_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel network_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel update_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel dispatch_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel dnssec_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    channel lame-servers_file {
+        stderr;
+        severity dynamic;
+        print-time yes;
+    };
+
+    category default { default_file; };
+    category general { general_file; };
+    category database { database_file; };
+    category security { security_file; };
+    category config { config_file; };
+    category resolver { resolver_file; };
+    category xfer-in { xfer-in_file; };
+    category xfer-out { xfer-out_file; };
+    category notify { notify_file; };
+    category client { client_file; };
+    category unmatched { unmatched_file; };
+    category queries { queries_file; };
+    category network { network_file; };
+    category update { update_file; };
+    category dispatch { dispatch_file; };
+    category dnssec { dnssec_file; };
+    category lame-servers { lame-servers_file; };
+};
