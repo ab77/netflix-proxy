@@ -5,10 +5,10 @@ python:
 
 addons:
   artifacts:
-    s3_region: "eu-central-1"
+    s3_region: eu-central-1
     debug: true
     paths:
-    - *.png
+      - $(ls tests/artifacts/*.png | tr "\n" ":")
 
 sudo: true
 
