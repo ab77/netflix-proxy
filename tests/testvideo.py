@@ -45,7 +45,7 @@ try:
 
 except ImportError:
     log.error('Python module "selenium" not found, please run "pip install selenium".')
-    exit()
+    exit(1)
         
 
 def args():
