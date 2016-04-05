@@ -13,7 +13,7 @@ Author: Anton Belodedenko (anton@belodedenko.me)
 Date: 04/2015
 """
 
-import os, sys, time, argparse, logging, traceback
+import os, sys, time, argparse, logging, traceback, inspect
 from StringIO import StringIO
 from uuid import uuid1
 from functools import wraps
@@ -62,7 +62,7 @@ def args():
     return args
 
 
-def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, logger=log, cdata=None):
+def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, logger=log, cdata='method=%s()' % inspect.stack()[0][3]):
     """Retry calling the decorated function using an exponential backoff.
 
     http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
