@@ -170,8 +170,10 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception)
     def waitForPlayer(self, title_id):
-        self.driver.get('https://%s/watch/%s' % (self.host, title_id))
+        url = 'https://%s/watch/%s' % (self.host, title_id)
+        self.driver.get(url)
         assert 'Netflix' in self.driver.title
+        assert url in self.driver.current_url
         self.driver.save_screenshot('%s.png' % 'waitForPlayer')
         return self.driver.current_url
 
@@ -250,24 +252,43 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     def VideoPlaybackTest(self):        
         log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
+        self.driver.save_screenshot('%s.png' % 'waitForSignOutPage')
+        
         log.info('self.waitForHomePage()=%s' % self.waitForHomePage())
+        self.driver.save_screenshot('%s.png' % 'waitForHomePage')
+        
         log.info('self.waitForSignInPage()=%s' % self.waitForSignInPage())
+        self.driver.save_screenshot('%s.png' % 'waitForSignInPage')
+        
         self.waitForSignInEmailElementByName().clear()
         self.waitForSignInEmailElementByName().send_keys(self.email)
+        self.driver.save_screenshot('%s.png' % 'waitForSignInEmailElement')
+        
         self.waitForSignInPasswordElementByName().clear()
         self.waitForSignInPasswordElementByName().send_keys(self.password)
+        self.driver.save_screenshot('%s.png' % 'waitForSignInPasswordElement')
+ 
         self.waitForSignInFormButtonElementByXPath().click()
+        self.driver.save_screenshot('%s.png' % 'waitForSignInFormButtonElement')
+
         log.info('self.waitForPlayer()=%s' % self.waitForPlayer(self.title_id))
+        self.driver.save_screenshot('%s.png' % 'waitForPlayer')
+
         self.waitForPlayerControlsByClassName()
+        self.driver.save_screenshot('%s.png' % 'waitForPlayerControls')
+
         self.enablePlayerDiagnostics()
 
         for i in xrange(1, self.playback_secs):
             self.enablePlayerControls()
             log.info('time=%s' % (self.waitForSliderByClassName().text))
+            self.driver.save_screenshot('%s.png' % 'waitForSlider')
+
             diags = self.dumpPlayerDiagInfoDict()
             log.info('diags=%s' % diags)
             assert 'Playing' in diags['Rendering state']
-            self.driver.save_screenshot('%s-%s.png' % ('VideoPlaybackTest', str(i)))
+            if i % 5 == 0:
+                self.driver.save_screenshot('%s-%s.png' % ('VideoPlaybackTest', str(i)))
             time.sleep(1)
 
         return True
