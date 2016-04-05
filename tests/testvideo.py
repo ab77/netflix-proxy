@@ -148,6 +148,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForHomePage(self):
         self.driver.get('https://%s/' % self.host)
         assert 'Netflix' in self.driver.title
+        self.driver.save_screenshot('%s.png' % 'waitForHomePage')
         return self.driver.current_url
 
 
@@ -155,6 +156,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForSignOutPage(self):
         self.driver.get('https://%s/SignOut' % self.host)
         assert 'Netflix' in self.driver.title        
+        self.driver.save_screenshot('%s.png' % 'waitForSignOutPage')
         return self.driver.current_url
 
 
@@ -162,6 +164,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForSignInPage(self):
         self.driver.get('https://%s/Login' % self.host)
         assert 'Netflix' in self.driver.title
+        self.driver.save_screenshot('%s.png' % 'waitForSignInPage')
         return self.driver.current_url
 
 
@@ -169,11 +172,13 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForPlayer(self, title_id):
         self.driver.get('https://%s/watch/%s' % (self.host, title_id))
         assert 'Netflix' in self.driver.title
+        self.driver.save_screenshot('%s.png' % 'waitForPlayer')
         return self.driver.current_url
 
  
     @retry(Exception)
     def waitForSignInEmailElementByName(self):
+        self.driver.save_screenshot('%s.png' % 'waitForSignInEmailElement')
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.NAME, 'email'))
         )
@@ -181,6 +186,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
   
     @retry(Exception)
     def waitForSignInPasswordElementByName(self):
+        self.driver.save_screenshot('%s.png' % 'waitForSignInPasswordElement')
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.NAME, 'password'))
         )
@@ -188,6 +194,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception)
     def waitForSignInFormButtonElementByXPath(self):
+        self.driver.save_screenshot('%s.png' % 'waitForSignInFormButtonElement')
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.XPATH, "//button[@type='submit']"))
         )
@@ -195,6 +202,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception)
     def waitForPlayerControlsByClassName(self):
+        self.driver.save_screenshot('%s.png' % 'waitForPlayerControls')
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'player-controls-wrapper'))
         )    
@@ -202,6 +210,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception)
     def waitForSliderByClassName(self):
+        self.driver.save_screenshot('%s.png' % 'waitForSlider')
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'player-slider'))
         )
@@ -258,6 +267,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
             diags = self.dumpPlayerDiagInfoDict()
             log.info('diags=%s' % diags)
             assert 'Playing' in diags['Rendering state']
+            self.driver.save_screenshot('%s-%s.png' % ('VideoPlaybackTest', str(i)))
             time.sleep(1)
 
         return True
