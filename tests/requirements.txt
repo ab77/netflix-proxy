@@ -1,8 +1,6 @@
-requests==2.5.3
+requests[security]
 termcolor
 dnspython
 pyopenssl
-ndg-httpsclient
-pyasn1
 selenium
 python_hosts
