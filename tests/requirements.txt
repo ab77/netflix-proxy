@@ -1,4 +1,4 @@
-requests[security]
+requests
 termcolor
 dnspython
 pyopenssl
