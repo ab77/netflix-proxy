@@ -16,10 +16,10 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_45757fbb12c0_key -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d 
   
 install:
-  - pip install -r requirements.txt --download-cache "$HOME/.cache/pip"
+  - pip install -r tests/equirements.txt --download-cache "$HOME/.cache/pip"
 
 before_script:
   - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
   
 script:
-  - python __testbuild.py digitalocean --api_token=$do_api_v2_token --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index --destroy
+  - python tests/__testbuild.py digitalocean --api_token=$do_api_v2_token --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index --destroy
