@@ -23,7 +23,7 @@ before_install:
   - sudo dpkg -i google-chrome*.deb
   
 install:
-  - sudo pip install -r tests/requirements.txt
+  - sudo -H pip install -r tests/requirements.txt
 
 before_script:
   - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
