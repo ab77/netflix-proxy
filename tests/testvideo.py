@@ -13,7 +13,7 @@ Author: Anton Belodedenko (anton@belodedenko.me)
 Date: 04/2015
 """
 
-import sys, time, argparse, logging, traceback
+import os, sys, time, argparse, logging, traceback
 from StringIO import StringIO
 from uuid import uuid1
 from functools import wraps
@@ -125,12 +125,13 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     def buildDriver(self):
         options = webdriver.ChromeOptions()
-        args = ['--user-data-dir=./ChromeProfile',
+        args = ['--user-data-dir=%s/ChromeProfile' % os.path.dirname(os.path.realpath(__file__)),
                 '--disable-session-crashed-bubble',                
                 '--disable-save-password-bubble',
                 '--disable-permissions-bubbles',
                 '--bwsi',
-                '--disable-extensions']
+                '--disable-extensions',
+                '--no-sandbox']
 
         if self.proxy:
             options.add_argument('--proxy-server=%s' % self.proxy)        
@@ -140,7 +141,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         for arg in args:
             options.add_argument(arg)
 
-        chromedriver = './chromedriver'
+        chromedriver = '%s/chromedriver' % os.path.dirname(os.path.realpath(__file__))
         return webdriver.Chrome(chromedriver, chrome_options=options)
 
 
@@ -254,7 +255,9 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
             diags = self.dumpPlayerDiagInfoDict()
             log.info('diags=%s' % diags)
             assert 'Playing' in diags['Rendering state']
-            time.sleep(1)            
+            time.sleep(1)
+
+        return True
 
 
 if __name__ == '__main__':
