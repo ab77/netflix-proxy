@@ -23,6 +23,9 @@ before_install:
   - sudo dpkg -i google-chrome*.deb
   
 install:
+  - sudo apt-get purge python-openssl
+  - sudo apt-get install libffi-dev python-openssl
+  - sudo -H pip install --upgrade pip
   - sudo -H pip install -r tests/requirements.txt
 
 before_script:
