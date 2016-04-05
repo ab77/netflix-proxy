@@ -2,3 +2,5 @@ requests
 termcolor
 dnspython
 pyopenssl
+selenium
+python_hosts

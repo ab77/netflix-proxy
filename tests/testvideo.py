@@ -19,6 +19,21 @@ from uuid import uuid1
 from functools import wraps
 from pprint import pprint
 
+from settings import (DEFAULT_PROXY,                      
+                      DEFAULT_HOST,
+                      DEFAULT_PLAYBACK,
+                      DEFAULT_TIMEOUT,
+                      DEFAULT_TRIES,
+                      DEFAULT_DELAY,
+                      DEFAULT_BACKOFF,
+                      DEFAULT_TITLEID)
+
+log = logging.getLogger(__name__)        
+log.setLevel(logging.DEBUG)
+stdout = logging.StreamHandler(sys.stdout)
+stdout.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+log.addHandler(stdout)
+
 try:
     from selenium import webdriver
     from selenium.webdriver.common.keys import Keys
@@ -29,25 +44,9 @@ try:
     from selenium.common.exceptions import TimeoutException
 
 except ImportError:
-    sys.stderr.write('ERROR: Python module "selenium" not found, please run "pip install selenium".\n')
-    sys.exit()
-    
-from settings import (DEFAULT_PROXY,                      
-                      DEFAULT_HOST,
-                      DEFAULT_PLAYBACK,
-                      DEFAULT_TIMEOUT,
-                      DEFAULT_TRIES,
-                      DEFAULT_DELAY,
-                      DEFAULT_BACKOFF,
-                      DEFAULT_TITLEID)
-
-
-log = logging.getLogger(__name__)        
-log.setLevel(logging.DEBUG)
-stdout = logging.StreamHandler(sys.stdout)
-stdout.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-log.addHandler(stdout)
-
+    log.error('Python module "selenium" not found, please run "pip install selenium".')
+    exit()
+        
 
 def args():
     parser = argparse.ArgumentParser()
@@ -272,8 +271,8 @@ if __name__ == '__main__':
             nflx.VideoPlaybackTest()
             
         except Exception as e:
-            log.info(traceback.print_exc())
-            sys.exit(1)
+            log.error(traceback.print_exc())
+            exit(1)
             
         finally:
             nflx.driver.close()
