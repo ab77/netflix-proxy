@@ -21,11 +21,12 @@ before_install:
   - sudo apt-get install -y libappindicator1 fonts-liberation
   - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - sudo dpkg -i google-chrome*.deb
+  - sudo apt-get purge python-openssl
+  - sudo apt-get install libffi-dev
+  - sudo apt-get install python-openssl
+  - sudo -H pip install --upgrade pip setuptools
   
 install:
-  - sudo apt-get purge python-openssl
-  - sudo apt-get install libffi-dev python-openssl
-  - sudo -H pip install --upgrade pip
   - sudo -H pip install -r tests/requirements.txt
 
 before_script:
