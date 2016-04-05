@@ -148,24 +148,28 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForHomePage(self):
         self.driver.get('https://%s/' % self.host)
         assert 'Netflix' in self.driver.title
+        return self.driver.current_url
 
 
     @retry(Exception)
     def waitForSignOutPage(self):
         self.driver.get('https://%s/SignOut' % self.host)
         assert 'Netflix' in self.driver.title        
+        return self.driver.current_url
 
 
     @retry(Exception)
     def waitForSignInPage(self):
         self.driver.get('https://%s/Login' % self.host)
         assert 'Netflix' in self.driver.title
+        return self.driver.current_url
 
 
     @retry(Exception)
     def waitForPlayer(self, title_id):
         self.driver.get('https://%s/watch/%s' % (self.host, title_id))
         assert 'Netflix' in self.driver.title
+        return self.driver.current_url
 
  
     @retry(Exception)
@@ -236,15 +240,15 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
 
     def VideoPlaybackTest(self):        
-        self.waitForSignOutPage()
-        self.waitForHomePage()
-        self.waitForSignInPage()
+        log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
+        log.info('self.waitForHomePage()=%s' % self.waitForHomePage())
+        log.info('self.waitForSignInPage()=%s' % self.waitForSignInPage())
         self.waitForSignInEmailElementByName().clear()
         self.waitForSignInEmailElementByName().send_keys(self.email)
         self.waitForSignInPasswordElementByName().clear()
         self.waitForSignInPasswordElementByName().send_keys(self.password)
         self.waitForSignInFormButtonElementByXPath().click()
-        self.waitForPlayer(self.title_id)
+        log.info('self.waitForPlayer()=%s' % self.waitForPlayer(self.title_id))
         self.waitForPlayerControlsByClassName()
         self.enablePlayerDiagnostics()
 
