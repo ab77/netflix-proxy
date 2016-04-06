@@ -369,7 +369,7 @@ def netflix_video_playback_test(email=None, passwd=None):
             print colored(traceback.print_exc(), 'red')
             
         finally:
-            obj.driver.close()
+            nflx.driver.close()
 
     return netflix_video_playback_test_retry()
 
