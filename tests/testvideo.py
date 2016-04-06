@@ -95,8 +95,11 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
                     msg = "%s, retrying in %d seconds (mtries=%d): %s" % (repr(e), mdelay, mtries, str(cdata))
                     if logger:
                         logger.warning(msg)
+                        logger.error(traceback.print_exc())
                     else:
-                         sys.stderr.write('WARNING: %s\n' % msg)
+                         sys.stderr.write('%s\n' % msg)
+                         sys.stderr.write(traceback.print_exc())
+                         
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
@@ -124,6 +127,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         self.driver = self.buildDriver()
 
 
+    @retry(Exception)
     def buildDriver(self):
         options = webdriver.ChromeOptions()
         args = ['--user-data-dir=%s/ChromeProfile' % CWD,
@@ -236,6 +240,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         return self.driver.execute_script(js)
 
 
+    @retry(Exception)
     def dumpPlayerDiagInfoDict(self,):
         s = StringIO(self.getPlayerDiagInfo())
         d = dict()
@@ -252,7 +257,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         return d
 
 
-    def VideoPlaybackTest(self):        
+    def VideoPlaybackTest(self):
         log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
         self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSignOutPage'))
         
@@ -290,26 +295,34 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
             log.info('diags=%s' % diags)
             assert 'Playing' in diags['Rendering state']
             if i % 5 == 0:
-                self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
+                self.driver.save_screenshot('%s/artifacts/%s-%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
             time.sleep(1)
-
+            
         return True
 
 
+def main(arg):
+
+    @retry(Exception)
+    def main_retry(arg):
+        if arg.provider in ['netflix']:
+            nflx = VideoPlaybackTestClassNetflix()
+            nflx.email = arg.email
+            nflx.password = arg.password    
+            nflx.playback_secs = arg.seconds
+            nflx.title_id = str(arg.titleid)
+            try:
+                return nflx.VideoPlaybackTest()
+                
+            except Exception as e:
+                log.error(traceback.print_exc())
+
+            finally:
+                nflx.driver.close()
+
+    return main_retry(arg)
+            
+
 if __name__ == '__main__':
-    arg = args()    
-    if arg.provider in ['netflix']:
-        nflx = VideoPlaybackTestClassNetflix()
-        nflx.email = arg.email
-        nflx.password = arg.password    
-        nflx.playback_secs = arg.seconds
-        nflx.title_id = str(arg.titleid)
-        try:
-            nflx.VideoPlaybackTest()
-            
-        except Exception as e:
-            log.error(traceback.print_exc())
-            exit(1)
-            
-        finally:
-            nflx.driver.close()
+    arg = args()
+    rc = main(arg)
