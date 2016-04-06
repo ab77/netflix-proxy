@@ -36,7 +36,7 @@ install:
 
 before_script:
   - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
-  - sudo python tests/testbuild.py digitalocean --api_token=$do_api_v2_token --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index --destroy
+  - sudo python tests/testbuild.py digitalocean --api_token=$do_api_v2_token --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index
 
 script:
   - sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
