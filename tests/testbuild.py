@@ -354,24 +354,19 @@ def add_hosts(ip):
       
 
 def netflix_video_playback_test(email=None, passwd=None):
-
-    @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
-    def netflix_video_playback_test_retry():      
-        try:
-            nflx = VideoPlaybackTestClassNetflix()
-            nflx.email = email
-            nflx.password = passwd
-            nflx.playback_secs = DEFAULT_PLAYBACK
-            nflx.title_id = str(DEFAULT_TITLEID)
-            return nflx.VideoPlaybackTest()
-            
-        except Exception:
-            print colored(traceback.print_exc(), 'red')
-            
-        finally:
-            nflx.driver.close()
-
-    return netflix_video_playback_test_retry()
+    try:
+        nflx = VideoPlaybackTestClassNetflix()
+        nflx.email = email
+        nflx.password = passwd
+        nflx.playback_secs = DEFAULT_PLAYBACK
+        nflx.title_id = str(DEFAULT_TITLEID)
+        return nflx.VideoPlaybackTest()
+        
+    except Exception:
+        print colored(traceback.print_exc(), 'red')
+        
+    finally:
+        nflx.driver.close()
 
 
 if __name__ == '__main__':
@@ -423,12 +418,18 @@ if __name__ == '__main__':
             if arg.netflix_email and arg.netflix_passwd:
                 print colored('Update hosts file entries with ipaddr = %s...' % droplet_ip, 'yellow')
                 result = add_hosts(droplet_ip)
-                if not result: exit(1)            
+                if not result: exit(1)        
 
                 print colored('Hosts: %s' % get_hosts(), 'cyan')
-            
-                print colored('Netflix video playback test via proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-                rc = netflix_video_playback_test(email=arg.netflix_email, passwd=arg.netflix_passwd)
+                
+                rc = 1
+                for i in xrange(1, DEFAULT_TRIES):
+                    print colored('Netflix video playback test try %s/%s, via proxy on Droplet with name = %s, ipaddr = %s...' % (str(i),
+                                                                                                                                  DEFAULT_TRIES,
+                                                                                                                                  name,
+                                                                                                                                  droplet_ip), 'yellow')
+                    rc = netflix_video_playback_test(email=arg.netflix_email,
+                                                     passwd=arg.netflix_passwd)
                 if not rc: exit(1)
 
             print colored('Tested, OK..', 'green')

@@ -95,7 +95,7 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
                     msg = "%s, retrying in %d seconds (mtries=%d): %s" % (repr(e), mdelay, mtries, str(cdata))
                     if logger:
                         logger.warning(msg)
-                        logger.error(traceback.print_exc())
+                        logging.exception("Exception")
                     else:
                          sys.stderr.write('%s\n' % msg)
                          sys.stderr.write(traceback.print_exc())
@@ -258,24 +258,6 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
 
     def VideoPlaybackTest(self):
-
-        @retry(Exception)
-        def video_playback_test_retry():
-            self.enablePlayerDiagnostics()
-            for i in xrange(1, self.playback_secs):
-                self.enablePlayerControls()
-                log.info('time=%s' % (self.waitForSliderByClassName().text))
-                self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSlider'))
-
-                diags = self.dumpPlayerDiagInfoDict()
-                log.info('diags=%s' % diags)
-                assert 'Playing' in diags['Rendering state']
-                if i % 5 == 0:
-                    self.driver.save_screenshot('%s/artifacts/%s-%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
-                time.sleep(1)
-                
-            return True          
-        
         log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
         self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSignOutPage'))
         
@@ -301,27 +283,40 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
         self.waitForPlayerControlsByClassName()
         self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForPlayerControls'))
+    
+        self.enablePlayerDiagnostics()
+        for i in xrange(1, self.playback_secs):
+            self.enablePlayerControls()
+            log.info('time=%s' % (self.waitForSliderByClassName().text))
+            self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSlider'))
 
-        return video_playback_test_retry()
-            
+            diags = self.dumpPlayerDiagInfoDict()
+            log.info('diags=%s' % diags)
+            assert 'Playing' in diags['Rendering state']
+            if i % 5 == 0:
+                self.driver.save_screenshot('%s/artifacts/%s-%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
+            time.sleep(1)
+
+        return True
+        
 
 if __name__ == '__main__':
     arg = args()
     if arg.provider in ['netflix']:
-        nflx = VideoPlaybackTestClassNetflix()
-        nflx.email = arg.email
-        nflx.password = arg.password    
-        nflx.playback_secs = arg.seconds
-        nflx.title_id = str(arg.titleid)
         try:
+            nflx = VideoPlaybackTestClassNetflix()
+            nflx.email = arg.email
+            nflx.password = arg.password    
+            nflx.playback_secs = arg.seconds
+            nflx.title_id = str(arg.titleid)
             rc = nflx.VideoPlaybackTest()
             if rc:
                 exit(0)
             else:
                 exit(1)
-            
+
         except Exception:
-            pass
+            logging.exception("Exception")
 
         finally:
             nflx.driver.close()
