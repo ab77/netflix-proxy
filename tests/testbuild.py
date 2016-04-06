@@ -356,21 +356,20 @@ def add_hosts(ip):
 def netflix_video_playback_test(email=None, passwd=None):
 
     @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
-    def netflix_video_playback_test_retry(obj):
+    def netflix_video_playback_test_retry(obj):      
         try:
+            obj = VideoPlaybackTestClassNetflix()
+            obj.email = email
+            obj.password = passwd
+            obj.playback_secs = DEFAULT_PLAYBACK
+            obj.title_id = str(DEFAULT_TITLEID)
             return obj.VideoPlaybackTest()
             
-        except Exception as e:
+        except Exception:
             print colored(traceback.print_exc(), 'red')
             
         finally:
             obj.driver.close()
-
-    nflx = VideoPlaybackTestClassNetflix()
-    nflx.email = email
-    nflx.password = passwd
-    nflx.playback_secs = DEFAULT_PLAYBACK
-    nflx.title_id = str(DEFAULT_TITLEID)
 
     return netflix_video_playback_test_retry(nflx)
 
