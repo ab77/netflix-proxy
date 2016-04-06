@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time, inspect, traceback, argparse, json, uuid
+import os, time, inspect, traceback, argparse, json, uuid
 from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
@@ -32,13 +32,7 @@ try:
     from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
 except ImportError:
     stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
-    exit(1)    
-
-try:
-    from python_hosts import Hosts, HostsEntry
-except ImportError:
-    stderr.write('ERROR: Python module "python_hosts" not found, please run "pip install python-hosts".\n')
-    exit(1) 
+    exit(1)
 
 
 PROXY_HOST = None
@@ -128,8 +122,6 @@ def args():
     digitalocean.add_argument('--tb_passwd', type=str, required=False, help='HE tunnel broker password')
     digitalocean.add_argument('--tb_key', type=str, required=False, help='HE tunnel broker update key')
     digitalocean.add_argument('--tb_index', type=int, required=False, default=DEFAULT_HE_TB_INDEX, help='HE tunnel broker tunnel index (default: %s)' % str(DEFAULT_HE_TB_INDEX))
-    digitalocean.add_argument('--netflix_email', type=str, required=False, help='Netflix account email')
-    digitalocean.add_argument('--netflix_passwd', type=str, required=False, help='Netflix password')
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
     args = parser.parse_args()
@@ -338,35 +330,20 @@ def reboot_test(ip):
     return docker_test_retry(ip)
 
 
-def get_hosts():
-    hosts = Hosts()
-    return hosts
+def set_sysdns(ips):
+    # quick hack, clobbers /etc/resolv.conf
+    ns = None
+    if isinstance(ips, unicode):
+        ns = 'nameserver %s' % ips
+    elif isinstance(ips, list):
+        for i in xrange(0, len(ips)):
+            ips[i] = 'nameserver %s'% ips[i]            
+        ns = '\n'.join(ips)
+    if ns: return os.system('printf "%s\n" | sudo tee /etc/resolv.conf' % ns)
 
 
-def add_hosts(ip):
-    hosts = Hosts()
-    entry = HostsEntry(entry_type='ipv4',
-                       address='%s' % ip,
-                       names=['netflix.com', 'www.netflix.com', 'nflxvideo.net'])
-    hosts.add([entry])
-    hosts.write()
-    return hosts
-      
-
-def netflix_video_playback_test(email=None, passwd=None):
-    try:
-        nflx = VideoPlaybackTestClassNetflix()
-        nflx.email = email
-        nflx.password = passwd
-        nflx.playback_secs = DEFAULT_PLAYBACK
-        nflx.title_id = str(DEFAULT_TITLEID)
-        return nflx.VideoPlaybackTest()
-        
-    except Exception:
-        print colored(traceback.print_exc(), 'red')
-        
-    finally:
-        nflx.driver.close()
+def get_sysdns():
+    return dns.resolver.Resolver().nameservers
 
 
 if __name__ == '__main__':
@@ -415,22 +392,12 @@ if __name__ == '__main__':
             rc = netflix_test(ip=droplet_ip)
             if not rc: exit(1)
 
-            if arg.netflix_email and arg.netflix_passwd:
-                print colored('Update hosts file entries with ipaddr = %s...' % droplet_ip, 'yellow')
-                result = add_hosts(droplet_ip)
-                if not result: exit(1)        
+            print colored('get_sysdns(): %s' % get_sysdns(), 'grey')
+            print colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow')
+            rc = set_sysdns(droplet_ip)
+            if rc > 0: exit(1)
 
-                print colored('Hosts: %s' % get_hosts(), 'cyan')
-                
-                rc = 1
-                for i in xrange(1, DEFAULT_TRIES):
-                    print colored('Netflix video playback test try %s/%s, via proxy on Droplet with name = %s, ipaddr = %s...' % (str(i),
-                                                                                                                                  DEFAULT_TRIES,
-                                                                                                                                  name,
-                                                                                                                                  droplet_ip), 'yellow')
-                    rc = netflix_video_playback_test(email=arg.netflix_email,
-                                                     passwd=arg.netflix_passwd)
-                if not rc: exit(1)
+            print colored('get_sysdns(): %s' % get_sysdns(), 'cyan')
 
             print colored('Tested, OK..', 'green')
             exit(0)
