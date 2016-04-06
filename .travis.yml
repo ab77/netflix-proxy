@@ -40,3 +40,6 @@ before_script:
 
 script:
   - sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
+
+after_script:
+  - echo $(grep nameserver /etc/resolv.conf | awk '{print $2}')
