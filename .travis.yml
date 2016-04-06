@@ -5,7 +5,6 @@ python:
 
 addons:
   artifacts:
-    s3_region: "eu-central-1"
     paths:
       - $(ls tests/artifacts/*.png | tr "\n" ":")
 
