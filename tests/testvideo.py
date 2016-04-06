@@ -321,7 +321,7 @@ if __name__ == '__main__':
                 exit(1)
             
         except Exception:
-            log.error(traceback.print_exc())
+            pass
 
         finally:
             nflx.driver.close()
