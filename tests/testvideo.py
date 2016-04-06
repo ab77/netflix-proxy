@@ -258,6 +258,24 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
 
     def VideoPlaybackTest(self):
+
+        @retry(Exception)
+        def video_playback_test_retry():
+            self.enablePlayerDiagnostics()
+            for i in xrange(1, self.playback_secs):
+                self.enablePlayerControls()
+                log.info('time=%s' % (self.waitForSliderByClassName().text))
+                self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSlider'))
+
+                diags = self.dumpPlayerDiagInfoDict()
+                log.info('diags=%s' % diags)
+                assert 'Playing' in diags['Rendering state']
+                if i % 5 == 0:
+                    self.driver.save_screenshot('%s/artifacts/%s-%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
+                time.sleep(1)
+                
+            return True          
+        
         log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
         self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSignOutPage'))
         
@@ -284,45 +302,26 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         self.waitForPlayerControlsByClassName()
         self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForPlayerControls'))
 
-        self.enablePlayerDiagnostics()
-
-        for i in xrange(1, self.playback_secs):
-            self.enablePlayerControls()
-            log.info('time=%s' % (self.waitForSliderByClassName().text))
-            self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForSlider'))
-
-            diags = self.dumpPlayerDiagInfoDict()
-            log.info('diags=%s' % diags)
-            assert 'Playing' in diags['Rendering state']
-            if i % 5 == 0:
-                self.driver.save_screenshot('%s/artifacts/%s-%s.png' % (CWD, 'VideoPlaybackTest', str(i)))
-            time.sleep(1)
-            
-        return True
-
-
-def main(arg):
-
-    @retry(Exception)
-    def main_retry(arg):
-        if arg.provider in ['netflix']:
-            nflx = VideoPlaybackTestClassNetflix()
-            nflx.email = arg.email
-            nflx.password = arg.password    
-            nflx.playback_secs = arg.seconds
-            nflx.title_id = str(arg.titleid)
-            try:
-                return nflx.VideoPlaybackTest()
-                
-            except Exception:
-                log.warning('main_retry()')
-
-            finally:
-                nflx.driver.close()
-
-    return main_retry(arg)
+        return video_playback_test_retry()
             
 
 if __name__ == '__main__':
     arg = args()
-    rc = main(arg)
+    if arg.provider in ['netflix']:
+        nflx = VideoPlaybackTestClassNetflix()
+        nflx.email = arg.email
+        nflx.password = arg.password    
+        nflx.playback_secs = arg.seconds
+        nflx.title_id = str(arg.titleid)
+        try:
+            rc = nflx.VideoPlaybackTest()
+            if rc:
+                exit(0)
+            else:
+                exit(1)
+            
+        except Exception:
+            log.error(traceback.print_exc())
+
+        finally:
+            nflx.driver.close()
