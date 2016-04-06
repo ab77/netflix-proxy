@@ -210,7 +210,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception)
     def waitForPlayerControlsByClassName(self):
-        self.driver.save_screenshot('%s.png' % 'waitForPlayerControls')
+        self.driver.save_screenshot('%s/artifacts/%s.png' % (CWD, 'waitForPlayerControls'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'player-controls-wrapper'))
         )    
