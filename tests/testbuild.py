@@ -434,7 +434,7 @@ if __name__ == '__main__':
             print colored('Tested, OK..', 'green')
             exit(0)
             
-        except Exception as e:
+        except Exception:
             print colored(traceback.print_exc(), 'red')
             exit(1)
             
