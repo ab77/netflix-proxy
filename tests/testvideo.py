@@ -306,6 +306,7 @@ if __name__ == '__main__':
     arg = args()
     if arg.provider in ['netflix']:
         rc = arg.tries
+        result = False
         for i in xrange(0, arg.tries):
             log.info('tries=%s/%s' % (str(i+1), arg.tries))
             nflx = VideoPlaybackTestClassNetflix()
@@ -314,11 +315,15 @@ if __name__ == '__main__':
             nflx.playback_secs = arg.seconds
             nflx.title_id = str(arg.titleid)
             try:
-                rc = nflx.VideoPlaybackTest()
-                nflx.driver.close()
+                result = nflx.VideoPlaybackTest()
+                log.info('result=%s' % str(i))
+                if result:
+                    rc = 0
+                    break
             except:
                 pass
             
-            log.info('rc=%s' % str(i))
-            if rc == 0: exit(0)
+            finally:
+                nflx.driver.close()
+
         exit(rc)

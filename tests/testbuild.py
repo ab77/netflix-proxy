@@ -6,9 +6,6 @@ from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
 from socket import socket, gethostbyname
 from functools import wraps
-from testvideo import (VideoPlaybackTestClassNetflix,
-                       DEFAULT_TITLEID,
-                       DEFAULT_PLAYBACK)
 
 try:
     import requests
@@ -124,6 +121,7 @@ def args():
     digitalocean.add_argument('--tb_index', type=int, required=False, default=DEFAULT_HE_TB_INDEX, help='HE tunnel broker tunnel index (default: %s)' % str(DEFAULT_HE_TB_INDEX))
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
+    digitalocean.add_argument('--ipaddr', type=str, required=False, help='Droplet ipaddr')
     args = parser.parse_args()
     return args
 
@@ -212,12 +210,24 @@ def get_droplet_id_by_name(s, name):
 def get_droplet_ip_by_name(s, name):
     response = s.get('%s/droplets' % BASE_API_URL)
     d = json.loads(response.text)
-    droplet_id = None
+    droplet_ip = None
     for droplet in d['droplets']:
         if name in droplet['name']:
             droplet_ip = droplet['networks']['v4'][0]['ip_address']
             
     return droplet_ip
+
+
+def get_droplet_name_by_ip(s, ip):
+    response = s.get('%s/droplets' % BASE_API_URL)
+    d = json.loads(response.text)
+    droplet_name = None
+    for droplet in d['droplets']:
+        droplet_ip = droplet['networks']['v4'][0]['ip_address']
+        if ip in droplet_ip:
+            droplet_name = droplet['name']
+            
+    return droplet_name
 
 
 def ssh_run_command(ip, command):
@@ -358,6 +368,17 @@ if __name__ == '__main__':
                          'https': 'https://%s:%s' % (PROXY_HOST, PROXY_PORT)}
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
 
+        if arg.ipaddr and arg.destroy:
+            droplet_name = get_droplet_name_by_ip(s, arg.ipaddr)
+            droplet_id = get_droplet_id_by_name(s, droplet_name)
+            print colored('Destroying Droplet ipaddr=%s name=%s id=%s...\n' % (arg.ipaddr,
+                                                                               droplet_name,
+                                                                               droplet_id), 'red')
+            time.sleep(DEFAULT_SLEEP)
+            d = destroy_droplet(s, droplet_id)
+            pprint(d)
+            exit(0)
+    
         if arg.list_regions:
             pprint(get_regions(s))
             exit(0)
