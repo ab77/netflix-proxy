@@ -4,4 +4,3 @@ termcolor
 dnspython
 pyopenssl
 selenium
-dnspython
