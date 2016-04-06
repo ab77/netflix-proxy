@@ -115,18 +115,6 @@ class BaseVideoPlaybackTestClass():
     proxy = DEFAULT_PROXY
 
 
-class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):    
-
-    host = DEFAULT_HOST
-    playback_secs = DEFAULT_PLAYBACK
-    timeout = DEFAULT_TIMEOUT
-    title_id = DEFAULT_TITLEID
-
-
-    def __init__(self):
-        self.driver = self.buildDriver()
-
-
     @retry(Exception)
     def buildDriver(self):
         options = webdriver.ChromeOptions()
@@ -148,6 +136,18 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
         chromedriver = '%s/chromedriver' % CWD
         return webdriver.Chrome(chromedriver, chrome_options=options)
+
+    
+    def __init__(self):
+        self.driver = self.buildDriver()
+
+        
+class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):    
+
+    host = DEFAULT_HOST
+    playback_secs = DEFAULT_PLAYBACK
+    timeout = DEFAULT_TIMEOUT
+    title_id = DEFAULT_TITLEID
 
 
     @retry(Exception)
