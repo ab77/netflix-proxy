@@ -315,7 +315,8 @@ def main(arg):
                 return nflx.VideoPlaybackTest()
                 
             except Exception as e:
-                log.error(traceback.print_exc())
+                log.warning(traceback.print_exc())
+                log.warning(repr(e))
 
             finally:
                 nflx.driver.close()
