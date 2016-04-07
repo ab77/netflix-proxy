@@ -222,18 +222,60 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 12. SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
 
 ### Automated Tests
-I've linked this project with `Travis CI` to automatically test the build. The helper Python script `__testbuild.py` now runs automatically after every commit. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that both `Docker` containers start; and (b) the `built.sh` script outputs the correct message at the end. The test `Droplet` is destroyed and the end of the run.
 
-The `__testbuild.py` script can also be used to programatically deploy `Droplets` from the command line as follows:
+#### Test Build
+This project is linked with `Travis CI` to deploy and test the project automatically. The Python script `testbuild.py` is used to deploy and test `netflix-proxy`. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that all `Docker` containers start; (b) the `built.sh` script outputs the correct message at the end; (c) all the relevant services survive a reboot; and (d) proxy is able to comunicate with Netflix over SSL.
 
-	python ./__testbuild.py digitalocean --api_token abcdef0123456789... --fingerprint 'aa:bb:cc:dd:...' --region 'abc1'
-	
-* `--api_token abcdef0123456789...` is your `DigitalOCean` API v2 token, which you can generate [here](https://cloud.digitalocean.com/settings/applications).
-* `--fingerprint aa:bb:cc:dd:...` are your personal SSH key fingerprint(s) quoted and separated by spaces. You can manage your SSH keys [here](https://cloud.digitalocean.com/settings/security). If you don't specify a fingerprint, it will default to my test one, which means you **won't** be able to SSH into your `Droplet`.
-* `--region abc1` is the region where you want the `Droplet` deployed. The default is `nyc3`, but you can use `--list_regions` to see the available choices.
-* `--help` parameter will also list all of the available command line options to pass to the script.
+The `testbuild.py` script can also be used to programatically deploy `Droplets` from the command line:
+```
+usage: testbuild.py digitalocean [-h] --api_token API_TOKEN
+                                 [--client_ip CLIENT_IP]
+                                 [--fingerprint FINGERPRINT [FINGERPRINT ...]]
+                                 [--region REGION] [--branch BRANCH]
+                                 [--tb_user TB_USER] [--tb_passwd TB_PASSWD]
+                                 [--tb_key TB_KEY] [--tb_index TB_INDEX]
+                                 [--create] [--destroy] [--list_regions]
+                                 [--name NAME]
 
-Note, you will need a working `Python 2.7` environment and the modules listed in `requirements.txt` (run `pip install -r requirements.txt`).
+optional arguments:
+  -h, --help            show this help message and exit
+  --api_token API_TOKEN
+                        DigitalOcean API v2 secret token
+  --client_ip CLIENT_IP
+                        client IP to secure Droplet
+  --fingerprint FINGERPRINT [FINGERPRINT ...]
+                        SSH key fingerprint
+  --region REGION       region to deploy into; use --list_regions for a list
+  --branch BRANCH       netflix-proxy branch to deploy (default: master)
+  --tb_user TB_USER     HE tunnel broker username
+  --tb_passwd TB_PASSWD
+                        HE tunnel broker password
+  --tb_key TB_KEY       HE tunnel broker update key
+  --tb_index TB_INDEX   HE tunnel broker tunnel index (default: 1)
+  --create              Create droplet
+  --destroy             Destroy droplet
+  --list_regions        list all available regions
+  --name NAME           Droplet name
+```
+
+Note, you will need a working `Python 2.7` environment and the modules listed in `tests/requirements.txt` (run `pip install -r tests/requirements.txt`).
+
+#### Test Video Playback
+After a successfull build deployment, `testvideo.py` is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. [1,000 Times Good Night](https://www.netflix.com/title/80001898)).
+
+```
+usage: testvideo.py netflix [-h] --email EMAIL --password PASSWORD
+                            [--seconds SECONDS] [--titleid TITLEID]
+                            [--tries TRIES]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --email EMAIL        Netflix username
+  --password PASSWORD  Netflix password
+  --seconds SECONDS    playback time per title in seconds (default: 60)
+  --titleid TITLEID    Netflix title_id to play (default: 80001898)
+  --tries TRIES        Playback restart attempts (default: 4)
+```
 
 ### IPv6 and Docker
 This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6] Having said that, the current iteration uses `HE Eectric's` free tunnel broker service to provide IPv6 connectivity, since `HE Electric` is geo-located in the US, Netflix geoblocking (or `geo-bollocking`, if you like), allows the traffic through.
