@@ -12,7 +12,7 @@ fi
 
 body='{
 "request": {
-  "message": "Scheduled build test"
+  "message": "Scheduled build test",
   "branch":"${branch}"
 }}'
 
