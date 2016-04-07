@@ -119,9 +119,10 @@ def args():
     digitalocean.add_argument('--tb_passwd', type=str, required=False, help='HE tunnel broker password')
     digitalocean.add_argument('--tb_key', type=str, required=False, help='HE tunnel broker update key')
     digitalocean.add_argument('--tb_index', type=int, required=False, default=DEFAULT_HE_TB_INDEX, help='HE tunnel broker tunnel index (default: %s)' % str(DEFAULT_HE_TB_INDEX))
-    digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet on exit')
+    digitalocean.add_argument('--create', action='store_true', required=False, help='Create droplet')
+    digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
-    digitalocean.add_argument('--ipaddr', type=str, required=False, help='Droplet ipaddr')
+    digitalocean.add_argument('--name', type=str, required=False, help='Droplet name')
     args = parser.parse_args()
     return args
 
@@ -359,7 +360,11 @@ def get_sysdns():
 if __name__ == '__main__':
     arg = args()
     if arg.api_token:
-        name = str(uuid.uuid4())
+        if not arg.name:
+            name = str(uuid.uuid4())
+        else:
+            name = arg.name
+            
         droplet_id = None
         s = requests.Session()
         if PROXY_HOST and PROXY_PORT:
@@ -367,70 +372,69 @@ if __name__ == '__main__':
             s.proxies = {'http' : 'http://%s:%s' % (PROXY_HOST, PROXY_PORT),
                          'https': 'https://%s:%s' % (PROXY_HOST, PROXY_PORT)}
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
-
-        if arg.ipaddr and arg.destroy:
-            droplet_name = get_droplet_name_by_ip(s, arg.ipaddr)
-            droplet_id = get_droplet_id_by_name(s, droplet_name)
-            print colored('Destroying Droplet ipaddr=%s name=%s id=%s...\n' % (arg.ipaddr,
-                                                                               droplet_name,
-                                                                               droplet_id), 'red')
-            time.sleep(DEFAULT_SLEEP)
-            d = destroy_droplet(s, droplet_id)
-            pprint(d)
-            exit(0)
     
         if arg.list_regions:
             pprint(get_regions(s))
             exit(0)
+
+        if arg.create:
+            try:
+                print colored('Creating Droplet %s...' % name, 'yellow')
+                d = create_droplet(s, name, arg.client_ip,
+                                   arg.fingerprint, arg.region, branch=arg.branch,
+                                   tb_user=arg.tb_user, tb_passwd=arg.tb_passwd, tb_key=arg.tb_key, tb_index=arg.tb_index)                
+                pprint(d)
+                
+                droplet_ip = get_droplet_ip_by_name(s, name)
+                print colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan')
+
+                print colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                result = docker_test(droplet_ip)
+                if not result: exit(1)
+                
+                print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                rc = netflix_proxy_test(droplet_ip)
+                if rc > 0: exit(rc)
         
-        try:
-            print colored('Creating Droplet %s...' % name, 'yellow')
-            d = create_droplet(s, name, arg.client_ip,
-                               arg.fingerprint, arg.region, branch=arg.branch,
-                               tb_user=arg.tb_user, tb_passwd=arg.tb_passwd, tb_key=arg.tb_key, tb_index=arg.tb_index)                
-            pprint(d)
-            
-            droplet_ip = get_droplet_ip_by_name(s, name)
-            print colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan')
+                print colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                result = reboot_test(droplet_ip)
+                if not result: exit(1)
 
-            print colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-            result = docker_test(droplet_ip)
-            if not result: exit(1)
-            
-            print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-            rc = netflix_proxy_test(droplet_ip)
-            if rc > 0: exit(rc)
-    
-            print colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-            result = reboot_test(droplet_ip)
-            if not result: exit(1)
+                print colored('SNIProxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                rc = netflix_openssl_test(ip=droplet_ip)
+                if not rc: exit(1)
 
-            print colored('SNIProxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-            rc = netflix_openssl_test(ip=droplet_ip)
-            if not rc: exit(1)
+                print colored('SNIProxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                rc = netflix_test(ip=droplet_ip)
+                if not rc: exit(1)
 
-            print colored('SNIProxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
-            rc = netflix_test(ip=droplet_ip)
-            if not rc: exit(1)
+                print colored('get_sysdns(): %s' % get_sysdns(), 'grey')
+                print colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow')
+                rc = set_sysdns(droplet_ip)
+                if rc > 0: exit(1)
 
-            print colored('get_sysdns(): %s' % get_sysdns(), 'grey')
-            print colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow')
-            rc = set_sysdns(droplet_ip)
-            if rc > 0: exit(1)
+                print colored('get_sysdns(): %s' % get_sysdns(), 'cyan')
 
-            print colored('get_sysdns(): %s' % get_sysdns(), 'cyan')
+                print colored('Tested, OK..', 'green')
+                
+            except Exception:
+                print colored(traceback.print_exc(), 'red')
+                exit(1)
+                
+            finally:
+                if arg.destroy:
+                    droplet_id = get_droplet_id_by_name(s, name)
+                    if droplet_id:
+                        print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
+                        d = destroy_droplet(s, droplet_id)
+                        pprint(d)
+                        
+        elif arg.destroy and arg.name and not arg.create:
+            droplet_id = get_droplet_id_by_name(s, arg.name)
+            print colored('Destroying Droplet name = %s id = %s...\n' % (arg.name,
+                                                                         droplet_id), 'red')
+            time.sleep(DEFAULT_SLEEP)
+            pprint(destroy_droplet(s, droplet_id))            
 
-            print colored('Tested, OK..', 'green')
-            exit(0)
-            
-        except Exception:
-            print colored(traceback.print_exc(), 'red')
-            exit(1)
-            
-        finally:
-            if arg.destroy:
-                droplet_id = get_droplet_id_by_name(s, name)
-                if droplet_id:
-                    print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
-                    d = destroy_droplet(s, droplet_id)
-                    pprint(d)
+        else:
+            print('No action specified: [--create] [--destroy] [--list_regions]')

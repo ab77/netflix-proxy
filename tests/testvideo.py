@@ -54,19 +54,21 @@ except ImportError:
 def args():
     parser = argparse.ArgumentParser()
     sp = parser.add_subparsers()    
-    html5 = sp.add_parser('netflix')
-    html5.add_argument('provider', action='store_const', const='netflix', help=argparse.SUPPRESS)
-    html5.add_argument('--email', type=str, required=True, help='Netflix username')
-    html5.add_argument('--password', type=str, required=True, help='Netflix password')
-    html5.add_argument('--seconds', type=int, default=DEFAULT_PLAYBACK, help='playback time per title in seconds (default: %i)' % DEFAULT_PLAYBACK)
-    html5.add_argument('--titleid', type=int, default=DEFAULT_TITLEID, help='Netflix title_id to play (default: %i)' % DEFAULT_TITLEID)
-    html5.add_argument('--tries', type=int, default=DEFAULT_TRIES, help='Playback restart attempts (default: %i)' % DEFAULT_TRIES)
+    netflix = sp.add_parser('netflix')
+    netflix.add_argument('provider', action='store_const', const='netflix', help=argparse.SUPPRESS)
+    netflix.add_argument('--email', type=str, required=True, help='Netflix username')
+    netflix.add_argument('--password', type=str, required=True, help='Netflix password')
+    netflix.add_argument('--seconds', type=int, default=DEFAULT_PLAYBACK, help='playback time per title in seconds (default: %i)' % DEFAULT_PLAYBACK)
+    netflix.add_argument('--titleid', type=int, default=DEFAULT_TITLEID, help='Netflix title_id to play (default: %i)' % DEFAULT_TITLEID)
+    netflix.add_argument('--tries', type=int, default=DEFAULT_TRIES, help='Playback restart attempts (default: %i)' % DEFAULT_TRIES)
+    hulu = sp.add_parser('hulu')
+    hulu.add_argument('provider', action='store_const', const='hulu', help=argparse.SUPPRESS)
     args = parser.parse_args()
     log.info(args)
     return args
 
 
-def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, logger=log, cdata='method=%s()' % inspect.stack()[0][3]):
+def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, logger=log, cdata=inspect.stack()[0][3]):
     """Retry calling the decorated function using an exponential backoff.
 
     http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
@@ -101,7 +103,6 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
                     else:
                          sys.stderr.write('%s\n' % msg)
                          sys.stderr.write(traceback.print_exc())
-                         
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
@@ -117,7 +118,7 @@ class BaseVideoPlaybackTestClass():
     proxy = DEFAULT_PROXY
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='buildDriver')
     def buildDriver(self):
         options = webdriver.ChromeOptions()
         args = ['--user-data-dir=%s/ChromeProfile' % CWD,
@@ -152,75 +153,66 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     title_id = DEFAULT_TITLEID
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForHomePage')
     def waitForHomePage(self):
         self.driver.get('https://%s/' % self.host)
-        assert 'Netflix' in self.driver.title
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForHomePage'))
+        assert 'Netflix' in self.driver.title        
         return self.driver.current_url
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSignOutPage')
     def waitForSignOutPage(self):
         self.driver.get('https://%s/SignOut' % self.host)
         assert 'Netflix' in self.driver.title        
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignOutPage'))
         return self.driver.current_url
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSignInPage')
     def waitForSignInPage(self):
         self.driver.get('https://%s/Login' % self.host)
         assert 'Netflix' in self.driver.title
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInPage'))
         return self.driver.current_url
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForPlayer')
     def waitForPlayer(self, title_id):
         url = 'https://%s/watch/%s' % (self.host, title_id)
         self.driver.get(url)
         assert 'Netflix' in self.driver.title
         assert url in self.driver.current_url
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForPlayer'))
         return self.driver.current_url
 
  
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSignInEmailElementByName')
     def waitForSignInEmailElementByName(self):
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInEmailElement'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.NAME, 'email'))
         )
 
   
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSignInPasswordElementByName')
     def waitForSignInPasswordElementByName(self):
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInPasswordElement'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.NAME, 'password'))
         )
    
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSignInFormButtonElementByXPath')
     def waitForSignInFormButtonElementByXPath(self):
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInFormButtonElement'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.XPATH, "//button[@type='submit']"))
         )
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForPlayerControlsByClassName')
     def waitForPlayerControlsByClassName(self):
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForPlayerControls'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'player-controls-wrapper'))
         )    
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='waitForSliderByClassName')
     def waitForSliderByClassName(self):
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSlider'))
         return WebDriverWait(self.driver, self.timeout).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'player-slider'))
         )
@@ -236,13 +228,13 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
         actions.send_keys(Keys.END).perform()
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='getPlayerDiagInfo')
     def getPlayerDiagInfo(self):
         js = """return document.evaluate('//*[@id="netflix-player"]/div[1]/div/div[2]/textarea', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;"""
         return self.driver.execute_script(js)
 
 
-    @retry(Exception)
+    @retry(Exception, cdata='dumpPlayerDiagInfoDict')
     def dumpPlayerDiagInfoDict(self,):
         s = StringIO(self.getPlayerDiagInfo())
         d = dict()
@@ -261,44 +253,27 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     def VideoPlaybackTest(self):
         log.info('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignOutPage'))
-        
         log.info('self.waitForHomePage()=%s' % self.waitForHomePage())
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForHomePage'))
-        
         log.info('self.waitForSignInPage()=%s' % self.waitForSignInPage())
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInPage'))
-        
         self.waitForSignInEmailElementByName().clear()
         self.waitForSignInEmailElementByName().send_keys(self.email)
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInEmailElement'))
-        
         self.waitForSignInPasswordElementByName().clear()
         self.waitForSignInPasswordElementByName().send_keys(self.password)
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInPasswordElement'))
- 
         self.waitForSignInFormButtonElementByXPath().click()
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSignInFormButtonElement'))
-
         log.info('self.waitForPlayer()=%s' % self.waitForPlayer(self.title_id))
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForPlayer'))
-
         self.waitForPlayerControlsByClassName()
-        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForPlayerControls'))
     
         self.enablePlayerDiagnostics()
         for i in xrange(1, self.playback_secs):
             self.enablePlayerControls()
             log.info('time=%s' % (self.waitForSliderByClassName().text))
-            self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'waitForSlider'))
-
             diags = self.dumpPlayerDiagInfoDict()
             log.info('diags=%s' % diags)
             assert 'Playing' in diags['Rendering state']
-            if i % 5 == 0:
-                self.driver.save_screenshot('%s/%s-%s.png' % (ARTIFACTS_DIR, 'VideoPlaybackTest', str(i)))
             time.sleep(1)
 
+        self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'VideoPlaybackTest'))
+        
         return True
         
 
@@ -327,3 +302,6 @@ if __name__ == '__main__':
                 nflx.driver.close()
 
         exit(rc)
+
+    elif arg.provider in ['hulu']:
+        log.info('Not implemented')
