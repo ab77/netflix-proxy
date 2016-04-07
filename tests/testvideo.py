@@ -63,7 +63,6 @@ def args():
     hulu = sp.add_parser('hulu')
     hulu.add_argument('provider', action='store_const', const='hulu', help=argparse.SUPPRESS)
     args = parser.parse_args()
-    log.info(args)
     return args
 
 
