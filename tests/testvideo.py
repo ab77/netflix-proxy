@@ -52,7 +52,7 @@ except ImportError:
 
 def args():
     parser = argparse.ArgumentParser()
-    sp = parser.add_subparsers(help='version %s' % VERSION)    
+    sp = parser.add_subparsers(help='version %s' % VERSION)
     netflix = sp.add_parser('netflix')
     netflix.add_argument('provider', action='store_const', const='netflix', help=argparse.SUPPRESS)
     netflix.add_argument('--email', type=str, required=True, help='Netflix username')
