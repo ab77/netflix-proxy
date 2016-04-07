@@ -1,0 +1,6 @@
+requests[secure]
+urllib3[secure]
+termcolor
+dnspython
+pyopenssl
+selenium

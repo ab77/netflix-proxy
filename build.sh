@@ -15,7 +15,7 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
 fi
 
 # gobals
-VERSION=2.3
+VERSION=2.4
 TIMEOUT=10
 BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 SDNS_ADMIN_PORT=43867
