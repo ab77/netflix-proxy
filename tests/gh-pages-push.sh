@@ -16,7 +16,7 @@ if [ "${TRAVIS_REPO_SLUG}" == "${GH_REPO}" ] && [ "${TRAVIS_PULL_REQUEST}" == "f
 
   cd gh-pages
   rm -rf artifacts && mkdir -p artifacts
-  cp -Rf ${HOME}/artifacts artifacts
+  cp -Rf ${HOME}/artifacts/*.png artifacts/
   ls -la artifacts
   git add -f .
   git commit -m "Auto-push from Travis build ${TRAVIS_BUILD_NUMBER}"
