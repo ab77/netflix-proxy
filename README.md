@@ -279,7 +279,7 @@ optional arguments:
 
 Finally, a screenshot is saved at the end of the test, which is uploaded to the `gh-pages` branch.
 
-![VideoPlaybackTest](https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/artifacts)
+![VideoPlaybackTest](https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/VideoPlaybackTest.png)
 
 ### IPv6 and Docker
 This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).[n6] Having said that, the current iteration uses `HE Eectric's` free tunnel broker service to provide IPv6 connectivity, since `HE Electric` is geo-located in the US, Netflix geoblocking (or `geo-bollocking`, if you like), allows the traffic through.
