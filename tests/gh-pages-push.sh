@@ -4,8 +4,9 @@ BRANCH=master
 
 if [ "${TRAVIS_REPO_SLUG}" == "${GH_REPO}" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "${BRANCH}" ]; then
 
-  printf "Publishing artifacts for ${TRAVIS_BUILD_NUMBER} to ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}...\n"
+  printf "Publishing artifacts from Travis build ${TRAVIS_BUILD_NUMBER} to ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}...\n"
 
+  printf "artifacts: $(ls tests/artifacts/*.png | tr "\n" "; ")\n" 
   cp -R tests/artifacts/*.png ${HOME}/artifacts
 
   cd ${HOME}
@@ -17,7 +18,7 @@ if [ "${TRAVIS_REPO_SLUG}" == "${GH_REPO}" ] && [ "${TRAVIS_PULL_REQUEST}" == "f
   rm -rf artifacts && mkdir -p artifacts
   cp -Rf ${HOME}/artifacts artifacts
   git add -f .
-  git commit -m "Artifacts from ${TRAVIS_BUILD_NUMBER} auto-pushed to gh-pages"
+  git commit -m "Auto-push from Travis build ${TRAVIS_BUILD_NUMBER}"
   git push -fq origin gh-pages > /dev/null
 
   printf "Published artifacts to gh-pages.\n"
