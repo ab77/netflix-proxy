@@ -84,7 +84,7 @@
 <li>Set the <code>IPv4 Endpoint</code> to the Droplet IP, pick a tunnel server in a location closest to you and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
 <li>Run: <code>git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
-<li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
+<li>Make sure to <strong>record the URL and credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP given at the end of the script, then go to <a href="http://ipinfo.io/">this</a> site to make sure the same IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
 <li>Enjoy or raise a new <a href="https://github.com/ab77/netflix-proxy/issues/new">issue</a> if something doesn't work quite right (also <code>#netflix-proxy</code> on <a href="https://webchat.freenode.net/?channels=netflix-proxy">freenode</a>).</li>
@@ -93,9 +93,11 @@
 <h3>
 <a id="authorising-additional-ips" class="anchor" href="#authorising-additional-ips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authorising Additional IPs</h3>
 
-<p>If you want to share your system with friends and family, you can authorise their home IP address(s) using the <code>netflix-proxy</code> admin site, located at <code>http://&lt;ipaddr&gt;:8080/</code>, where <code>ipaddr</code> is the public IP address of your VPS. Login using <code>admin</code> account with the password you recorded during the build, in step 6.</p>
+<p>If you want to share your system with friends and family, you can authorise their home IP address(s) using the <code>netflix-proxy</code> admin site, located at <code>http://&lt;ipaddr&gt;:8080/</code>, where <code>ipaddr</code> is the public IP address of your VPS. Login using <code>admin</code> account with the password you recorded during the build, in step 8 above.</p>
 
 <p><a href="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png" alt=""></a></p>
+
+<p>The <code>admin</code> account does not restrict the entry or removal of IPs. If you want to restrict the entry of IPs to the current client IP using an automatically populated drop-down, create a standard user account using the <code>account-creator.sh</code> script located in the <code>auth</code> directory, which will prompt you for the input and create the user account.</p>
 
 <h4>
 <a id="dynamic-ips" class="anchor" href="#dynamic-ips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dynamic IPs</h4>
@@ -144,7 +146,7 @@
 <h3>
 <a id="locale-issues" class="anchor" href="#locale-issues" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Locale Issues</h3>
 
-<p>The build script has been designed to work on <code>Ubuntu 14.x</code> and <code>Debian 8.x</code>. It will most likely fail on all other distributions. Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get <code>locale</code> issues reported by <code>Python</code> and/or <code>pip</code> durin the build, try running the following first:</p>
+<p>The build script has been designed to work on <code>Ubuntu 14.x</code> and <code>Debian 8.x</code>. It will most likely fail on all other distributions. Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get <code>locale</code> issues reported by <code>Python</code> and/or <code>pip</code> during the build, try running the following first:</p>
 
 <pre><code>export LANGUAGE=en_US.UTF-8 &amp;&amp; \
   export LANG=en_US.UTF-8 &amp;&amp; \
@@ -211,7 +213,7 @@
 
 <p><a href="http://www.dreamhost.com/r.cgi?2124700"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/dreamhost.png" alt=""></a></p>
 
-<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>DreamHost</code>, but should work on any Linux distribution <strong>without</strong> Docker installed and running under <strong>non-root</strong> user (e.g. <code>Amazon Web Services</code>). Do <strong>not</strong> enable native IPv6 on the host.</p>
+<p><strong>(untested)</strong> The following is based on a standard Ubuntu image provided by <code>DreamHost</code>, but should work on any Linux distribution <strong>without</strong> Docker installed and running under <strong>non-root</strong> user (e.g. <code>Amazon Web Services</code>[n13]). Do <strong>not</strong> enable native IPv6 on the host.</p>
 
 <ol>
 <li>Head over to <a href="http://www.dreamhost.com/r.cgi?2124700">DreamHost</a> and sign-up for an account.</li>
@@ -250,7 +252,7 @@
 <h3>
 <a id="microsoft-azure-advanced" class="anchor" href="#microsoft-azure-advanced" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Azure (advanced)</h3>
 
-<p>The following <strong>has not been tested</strong> and is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription.</p>
+<p>The following <strong>has not been tested</strong> and is based on a standard <code>Ubuntu</code> image provided by <code>Microsoft Azure</code> using <code>cloud-harness</code> automation tool I wrote a while back and assumes an empty <code>Microsoft Azure</code> subscription. Also, because Azure <a href="https://blogs.msdn.microsoft.com/mast/2014/06/22/use-port-pings-instead-of-icmp-to-test-azure-vm-connectivity/">block ICMP</a> thorough the load-balancer, IPv6 tunnelling through HE tunnel broker isn't going to work.</p>
 
 <ol>
 <li>Head over to <a href="https://azure.microsoft.com/en-gb/">Microsoft Azure</a> and sign-up for an account.</li>
@@ -296,25 +298,62 @@
 <h3>
 <a id="automated-tests" class="anchor" href="#automated-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Automated Tests</h3>
 
-<p>I've linked this project with <code>Travis CI</code> to automatically test the build. The helper Python script <code>__testbuild.py</code> now runs automatically after every commit. This script deploys a test <code>Droplet</code> and then runs a serious of tests to verify (a) that both <code>Docker</code> containers start; and (b) the <code>built.sh</code> script outputs the correct message at the end. The test <code>Droplet</code> is destroyed and the end of the run.</p>
+<h4>
+<a id="test-build" class="anchor" href="#test-build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test Build</h4>
 
-<p>The <code>__testbuild.py</code> script can also be used to programatically deploy <code>Droplets</code> from the command line as follows:</p>
+<p>This project is linked with <code>Travis CI</code> to deploy and test the project automatically. The Python script <code>testbuild.py</code> is used to deploy and test <code>netflix-proxy</code>. This script deploys a test <code>Droplet</code> and then runs a serious of tests to verify (a) that all <code>Docker</code> containers start; (b) the <code>built.sh</code> script outputs the correct message at the end; (c) all the relevant services survive a reboot; and (d) proxy is able to comunicate with Netflix over SSL.</p>
 
-<pre><code>python ./__testbuild.py digitalocean --api_token abcdef0123456789... --fingerprint 'aa:bb:cc:dd:...' --region 'abc1'
+<p>The <code>testbuild.py</code> script can also be used to programatically deploy <code>Droplets</code> from the command line:</p>
+
+<pre><code>usage: testbuild.py digitalocean [-h] --api_token API_TOKEN
+                                 [--client_ip CLIENT_IP]
+                                 [--fingerprint FINGERPRINT [FINGERPRINT ...]]
+                                 [--region REGION] [--branch BRANCH]
+                                 [--tb_user TB_USER] [--tb_passwd TB_PASSWD]
+                                 [--tb_key TB_KEY] [--tb_index TB_INDEX]
+                                 [--create] [--destroy] [--list_regions]
+                                 [--name NAME]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --api_token API_TOKEN
+                        DigitalOcean API v2 secret token
+  --client_ip CLIENT_IP
+                        client IP to secure Droplet
+  --fingerprint FINGERPRINT [FINGERPRINT ...]
+                        SSH key fingerprint
+  --region REGION       region to deploy into; use --list_regions for a list
+  --branch BRANCH       netflix-proxy branch to deploy (default: master)
+  --tb_user TB_USER     HE tunnel broker username
+  --tb_passwd TB_PASSWD
+                        HE tunnel broker password
+  --tb_key TB_KEY       HE tunnel broker update key
+  --tb_index TB_INDEX   HE tunnel broker tunnel index (default: 1)
+  --create              Create droplet
+  --destroy             Destroy droplet
+  --list_regions        list all available regions
+  --name NAME           Droplet name
 </code></pre>
 
-<ul>
-<li>
-<code>--api_token abcdef0123456789...</code> is your <code>DigitalOCean</code> API v2 token, which you can generate <a href="https://cloud.digitalocean.com/settings/applications">here</a>.</li>
-<li>
-<code>--fingerprint aa:bb:cc:dd:...</code> are your personal SSH key fingerprint(s) quoted and separated by spaces. You can manage your SSH keys <a href="https://cloud.digitalocean.com/settings/security">here</a>. If you don't specify a fingerprint, it will default to my test one, which means you <strong>won't</strong> be able to SSH into your <code>Droplet</code>.</li>
-<li>
-<code>--region abc1</code> is the region where you want the <code>Droplet</code> deployed. The default is <code>nyc3</code>, but you can use <code>--list_regions</code> to see the available choices.</li>
-<li>
-<code>--help</code> parameter will also list all of the available command line options to pass to the script.</li>
-</ul>
+<p>Note, you will need a working <code>Python 2.7</code> environment and the modules listed in <code>tests/requirements.txt</code> (run <code>pip install -r tests/requirements.txt</code>).</p>
 
-<p>Note, you will need a working <code>Python 2.7</code> environment and the modules listed in <code>requirements.txt</code> (run <code>pip install -r requirements.txt</code>).</p>
+<h4>
+<a id="test-video-playback" class="anchor" href="#test-video-playback" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test Video Playback</h4>
+
+<p>After a successfull build deployment, <code>testvideo.py</code> is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. <a href="https://www.netflix.com/title/80001898">1,000 Times Good Night</a>).</p>
+
+<pre><code>usage: testvideo.py netflix [-h] --email EMAIL --password PASSWORD
+                            [--seconds SECONDS] [--titleid TITLEID]
+                            [--tries TRIES]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --email EMAIL        Netflix username
+  --password PASSWORD  Netflix password
+  --seconds SECONDS    playback time per title in seconds (default: 60)
+  --titleid TITLEID    Netflix title_id to play (default: 80001898)
+  --tries TRIES        Playback restart attempts (default: 4)
+</code></pre>
 
 <h3>
 <a id="ipv6-and-docker" class="anchor" href="#ipv6-and-docker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IPv6 and Docker</h3>
@@ -455,7 +494,9 @@ docker run -it ubuntu bash -c "ping6 google.com"
 
 <p>[n12] <a href="https://www.ubermotive.com/?p=344">Bypass Netflix Geoblocks with IPv6</a>.</p>
 
-<pre><code>-- v2.3
+<p>[n13] See, <a href="http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/">IPv6 on Amazon AWS EC2</a>.</p>
+
+<pre><code>-- v2.4
 </code></pre>
       </section>
     </div>
