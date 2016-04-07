@@ -43,6 +43,9 @@ before_script:
 script:
   - sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
 
+after_failure:
+  - sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+
 after_script:
   - sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
   - printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
