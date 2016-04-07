@@ -97,6 +97,7 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
                     return f(*args, **kwargs)
                 except ExceptionToCheck, e:
                     msg = "%s, retrying in %d seconds (mtries=%d): %s" % (repr(e), mdelay, mtries, str(cdata))
+                    args[0].driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, cdata))
                     if logger:
                         logger.warning(msg)
                         logging.exception("Exception")
@@ -291,15 +292,16 @@ if __name__ == '__main__':
             nflx.title_id = str(arg.titleid)
             try:
                 result = nflx.VideoPlaybackTest()
-                log.info('result=%s' % str(i))
-                if result:
-                    rc = 0
-                    break
             except:
                 pass
-            
+
             finally:
                 nflx.driver.close()
+                
+            log.info('result=%s' % str(i))
+            if result:
+                rc = 0
+                break
 
         exit(rc)
 
