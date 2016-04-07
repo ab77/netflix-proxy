@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 """
-Version : 1.0
-
 Automatically play back Netflix titles.
 
 Uses Selenium Python bindings for WebDriver.
@@ -19,7 +17,8 @@ from uuid import uuid1
 from functools import wraps
 from pprint import pprint
 
-from settings import (DEFAULT_PROXY,                      
+from settings import (VERSION,
+                      DEFAULT_PROXY,                      
                       DEFAULT_HOST,
                       DEFAULT_PLAYBACK,
                       DEFAULT_TIMEOUT,
@@ -53,14 +52,14 @@ except ImportError:
 
 def args():
     parser = argparse.ArgumentParser()
-    sp = parser.add_subparsers()    
+    sp = parser.add_subparsers(help='version %s' % VERSION)    
     netflix = sp.add_parser('netflix')
     netflix.add_argument('provider', action='store_const', const='netflix', help=argparse.SUPPRESS)
     netflix.add_argument('--email', type=str, required=True, help='Netflix username')
     netflix.add_argument('--password', type=str, required=True, help='Netflix password')
     netflix.add_argument('--seconds', type=int, default=DEFAULT_PLAYBACK, help='playback time per title in seconds (default: %i)' % DEFAULT_PLAYBACK)
     netflix.add_argument('--titleid', type=int, default=DEFAULT_TITLEID, help='Netflix title_id to play (default: %i)' % DEFAULT_TITLEID)
-    netflix.add_argument('--tries', type=int, default=DEFAULT_TRIES, help='Playback restart attempts (default: %i)' % DEFAULT_TRIES)
+    netflix.add_argument('--tries', type=int, default=DEFAULT_TRIES, help='Playback restart attempts (default: %i)' % DEFAULT_TRIES)    
     hulu = sp.add_parser('hulu')
     hulu.add_argument('provider', action='store_const', const='hulu', help=argparse.SUPPRESS)
     args = parser.parse_args()

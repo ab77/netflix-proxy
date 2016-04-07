@@ -353,5 +353,5 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n13] See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
 
 ```
--- v2.3
+-- v2.4
 ```

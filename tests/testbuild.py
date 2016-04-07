@@ -31,22 +31,23 @@ except ImportError:
     stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
     exit(1)
 
-
-PROXY_HOST = None
-PROXY_PORT = None
-BASE_API_URL = 'https://api.digitalocean.com/v2'
-DOCKER_IMAGE_SLUG = 'docker'
-DEFAULT_FINGERPRINT = ['d1:b6:92:ea:cc:4c:fe:9c:c5:ef:27:ce:33:1f:ba:61']
-DEFAULT_REGION_SLUG = 'nyc3'
-DEFAULT_MEMORY_SIZE_SLUG = '512mb'
-DEFAULT_VCPUS = 1
-DEFAULT_DISK_SIZE = 20
-DEFAULT_SLEEP = 5
-DEFAULT_BRANCH = 'master'
-DEFAULT_HE_TB_INDEX = 1
-DEFAULT_TRIES = 4
-DEFAULT_DELAY = 30
-DEFAULT_BACKOFF = 2
+from settings import (VERSION,
+                      DEFAULT_PROXY,                      
+                      BASE_API_URL,
+                      DEFAULT_HOST,
+                      DOCKER_IMAGE_SLUG,
+                      DEFAULT_FINGERPRINT,
+                      DEFAULT_REGION_SLUG,
+                      DEFAULT_MEMORY_SIZE_SLUG,
+                      DEFAULT_VCPUS,
+                      DEFAULT_DISK_SIZE,
+                      DEFAULT_SLEEP,
+                      DEFAULT_BRANCH,
+                      DEFAULT_HE_TB_INDEX,
+                      DEFAULT_TRIES,
+                      DEFAULT_DELAY,
+                      DEFAULT_BACKOFF,
+                      DEFAULT_TITLEID)
 
 
 def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, cdata=None):
@@ -107,7 +108,7 @@ def get_regions(s):
 
 def args():   
     parser = argparse.ArgumentParser()
-    sp = parser.add_subparsers()    
+    sp = parser.add_subparsers(help='version %s' % VERSION)    
     digitalocean = sp.add_parser('digitalocean')
     digitalocean.add_argument('provider', action='store_const', const='digitalocean', help=argparse.SUPPRESS)
     digitalocean.add_argument('--api_token', type=str, required=True, help='DigitalOcean API v2 secret token')
@@ -288,7 +289,7 @@ def netflix_proxy_test(ip):
     return netflix_proxy_test_retry(ip)
 
 
-def netflix_openssl_test(ip=None, port=443, hostname='netflix.com'):
+def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_HOST):
     """
     Connect to an SNI-enabled server and request a specific hostname
     """
@@ -319,7 +320,7 @@ def netflix_openssl_test(ip=None, port=443, hostname='netflix.com'):
     return netflix_openssl_test_retry(ip)
 
 
-def netflix_test(ip=None, host='www.netflix.com'):
+def netflix_test(ip=None, host=DEFAULT_HOST):
 
     @retry(Exception, tries=3, delay=10, backoff=2, cdata='method=%s()' % inspect.stack()[0][3])
     def netflix_openssl_test_retry(ip):
@@ -367,10 +368,10 @@ if __name__ == '__main__':
             
         droplet_id = None
         s = requests.Session()
-        if PROXY_HOST and PROXY_PORT:
+        if DEFAULT_PROXY:
             s.verify = False
-            s.proxies = {'http' : 'http://%s:%s' % (PROXY_HOST, PROXY_PORT),
-                         'https': 'https://%s:%s' % (PROXY_HOST, PROXY_PORT)}
+            s.proxies = {'http' : 'http://%s' % DEFAULT_PROXY,
+                         'https': 'https://%s' % DEFAULT_PROXY}
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
     
         if arg.list_regions:
