@@ -1,48 +1,58 @@
+sudo: true
 language: python
-
 python:
-  - 2.7
+- 2.7
+
+env:
+  global:
+    secure: d05ikTH+y5M12t+r9LLghV9a6ZrtMVr7VrEnyM5Z1iHia+iG+rl2AUz7XG1JQzSvrnq+KNbPYmPNWOiuwWm9NdxcQYWilQFqF03XvSLRN09WgAiuWR1j6aTFFTjyxGBjvS4BR8pu9gU3r2Lsk5erMc3zKZ4jhhqI/9jAB5t4BzeXS7PlmO9W3r9btBiCXYitRmByZyFpRpmXm3ReC3ItqiwQAFO/Ce8mTLVuD22xzFxS4p35RNmjqz6Ktx3oCUOpxNhUQjPBTcD94YFdVox3/w0FThKvHAIq0X70fbtYoIiseT1rpd01JhTzdtNOsV4YFblr6NhanRa4D6t1qz1I1iNb7mp6BwNXuwKzLEA/T9S0OP+mu5hC8vOrztyc+3JWWjD70thG/67hamwLzhRWlYieWY99+AjAqmtomNEzFgAC00DKrwUqmjKll73PMKF2KLgQOC6pQYXYXp4D/fMgZSzyk2BurffilNFxGAw5VnHc2Po/cFYwP3TaRrxuepIE2L1/7YRhWYdCOm08Z5wPnRt/C5DKaGCYoTuqSKYcU04SXpL4NCJarfkAdPwNkb2UGyPywZ36lyWYtLxvkEFa3/vWUiBLg9lVybMILNrs7VWDnzR4nJxJIXEpKdao2PQxuLXPmZ52L774/dyq+wUUkz5HELeq9dJGc116x538Co4=
 
 addons:
   artifacts:
-    s3_region: "us-west-2"
+    s3_region: us-west-2
     paths:
-      - $(ls tests/artifacts/*.png | tr "\n" ":")
-
-sudo: true
+    - $(ls tests/artifacts/*.png | tr "\n" ":")
 
 cache:
   directories:
-    - $HOME/.cache/pip
+  - "$HOME/.cache/pip"
 
 before_cache:
-  - rm -f $HOME/.cache/pip/log/debug.log
+- rm -f $HOME/.cache/pip/log/debug.log
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_45757fbb12c0_key -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d 
-  - export CHROME_BIN=/usr/bin/google-chrome
-  - export DISPLAY=:99.0 
-  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
-  - sudo apt-get update
-  - sudo apt-get install -y libappindicator1 fonts-liberation
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
-  - sudo apt-get install build-essential python-dev libffi-dev libssl-dev
-  - sudo -H pip install --upgrade cryptography
-  - sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
-  
+- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && openssl aes-256-cbc -K $encrypted_45757fbb12c0_key -iv $encrypted_45757fbb12c0_iv
+  -in id_rsa.travis.enc -out id_rsa.travis -d || false'
+- export CHROME_BIN=/usr/bin/google-chrome
+- export DISPLAY=:99.0
+- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
+  --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
+- sudo apt-get update
+- sudo apt-get install -y libappindicator1 fonts-liberation
+- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- sudo dpkg -i google-chrome*.deb
+- sudo apt-get install build-essential python-dev libffi-dev libssl-dev
+- sudo -H pip install --upgrade cryptography
+- sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
+
 install:
-  - sudo -H pip install -r tests/requirements.txt
+- sudo -H pip install -r tests/requirements.txt
 
 before_script:
-  - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
-  - export NAME=$(uuidgen)
-  - export RESOLVER=$(grep nameserver /etc/resolv.conf)
-  - sudo python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index || sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+- chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
+- export NAME=$(uuidgen)
+- export RESOLVER=$(grep nameserver /etc/resolv.conf)
+- sudo python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
+  --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd
+  --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index || sudo python tests/testbuild.py
+  digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
 
 script:
-  - sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
+- sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
 
 after_script:
-  - printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
-  - sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+- printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
+- sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+
+after_success:
+- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && tests/gh-pages-push.sh || false'
