@@ -7,7 +7,7 @@ if [ "${TRAVIS_REPO_SLUG}" == "${GH_REPO}" ] && [ "${TRAVIS_PULL_REQUEST}" == "f
   printf "Publishing artifacts from Travis build ${TRAVIS_BUILD_NUMBER} to ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}...\n"
 
   printf "artifacts: $(ls tests/artifacts/*.png | tr "\n" "; ")\n" 
-  cp -R tests/artifacts/*.png ${HOME}/artifacts
+  mkdir -p ${HOME}/artifacts && cp -R tests/artifacts/*.png ${HOME}/artifacts/
 
   cd ${HOME}
   git config --global user.email "${GH_EMAIL}"
