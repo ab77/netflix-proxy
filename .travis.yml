@@ -21,38 +21,44 @@ before_cache:
 - rm -f $HOME/.cache/pip/log/debug.log
 
 before_install:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && openssl aes-256-cbc -K $encrypted_45757fbb12c0_key
-  -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && export CHROME_BIN=/usr/bin/google-chrome || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && export DISPLAY=:99.0 || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
-  --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16 || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo apt-get update || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo apt-get install -y libappindicator1 fonts-liberation || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo dpkg -i google-chrome*.deb || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo apt-get install build-essential python-dev libffi-dev libssl-dev || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo -H pip install --upgrade cryptography || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1 || false'
+- tests/__isfork.sh
+- openssl aes-256-cbc -K $encrypted_45757fbb12c0_key
+  -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d
+- export CHROME_BIN=/usr/bin/google-chrome
+- export DISPLAY=:99.0
+- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
+  --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
+- sudo apt-get update
+- sudo apt-get install -y libappindicator1 fonts-liberation
+- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- sudo dpkg -i google-chrome*.deb
+- sudo apt-get install build-essential python-dev libffi-dev libssl-dev
+- sudo -H pip install --upgrade cryptography
+- sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
 
 install:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo -H pip install -r tests/requirements.txt || false'
+- tests/__isfork.sh
+- sudo -H pip install -r tests/requirements.txt
 
 before_script:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && export NAME=$(uuidgen) || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && export RESOLVER=$(grep nameserver /etc/resolv.conf) || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
+- tests/__isfork.sh
+- chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
+- export NAME=$(uuidgen)
+- export RESOLVER=$(grep nameserver /etc/resolv.conf)
+- sudo python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
   --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd
   --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index || sudo python tests/testbuild.py
-  digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token || false'
+  digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
 
 script:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd || false'
+- tests/__isfork.sh
+- sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
 
 after_script:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf || false'
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token || false'
+- tests/__isfork.sh
+- printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
+- sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
 
 after_success:
-- '[ "${TRAVIS_REPO_SLUG}" = "${GH_REPO}" ] && sudo tests/gh-pages-push.sh || false'
+- tests/__isfork.sh
+- sudo tests/gh-pages-push.sh
