@@ -291,6 +291,7 @@ if __name__ == '__main__':
             try:
                 result = nflx.VideoPlaybackTest()
             except:
+                logging.exception("Exception")
                 pass
 
             finally:
