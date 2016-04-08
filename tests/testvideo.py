@@ -242,7 +242,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
                 kvlst = line.strip().split(': ')
                 val = ''
                 try:
-                    val = kvlst[1].strip()
+                    val = ': '.join(kvlst[1:]).strip()
                 except:
                     pass
                 d[kvlst[0].strip()] = val
