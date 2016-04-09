@@ -1,37 +1,29 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>netflix-proxy by ab77</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>netflix-proxy</h1>
-        <p>Docker packaged smart DNS proxy to watch Netflix out of region using BIND and sniproxy.</p>
-        <p class="view"><a href="https://github.com/ab77/netflix-proxy">View the Project on GitHub <small>ab77/netflix-proxy</small></a></p>
-        <ul>
-          <li><a href="https://github.com/ab77/netflix-proxy/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ab77/netflix-proxy/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ab77/netflix-proxy">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <section class="page-header">
+      <h1 class="project-name">netflix-proxy</h1>
+      <h2 class="project-tagline">Docker packaged smart DNS proxy to watch Netflix out of region using BIND and sniproxy.</h2>
+      <a href="https://github.com/ab77/netflix-proxy" class="btn">View on GitHub</a>
+      <a href="https://github.com/ab77/netflix-proxy/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/ab77/netflix-proxy/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
 <a id="netflix-proxy--" class="anchor" href="#netflix-proxy--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a> <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" alt=""></a>
 </h1>
 
-<p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>sniproxy</code>[n1]. Works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>.</p>
+<p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>SNIProxy</code>[n1]. Works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>.</p>
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
@@ -355,6 +347,10 @@ optional arguments:
   --tries TRIES        Playback restart attempts (default: 4)
 </code></pre>
 
+<p>Finally, a screenshot is saved at the end of the test, which is uploaded to the <code>gh-pages</code> branch.</p>
+
+<p><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/VideoPlaybackTest.png" alt="VideoPlaybackTest"></p>
+
 <h3>
 <a id="ipv6-and-docker" class="anchor" href="#ipv6-and-docker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>IPv6 and Docker</h3>
 
@@ -498,14 +494,16 @@ docker run -it ubuntu bash -c "ping6 google.com"
 
 <pre><code>-- v2.4
 </code></pre>
-      </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/ab77">ab77</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-              <script type="text/javascript">
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/ab77/netflix-proxy">netflix-proxy</a> is maintained by <a href="https://github.com/ab77">ab77</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
