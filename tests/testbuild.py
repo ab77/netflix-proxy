@@ -435,7 +435,8 @@ if __name__ == '__main__':
             print colored('Destroying Droplet name = %s id = %s...\n' % (arg.name,
                                                                          droplet_id), 'red')
             time.sleep(DEFAULT_SLEEP)
-            pprint(destroy_droplet(s, droplet_id))            
+            d = destroy_droplet(s, droplet_id)
+            pprint(d)
 
         else:
             print('No action specified: [--create] [--destroy] [--list_regions]')
