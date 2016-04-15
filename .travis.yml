@@ -29,12 +29,11 @@ before_install:
 - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
   --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
 - sudo apt-get -y update
-- sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-- sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade || (sudo dpkg --configure -a && sudo apt-get install -f)
-- apt-get autoremove && sudo apt-get autoclean
 - sudo apt-get -y install -y libappindicator1 fonts-liberation
-- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-- sudo dpkg -i google-chrome-stable_current_amd64.deb
+# broken dependencies in the latest Chrome build
+#- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+- wget http://mirror.pcbeta.com/google/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_49.0.2623.112-1_amd64.deb
+- sudo dpkg -i google-chrome-stable_*.deb
 - sudo apt-get -y install build-essential python-dev libffi-dev libssl-dev
 - sudo -H pip install --upgrade cryptography
 - sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
