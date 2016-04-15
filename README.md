@@ -39,7 +39,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 2. Create a Droplet in a location closest to you using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
-5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in a location closest to you and click `Create Tunnel`.
+5. Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in a location closest[n14] to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
 7. Run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the URL and credentials** for the `netflix-proxy` admin site.
@@ -397,6 +397,8 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n12] [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
 
 [n13] See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
+
+[n14] If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
 
 ```
 -- v2.4
