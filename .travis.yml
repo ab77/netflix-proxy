@@ -31,7 +31,7 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install -y libappindicator1 fonts-liberation
 - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-- sudo dpkg -i google-chrome*.deb
+- sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install
 - sudo apt-get install build-essential python-dev libffi-dev libssl-dev
 - sudo -H pip install --upgrade cryptography
 - sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
