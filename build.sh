@@ -149,7 +149,7 @@ if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
     log_action_end_msg $?
 
     log_action_begin_msg "installing XPath"
-    apt-get -y install libxml-xpath-perl &>> ${BUILD_ROOT}/netflix-proxy.log
+    sudo apt-get -y install libxml-xpath-perl &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 
     log_action_begin_msg "enabling ${HE_IFACE} interface"
