@@ -147,7 +147,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 4. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 5. Set the `IPv4 Endpoint` to the IP address of your Linode, pick a tunnel server closest to you and click `Create Tunnel`.
 6. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-7. Run: `curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+7. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 8. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 9. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 10. Finally, enjoy `Netflix` and others out of region.
@@ -165,7 +165,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. Do
 6. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 7. Set the `IPv4 Endpoint` to the IP address of your instance, pick a tunnel server closest to you and click `Create Tunnel`.
 8. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-9. Run: `curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+9. Run: `sudo apt-get update && sudo apt-get -y install vim dnsutils curl git && curl -sSL https://get.docker.com/ | sh && sudo usermod -aG docker $(whoami | awk '{print $1}') && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 10. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 11. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 12. Finally, enjoy `Netflix` and others out of region.
@@ -180,7 +180,7 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 3. Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).
 4. Set the `IPv4 Endpoint` to the IP address of your server, pick a tunnel server in the US and click `Create Tunnel`.
 5. SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.
-6. Run: `apt-get -y update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
+6. Run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.
 7. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 8. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 9. Finally, enjoy `Netflix` and others out of region.
