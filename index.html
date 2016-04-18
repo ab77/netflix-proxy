@@ -23,7 +23,7 @@
 <a id="netflix-proxy--" class="anchor" href="#netflix-proxy--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a> <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" alt=""></a>
 </h1>
 
-<p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>SNIProxy</code>[n1]. Works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>.</p>
+<p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>SNIProxy</code>[n1]. Bypasses <a href="https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063">The Great Firewall</a> and works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>. </p>
 
 <p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
@@ -73,7 +73,7 @@
 <li>Create a Droplet in a location closest to you using <code>Docker 1.x</code> on <code>Ubuntu 14.04</code> (find in under <code>One-click Apps</code> tab).</li>
 <li>Create a free <a href="https://tunnelbroker.net/register.php">tunnel broker</a> account.</li>
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>.</li>
-<li>Set the <code>IPv4 Endpoint</code> to the Droplet IP, pick a tunnel server in a location closest to you and click <code>Create Tunnel</code>.</li>
+<li>Set the <code>IPv4 Endpoint</code> to the Droplet IP, pick a tunnel server in a location closest[n14] to you and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
 <li>Run: <code>git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
 <li>Make sure to <strong>record the URL and credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
@@ -196,7 +196,7 @@
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your Linode, pick a tunnel server closest to you and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
-<li>Run: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
+<li>Run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
 <li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP given at the end of the script, then go to <a href="http://ipinfo.io/">this</a> site to make sure the same IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
@@ -217,7 +217,7 @@
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your instance, pick a tunnel server closest to you and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
-<li>Run: <code>curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
+<li>Run: <code>sudo apt-get update &amp;&amp; sudo apt-get -y install vim dnsutils curl git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; sudo usermod -aG docker $(whoami | awk '{print $1}') &amp;&amp; sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
 <li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP given at the end of the script, then go to <a href="http://ipinfo.io/">this</a> site to make sure the same IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
@@ -234,7 +234,7 @@
 <li>Create a <a href="https://tunnelbroker.net/new_tunnel.php">regular tunnel</a>.</li>
 <li>Set the <code>IPv4 Endpoint</code> to the IP address of your server, pick a tunnel server in the US and click <code>Create Tunnel</code>.</li>
 <li>SSH to your server and run <code>ping6 netflix.com</code>; if you get <code>Network is unreachable</code> proceed to the next step, otherwise remove native IPv6 first.</li>
-<li>Run: <code>apt-get -y update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
+<li>Run: <code>apt-get update &amp;&amp; apt-get -y install vim dnsutils curl sudo git &amp;&amp; curl -sSL https://get.docker.com/ | sh &amp;&amp; git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy &amp;&amp; cd /opt/netflix-proxy &amp;&amp; ./build.sh -u &lt;tunnelbroker-username&gt; -p &lt;tunnelbroker-password&gt;</code>, making sure to specify your HE tunnel username and password correctly.</li>
 <li>Make sure to <strong>record the credentials</strong> for the <code>netflix-proxy</code> admin site.</li>
 <li>Set your DNS server to the IP given at the end of the script, then go to <a href="http://ipinfo.io/">this</a> site to make sure the same IP is displayed.</li>
 <li>Finally, enjoy <code>Netflix</code> and others out of region.</li>
@@ -491,6 +491,8 @@ docker run -it ubuntu bash -c "ping6 google.com"
 <p>[n12] <a href="https://www.ubermotive.com/?p=344">Bypass Netflix Geoblocks with IPv6</a>.</p>
 
 <p>[n13] See, <a href="http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/">IPv6 on Amazon AWS EC2</a>.</p>
+
+<p>[n14] If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).</p>
 
 <pre><code>-- v2.4
 </code></pre>
