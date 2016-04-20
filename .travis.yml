@@ -32,7 +32,7 @@ before_install:
 - sudo apt-get -y install -y libappindicator1 fonts-liberation
 #- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 #- sudo dpkg -i google-chrome-stable_current_amd64.deb
-- wget https://s3-us-west-2.amazonaws.com/belodetech/google-chrome-stable_49.0.2623.112-1_amd64.deb
+- wget https://s3-eu-central-1.amazonaws.com/belodetech/google-chrome-stable_49.0.2623.112-1_amd64.deb
 - sudo dpkg -i google-chrome-stable_49.0.2623.112-1_amd64.deb
 - sudo apt-get -y install build-essential python-dev libffi-dev libssl-dev
 - sudo -H pip install --upgrade cryptography
