@@ -154,14 +154,17 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception, cdata='waitForHomePage')
     def waitForHomePage(self):
-        self.driver.get('https://%s/' % self.host)
-        assert 'Netflix' in self.driver.title        
+        url = 'https://%s/' % self.nflx_host
+        self.driver.get(url)
+        log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
+        assert url in self.driver.current_url
         return self.driver.current_url
 
 
     @retry(Exception, cdata='waitForSignOutPage')
     def waitForSignOutPage(self):
         self.driver.get('https://%s/SignOut' % self.host)
+        log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
         assert 'Netflix' in self.driver.title        
         return self.driver.current_url
 
@@ -169,6 +172,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     @retry(Exception, cdata='waitForSignInPage')
     def waitForSignInPage(self):
         self.driver.get('https://%s/Login' % self.host)
+        log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
         assert 'Netflix' in self.driver.title
         return self.driver.current_url
 
@@ -177,6 +181,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
     def waitForPlayer(self, title_id):
         url = 'https://%s/watch/%s' % (self.host, title_id)
         self.driver.get(url)
+        log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
         assert 'Netflix' in self.driver.title
         assert url in self.driver.current_url
         return self.driver.current_url
