@@ -154,7 +154,7 @@ class VideoPlaybackTestClassNetflix(BaseVideoPlaybackTestClass):
 
     @retry(Exception, cdata='waitForHomePage')
     def waitForHomePage(self):
-        url = 'https://%s/' % self.nflx_host
+        url = 'https://%s/' % self.host
         self.driver.get(url)
         log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
         assert url in self.driver.current_url
