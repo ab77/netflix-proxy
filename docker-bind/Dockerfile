@@ -1,19 +1,16 @@
-# Dockerfile for BIND DNS on CentOS
-
-FROM centos
+FROM phusion/baseimage
 
 MAINTAINER anton@belodedenko.me
 
-ADD named.conf /etc/named.conf
+RUN apt-get update && \
+    apt-get -y install vim dnsutils curl git bind9
 
-ADD named.conf.logging /etc/named.conf.logging
+ADD named.conf.options /etc/bind/named.conf.options
 
-ADD named.recursion.conf /etc/named.recursion.conf
+ADD named.conf.local /etc/bind/named.conf.local
 
-RUN yum -y install bind bind-chroot
+ADD named.conf.logging /etc/bind/named.conf.logging
 
-RUN chown -hR named:named /var/named
+ADD named.recursion.conf /etc/bind/named.recursion.conf
 
-RUN chown -hR named:named /etc/named*
-
-CMD ["/usr/sbin/named", "-u", "named", "-c", "/etc/named.conf", "-f"]
+CMD ["/usr/sbin/named", "-c", "/etc/bind/named.conf", "-f"]
