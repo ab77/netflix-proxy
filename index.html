@@ -20,7 +20,7 @@
 
     <section class="main-content">
       <h1>
-<a id="netflix-proxy--" class="anchor" href="#netflix-proxy--" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a> <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" alt=""></a>
+<a id="netflix-proxy-----" class="anchor" href="#netflix-proxy-----" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>netflix-proxy <a href="https://travis-ci.org/ab77/netflix-proxy"><img src="https://travis-ci.org/ab77/netflix-proxy.svg?branch=master" alt="Build Status"></a> <a href="https://hub.docker.com/r/ab77/sniproxy/"><img src="https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000" alt="Docker Pulls"></a> <a href="https://hub.docker.com/r/ab77/bind/"><img src="https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000" alt="Docker Stars"></a>  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5UUCDR8YXWERQ"><img src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" alt=""></a>
 </h1>
 
 <p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>SNIProxy</code>[n1]. Bypasses <a href="https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063">The Great Firewall</a> and works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>. </p>
@@ -61,7 +61,7 @@
 <h1>
 <a id="instructions" class="anchor" href="#instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instructions</h1>
 
-<p>The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. These are all based on the assumption that access to the US region access is desired. If a different region is required (e.g. France), HE tunnel broker can not be used, as HE's entire network appears to be <a href="https://www.maxmind.com/en/geoip-demo">geo-located</a> in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to <code>build.sh</code>.</p>
+<p>The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. Note, OpenVZ <strong>won't work</strong>, make sure to get a proper virtual machine using KVM or Xen. These instructions are based on the assumption, that access to the US region access is desired. If a different region is required (e.g. France), you may struggle with HE tunnel broker, as their entire network appears to be <a href="https://www.maxmind.com/en/geoip-demo">geo-located</a> in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to <code>build.sh</code>.</p>
 
 <p><a href="https://m.do.co/c/937b01397c94"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png" alt=""></a></p>
 
@@ -85,7 +85,7 @@
 <h3>
 <a id="authorising-additional-ips" class="anchor" href="#authorising-additional-ips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authorising Additional IPs</h3>
 
-<p>If you want to share your system with friends and family, you can authorise their home IP address(s) using the <code>netflix-proxy</code> admin site, located at <code>http://&lt;ipaddr&gt;:8080/</code>, where <code>ipaddr</code> is the public IP address of your VPS. Login using <code>admin</code> account with the password you recorded during the build, in step 8 above.</p>
+<p>If you want to share your system with friends and family, you can authorise their home IP address(s) using the <code>netflix-proxy</code> admin site, located at <code>http://&lt;ipaddr&gt;:8080/</code>, where <code>ipaddr</code> is the public IP address of your VPS. Login using <code>admin</code> account with the password you recorded during the build, in step 8 above. If you've forgottedn your admin credentials, <a href="https://github.com/ab77/netflix-proxy/wiki/Changing-Admin-Password-For-Auth-Version">reset</a>.</p>
 
 <p><a href="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png" alt=""></a></p>
 
