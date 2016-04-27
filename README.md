@@ -264,6 +264,9 @@ optional arguments:
 Note, you will need a working `Python 2.7` environment and the modules listed in `tests/requirements.txt` (run `pip install -r tests/requirements.txt`).
 
 #### Test Video Playback
+
+##### Netflix
+
 After a successfull build deployment, `testvideo.py` is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. [1,000 Times Good Night](https://www.netflix.com/title/80001898)).
 
 ```
@@ -280,9 +283,13 @@ optional arguments:
   --tries TRIES        Playback restart attempts (default: 4)
 ```
 
-Finally, screenshot are saved at the end of the test, which are uploaded to the `gh-pages` branch.
+A screenshot is saved at the end of the test and uploaded to the `gh-pages` branch.
 
 ![Netflix VideoPlaybackTest screenshot](https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/VideoPlaybackTestNflx.png)
+
+##### Hulu
+
+Similarly, `testvideo.py` is executed to test Hulu video playback using one of the free titles (e.g. [South Park S01E01: Cartman Gets an Anal Probe](http://www.hulu.com/watch/249837)). The build is configured not to fail in the event of Hulu test failing. This is because Hulu is almost cetrtainly blocked from Digital Ocean.
 
 ![Hulu VideoPlaybackTest screenshot](https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/VideoPlaybackTestHulu.png)
 
