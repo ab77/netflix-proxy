@@ -46,8 +46,7 @@ from settings import (VERSION,
                       DEFAULT_HE_TB_INDEX,
                       DEFAULT_TRIES,
                       DEFAULT_DELAY,
-                      DEFAULT_BACKOFF,
-                      DEFAULT_TITLEID)
+                      DEFAULT_BACKOFF)
 
 
 def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, cdata=None):
