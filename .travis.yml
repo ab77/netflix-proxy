@@ -55,7 +55,7 @@ before_script:
 script:
 - tests/__isfork.sh
 - sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
-- sudo python tests/testvideo.py hulu --email=$hulu_email --password=$hulu_passwd && true
+- sudo python tests/testvideo.py hulu --email=$hulu_email --password=$hulu_passwd --tries=1 && true
 
 after_script:
 - tests/__isfork.sh
