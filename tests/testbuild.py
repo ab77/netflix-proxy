@@ -34,7 +34,7 @@ except ImportError:
 from settings import (VERSION,
                       DEFAULT_PROXY,                      
                       BASE_API_URL,
-                      DEFAULT_HOST,
+                      DEFAULT_NFLX_HOST,
                       DOCKER_IMAGE_SLUG,
                       DEFAULT_FINGERPRINT,
                       DEFAULT_REGION_SLUG,
@@ -289,7 +289,7 @@ def netflix_proxy_test(ip):
     return netflix_proxy_test_retry(ip)
 
 
-def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_HOST):
+def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_NFLX_HOST):
     """
     Connect to an SNI-enabled server and request a specific hostname
     """
@@ -320,7 +320,7 @@ def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_HOST):
     return netflix_openssl_test_retry(ip)
 
 
-def netflix_test(ip=None, host=DEFAULT_HOST):
+def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
 
     @retry(Exception, tries=3, delay=10, backoff=2, cdata='method=%s()' % inspect.stack()[0][3])
     def netflix_openssl_test_retry(ip):
