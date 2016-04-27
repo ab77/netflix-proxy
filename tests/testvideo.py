@@ -345,8 +345,8 @@ class VideoPlaybackTestClassHulu(BaseVideoPlaybackTestClass):
         )
     
 
-    @retry(Exception, cdata='waitForPlayer')
-    def waitForPlayer(self, title_id):
+    @retry(Exception, cdata='waitForPlayerUrl')
+    def waitForPlayerUrl(self, title_id):
         url = 'http://%s/watch/%s' % (self.host, title_id)
         self.driver.get(url)
         log.debug('url=%s title=%s' % (self.driver.current_url, self.driver.title))
@@ -355,12 +355,34 @@ class VideoPlaybackTestClassHulu(BaseVideoPlaybackTestClass):
         return self.driver.current_url
 
 
+    @retry(Exception, cdata='getPlayerCurrentTime')
+    def getPlayerCurrentTime(self):
+        js = "return window.Hulu.videoPlayerApp._dashPlayer.getCurrentTime()"
+        return self.driver.execute_script(js)
+
+
+    @retry(Exception, cdata='getPlayerCurrentVideoId')
+    def getPlayerCurrentVideoId(self):
+        js = "return window.Hulu.videoPlayerApp._dashPlayer.getCurrentVideoId()"
+        return self.driver.execute_script(js)
+
+
+    @retry(Exception, cdata='waitForPlayer')
+    def waitForPlayer(self):
+        assert self.getPlayerCurrentVideoId() == int(self.title_id)
+        
+
+    @retry(Exception, cdata='waitForAdsToFinish')
+    def waitForAdsToFinish(self):
+        assert self.getPlayerCurrentTime() > 0
+    
+
     def VideoPlaybackTest(self):
         self.driver.set_window_size(1280, 1024)
         log.debug('self.waitForSignOutPage()=%s' % self.waitForSignOutPage())
         log.debug('self.waitForHomePage()=%s' % self.waitForHomePage())
         log.debug('window_size=%s' % self.driver.get_window_size())
-        log.debug('self.waitForPlayer()=%s' % self.waitForPlayer(self.title_id))
+        log.debug('self.waitForPlayerUrl()=%s' % self.waitForPlayerUrl(self.title_id))
         self.waitForSignInPopUpByXPath().click()
         self.waitForSignInDummyEmailElementByXPath().click()        
         self.waitForSignInEmailElementByXPath().clear()
@@ -368,10 +390,14 @@ class VideoPlaybackTestClassHulu(BaseVideoPlaybackTestClass):
         self.waitForSignInPasswordElementByXPath().clear()
         self.waitForSignInPasswordElementByXPath().send_keys(self.password)
         self.waitForSignInFormButtonElementByXPath().click()
+        self.waitForPlayer()
+        self.waitForAdsToFinish()
         
         for i in xrange(1, self.playback_secs):
             progress = round(i / self.playback_secs * 100, 0)
-            log.debug("progress=%s%%" % str(progress))
+            log.debug('progress=%s%% current_time=%s video_id=%s' % (str(progress),
+                                                                     self.getPlayerCurrentTime(),
+                                                                     self.getPlayerCurrentVideoId()))
             time.sleep(1)
 
         self.driver.save_screenshot('%s/%s.png' % (ARTIFACTS_DIR, 'VideoPlaybackTestHulu'))
