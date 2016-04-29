@@ -64,7 +64,7 @@ function get_ip6addr() {
       grep "scope global" | \
       grep "/64" | \
       awk '{print $2}' | \
-      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
+      grep -Po '[0-9a-fA-F:].+[^/.+]{4}')
     echo $(echo ${ip6addr} | awk '{print $1}')
 }
 
@@ -145,7 +145,7 @@ function add_source_ipv6_lb() {
         local random_words=$(printf '%x:%x:%x\n' $RANDOM $RANDOM $RANDOM)
         local ip6addr=${FIRST_WORDS}:${random_words}
         printf "Adding ip=${ip6addr} on dev=${IFACE6}\n"
-        ip -6 addr add ${ip6addr} dev ${IFACE6}
+        ip -6 addr add ${ip6addr} dev ${IFACE6} nodad
         ip6tables -t nat -A POSTROUTING -m statistic --mode random --probability ${prob} -j SNAT --to-source ${ip6addr}
     done
 }
