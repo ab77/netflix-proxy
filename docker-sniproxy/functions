@@ -64,7 +64,7 @@ function get_ip6addr() {
       grep "scope global" | \
       grep "/64" | \
       awk '{print $2}' | \
-      grep -Po '[0-9a-fA-F:].+[^/.+]{4}')
+      grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}')
     echo $(echo ${ip6addr} | awk '{print $1}')
 }
 
