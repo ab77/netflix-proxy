@@ -32,7 +32,7 @@ The following are supported out of the box, however adding additional services i
 This project is **free**, covered by the [MIT License](https://github.com/ab77/netflix-proxy/blob/master/LICENSE.md). It is provided without any warranty and can be used for any purpose, including private and commercial. However, if you are planning to use it for commercial purposes (i.e make money off it), please do not expect me to provide support for free, as it would be unfair. A commercial support model can always be negotiated, if required. Please [contact](https://www.upwork.com/freelancers/~016da2a2dc195af5ec) me if this is something that interests you.
 
 # Instructions
-The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. Note, OpenVZ **won't work**, make sure to get a proper virtual machine using KVM or Xen. These instructions are based on the assumption, that access to the US region access is desired. If a different region is required (e.g. France), you may struggle with HE tunnel broker, as their entire network appears to be [geo-located](https://www.maxmind.com/en/geoip-demo) in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to `build.sh`.
+The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. If you prefer a video tutorial, [here](https://www.youtube.com/watch?v=8DrNgnq_cdM) is one prapared by one of the users. Note, OpenVZ **won't work**[n15], make sure to get a proper virtual machine using KVM or Xen. These instructions are based on the assumption, that access to the US region access is desired. If a different region is required (e.g. France), you may struggle with HE tunnel broker, as their entire network appears to be [geo-located](https://www.maxmind.com/en/geoip-demo) in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to `build.sh`.
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
@@ -409,6 +409,8 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 [n13] See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
 
 [n14] If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
+
+[n15] See, https://openvz.org/Docker_inside_CT.
 
 ```
 -- v2.4
