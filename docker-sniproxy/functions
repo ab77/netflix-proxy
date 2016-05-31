@@ -136,8 +136,16 @@ function get_ip_first_words() {
 }
 
 
+function get_public6_prefix() {
+    IFACE6=$(get_iface6)
+    local public6_prefix=$(ifconfig ${IFACE6} | grep inet6 | grep Global | awk -F' ' '{print $3}' | grep -Po '\/([0-9]+)')
+    echo ${public6_prefix}
+}
+
+
 function add_source_ipv6_lb() {
     IFACE6=$(get_iface6)
+    SUBNET=$(get_public6_prefix)
     FIRST_WORDS=$(get_ip_first_words)
     local prob=$(awk -v m=$m "BEGIN {print (1/${1})}")
     for (( x=0; x<=${1}; x++ ))
@@ -145,7 +153,7 @@ function add_source_ipv6_lb() {
         local random_words=$(printf '%x:%x:%x\n' $RANDOM $RANDOM $RANDOM)
         local ip6addr=${FIRST_WORDS}:${random_words}
         printf "Adding ip=${ip6addr} on dev=${IFACE6}\n"
-        ip -6 addr add ${ip6addr} dev ${IFACE6} nodad
+        ip -6 addr add ${ip6addr}${SUBNET} dev ${IFACE6} nodad
         ip6tables -t nat -A POSTROUTING -m statistic --mode random --probability ${prob} -j SNAT --to-source ${ip6addr}
     done
 }
