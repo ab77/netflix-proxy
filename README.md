@@ -3,9 +3,9 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update June/2016**: HE IPv6 endpoints are now blocked. This solution won't work anymore until an alternative cn be found.
+**Update June/2016**: HE TunnelBroker IPv6 endpoints are now blocked. This solution won't work for unblocking Netflix until an alternative can be found. It should still work for other services, not using IPv6.
 
-**Update March/2016**: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix could to be "tagging" accounts too, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
+Update March/2016: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4. Netflix could to be "tagging" accounts too, so if your account is tagged, the only device that will work out of region is the desktop web browser (i.e. Chrome)[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.
 
 If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix subscription and/or sign the petition:
 
