@@ -47,7 +47,7 @@ The following is based on a standard Ubuntu Docker image provided by `DigitalOce
 5. ~~Set the `IPv4 Endpoint` to the Droplet IP, pick a tunnel server in a location closest[n14] to you and click `Create Tunnel`.~~
 6. ~~SSH to your server and run `ping6 netflix.com`; if you get `Network is unreachable` proceed to the next step, otherwise remove native IPv6 first.~~
 7. ~~Run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -u <tunnelbroker-username> -p <tunnelbroker-password>`, making sure to specify your HE tunnel username and password correctly.~~
-8. SSH to your server and run: ``git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+8. SSH to your server and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 9. Make sure to **record the URL and credentials** for the `netflix-proxy` admin site.
 10. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 11. Finally, enjoy `Netflix` and others out of region.
