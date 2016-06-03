@@ -130,7 +130,7 @@ The following is based on a Debian image provided by `Vultr`, but should in theo
 
 [![](http://www.ramnode.com/images/banners/affbannerdarknewlogo.png)](https://clientarea.ramnode.com/aff.php?aff=3079)
 
-The following is based on a Debian or Ubuntu OS images provided by `RamNode`. ~~Do **not** enable native IPv6 on the host.~~
+The following is based on a Debian or Ubuntu OS images provided by `RamNode`. ~~Do **not** enable native IPv6 on the host.~~ Also, see [RamNode](https://github.com/ab77/netflix-proxy/blob/master/README.md#ramnode) specific IPv6 notes.
 
 1. Head over to [RamNode](https://clientarea.ramnode.com/aff.php?aff=3079) to create an account and buy a **KVM** VPS in a location closest to you (OpenVZ won't work).
 2. Log into the `VPS Control Panel` and (re)install the OS using `Ubuntu 14.04 x86_64 Server Minimal` or `Debian 8.0 x86_64 Minimal` image.
