@@ -59,7 +59,7 @@ The following is based on a standard Ubuntu image provided by `Kamatera`.
 
 1. Head over to [Kamatera](https://www.kamatera.com/express/compute/?tcampaign=antonbelodedenko&HT=17) to start your **30 Day Free Trial**.
 2. Create a new server in a geographic location of interest using `Ubuntu Server 14.04 64-bit` OS image.
-3. SSH to your server and run: `git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
+3. SSH to your server and run: `apt-get update && apt-get -y install vim dnsutils curl sudo git && curl -sSL https://get.docker.com/ | sh && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh`
 4. Make sure to **record the URL and credentials** for the `netflix-proxy` admin site.
 5. Set your DNS server to the IP given at the end of the script, then go to [this](http://ipinfo.io/) site to make sure the same IP is displayed.
 6. Finally, enjoy `Netflix` and others out of region.
