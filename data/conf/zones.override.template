@@ -283,6 +283,11 @@ zone "bbci.co.uk." {
     file "/data/conf/db.override";
 };
 
+zone "vod-rtmp-uk-live.edgesuite.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "vs-hds-uk-live.edgesuite.net." {
     type master;
     file "/data/conf/db.override";
@@ -304,6 +309,11 @@ zone "vod-hls-uk-live.edgesuite.net." {
 };
 
 zone "bbcfmt.vo.llnwd.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "bbcfmt.fcod.llnwd.net." {
     type master;
     file "/data/conf/db.override";
 };
