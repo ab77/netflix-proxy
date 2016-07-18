@@ -25,15 +25,13 @@
 
 <p><code>Docker</code> packaged smart DNS proxy to watch <code>Netflix</code>, <code>Hulu</code>[n2], <code>HBO Now</code> and others out of region using <code>BIND</code> and <code>SNIProxy</code>[n1]. Bypasses <a href="https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063">The Great Firewall</a> and works for blocked sites too, such as <a href="http://www.pornhub.com/">PornHub</a>. And if you happen to live in Germany and want to <a href="https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany">watch</a> YouTube like the rest of the world does, just add <code>googlevideo.com</code> to <code>zones.override</code> file and run <code>docker restart bind</code>.</p>
 
-<p>This solution will only work with devices supporting Server Name Indication (SNI)[n7]. To test, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
+<p>This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to <a href="https://sni.velox.ch/">this</a> site (<code>https://sni.velox.ch/</code>).</p>
 
-<p><strong>Update June/2016</strong>: HE TunnelBroker IPv6 endpoints are now also blocked. Your best bet now is to find a small VPS which offers native IPv6 support and which isn't yet blocked by Netflix (and keep it quiet <g-emoji alias="grimacing" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f62c.png">😬</g-emoji>). For other, non-IPv6 enabled services, this solution should still work fine.</p>
+<p><strong>Update July/2016</strong>: Some providers bypass DNS completely when making media requests. If you are willing to pay for a service that unblocks these, please <a href="http://www.poll-maker.com/poll752414x73014Ca9-30">vote</a>.</p>
+
+<p><strong>Update June/2016</strong>: HE TunnelBroker IPv6 endpoints are now also blocked. Your best bet now is to find a small VPS which offers native IPv6 support and which isn't yet blocked by Netflix (and keep it quiet <g-emoji alias="grimacing" fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f62c.png">😬</g-emoji>). For other, non-IPv6 enabled services that honour DNS settings, this solution should still work fine.</p>
 
 <p><strong>Update March/2016</strong>: IPv6 addresses of common hosting providers are now blocked in the same way as IPv4 (incl. Digital Ocean and Vultr). Netflix could be "tagging" accounts[n11]. Netflix and BBC iPlayer are also perfoming geo checks on their media hosts, so the relevant media domains are now proxied by default[n8]. Please note, that proxying media delivery could increase the bandwidth bill you get from your VPS provider. However, since most VPS providers offer 1TB per month inclusive with each server and most home ISPs don't offer anywhere near that amount, it should be a moot point in most situations.</p>
-
-<p>If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix subscription and/or sign the petition:</p>
-
-<p><a href="https://act.openmedia.org/netflix"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png" alt=""></a></p>
 
 <p>Please see the <a href="https://github.com/ab77/netflix-proxy/wiki"><strong>Wiki</strong></a> page(s) for some common troubleshooting ideas.</p>
 
@@ -504,6 +502,13 @@ docker run -it ubuntu:14.04 bash -c "ping6 google.com"
 </tr>
 </tbody>
 </table>
+
+<h3>
+<a id="petition" class="anchor" href="#petition" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Petition</h3>
+
+<p>If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix (and other) subscriptions(s) and/or by signing the petition:</p>
+
+<p><a href="https://act.openmedia.org/netflix"><img src="https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png" alt=""></a></p>
 
 <p><a href="http://ab77.github.io/"><img src="https://avatars2.githubusercontent.com/u/2033996?v=3&amp;s=96" alt="ab1"></a></p>
 
