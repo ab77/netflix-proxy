@@ -3,7 +3,9 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update July/2016**: Some providers bypass DNS completely when making media requests. If you are willing to pay for a service that unblocks these, please [vote](http://www.poll-maker.com/poll752414x73014Ca9-30).
+**Update August/2016**: Some providers and/or apps bypass DNS entirely, which invalidates all DNS based solutions. To participate in a free limited trial of a new unblocking service, please [register](http://eepurl.com/cb4rUv) your email and be notified when it is available (You'll need to BYO [Raspberry Pi](https://www.raspberrypi.org) or [Intel NUC](http://www.intel.com/content/www/us/en/nuc/overview.html) device).
+
+</strong>: Some providers and/or apps bypass DNS entirely, which invalidates all DNS based solutions. To participate in a free limited trial of a new unblocking service, please register your email below and be notified when it is available (You'll need to BYO <a href="https://www.raspberrypi.org/">Raspberry Pi</a> or <a href="http://www.intel.com/content/www/us/en/nuc/overview.html">Intel NUC</a> device).
 
 **Update June/2016**: HE TunnelBroker IPv6 endpoints are now also blocked. Your best bet now is to find a small VPS which offers native IPv6 support and which isn't yet blocked by Netflix (and keep it quiet :grimacing:). For other, non-IPv6 enabled services that honour DNS settings, this solution should still work fine.
 
