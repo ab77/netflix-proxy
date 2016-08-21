@@ -38,7 +38,7 @@ The following paragraphs show how to get this solution up and running with a few
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
-(Netflix is **blocked**) The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. ~~Do **not** enable native IPv6 on the host.~~
+(Netflix is **blocked**[n16]) The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. ~~Do **not** enable native IPv6 on the host.~~
 
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a Droplet in a geographic location of interest using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
@@ -125,7 +125,7 @@ export LANGUAGE=en_US.UTF-8 && \
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/vultr.png)](http://www.vultr.com/?ref=6871746)
 
-(Netflix is **blocked**) The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. ~~Do **not** enable native IPv6 on the host.~~
+(Netflix is **blocked**[n16]) The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. ~~Do **not** enable native IPv6 on the host.~~
 
 1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
 2. Create a compute instance in a geographic location of interest using `Debian 8 x64 (jessie)` image.
@@ -159,7 +159,7 @@ The following is based on a Debian or Ubuntu OS images provided by `RamNode`. ~~
 
 [![](https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_small.png)](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9)
 
-(Netflix is **blocked**) The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. ~~Do **not** enable native IPv6 on the host or disable it post-build and before moving onto step 7.~~
+(Netflix is **blocked**[n16]) The following is based on a standard Ubuntu image provided by `Linode`, but should work on any Linux distribution **without** Docker installed. ~~Do **not** enable native IPv6 on the host or disable it post-build and before moving onto step 7.~~
 
 1. Head over to [Linode](https://www.linode.com/?r=ceb35af7bad520f1e2f4232b3b4d49136dcfe9d9) and sign-up for an account.
 2. Create a new `Linode` in a geographic location of interest and deploy an `Ubuntu 14-04 LTS` image into it.
@@ -438,6 +438,8 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 [n14] If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
 
 [n15] See, https://openvz.org/Docker_inside_CT.
+
+[n16] Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution.
 
 ```
 -- v2.4
