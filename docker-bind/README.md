@@ -1,4 +1,4 @@
-# netflix-proxy
+# netflix-proxy [![](https://images.microbadger.com/badges/image/ab77/bind.svg)](https://microbadger.com/images/ab77/bind "Get your own image badge on microbadger.com")
 Docker packaged smart DNS proxy to watch Netflix out of region using BIND and sniproxy.
 
 # Instructions
