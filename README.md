@@ -127,7 +127,7 @@ export LANGUAGE=en_US.UTF-8 && \
 
 (Netflix is **blocked**[n16]) The following is based on a Debian image provided by `Vultr`, but should in theory work on any Debian distribution. ~~Do **not** enable native IPv6 on the host.~~
 
-1. Head over to [Vultr](http://www.vultr.com/?ref=6871746) to create an account.
+1. For a limited time, head over to [Vultr](http://www.vultr.com/?ref=6962933-3B) to create and account and get **$20 USD credit**.
 2. Create a compute instance in a geographic location of interest using `Debian 8 x64 (jessie)` image.
 3. ~~Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.~~
 4. ~~Create a [regular tunnel](https://tunnelbroker.net/new_tunnel.php).~~
