@@ -55,7 +55,7 @@ The following paragraphs show how to get this solution up and running with a few
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/kamatera.png)](https://www.kamatera.com/express/compute/?tcampaign=antonbelodedenko&HT=17)
 
-The following is based on a standard Ubuntu image provided by `Kamatera`.
+(Netflix is **blocked**[n16]) The following is based on a standard Ubuntu image provided by `Kamatera`.
 
 1. Head over to [Kamatera](https://www.kamatera.com/express/compute/?tcampaign=antonbelodedenko&HT=17) to start your **30 Day Free Trial**.
 2. Create a new server in a geographic location of interest using `Ubuntu Server 14.04 64-bit` OS image.
