@@ -440,31 +440,33 @@ for ip in $(echo ${IAPDDR} ${IPADDR6}); do
     log_action_end_msg $?
 done
 
-for ip in $(echo ${EXTIP} ${EXTIP6}); do
+# OpenSSL does not suppport connections to IPv6 addresses, hack using ip6-localhost
+for ip in $(echo ${EXTIP} ip6-localhost); do
     log_action_begin_msg "testing proxy (OpenSSL) on extip=${ip}"
     printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${ip}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 done
 
-for ip in $(echo ${IAPDDR} ${IPADDR6}); do
+# OpenSSL does not suppport connections to IPv6 addresses, hack using ip6-localhost
+for ip in $(echo ${IAPDDR} ip6-localhost); do
     log_action_begin_msg "testing proxy (OpenSSL) ipaddr=$ip"
       printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${ip}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 done
 
-for ip in $(echo ${EXTIP} ${EXTIP6}); do
+for ip in $(echo ${EXTIP} [${EXTIP6}]); do
     log_action_begin_msg "testing proxy (cURL) extip=${ip}"
     with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 done
 
-for ip in $(echo ${IAPDDR} ${IPADDR6}); do    
+for ip in $(echo ${IAPDDR} [${IPADDR6}]); do    
     log_action_begin_msg "testing proxy (cURL) ipaddr=${ip}"
       with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 done
 
-for ip in $(echo ${EXTIP} ${EXTIP6}); do
+for ip in $(echo ${EXTIP} [${EXTIP6}]); do
     log_action_begin_msg "testing netflix-proxy admin site extip=${ip}"
     (with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
       with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -472,7 +474,7 @@ for ip in $(echo ${EXTIP} ${EXTIP6}); do
     printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 done
 
-for ip in $(echo ${IAPDDR} ${IPADDR6}); do
+for ip in $(echo ${IAPDDR} [${IPADDR6}]); do
     log_action_begin_msg "testing netflix-proxy admin site ipaddr=${ip}"
     (with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
       with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
