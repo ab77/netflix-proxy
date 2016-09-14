@@ -37,8 +37,19 @@ except ImportError:
 
 def run_ipt_cmd(ipaddr, op):
     iface = get_iface()
-    web.debug('DEBUG: public iface=%s' % iface)
-    ipt_cmd = 'iptables -t nat -%s PREROUTING -s %s/32 -i %s -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules' % (op, ipaddr, iface)
+    web.debug('DEBUG: public iface=%s ipaddr=%s' % (iface, ipaddr))
+    ipt_cmd = 'iptables -t nat -%s PREROUTING -s %s/32 -i %s -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4' % (op, ipaddr, iface)
+    web.debug('DEBUG: ipaddr=%s, op=%s, ipt_cmd=%s' % (ipaddr, op, ipt_cmd))
+    p = Popen(ipt_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    output, err = p.communicate()
+    rc = p.returncode
+    return rc, err, output
+
+
+def run_ipt6_cmd(ipaddr, op):
+    iface = get_iface()
+    web.debug('DEBUG: public iface=%s ipaddr=%s' % (iface, ipaddr))
+    ipt_cmd = 'ip6tables -t nat -%s PREROUTING -s %s/128 -i %s -j ACCEPT -v && ip6tables-save > /etc/iptables/rules.v6' % (op, ipaddr, iface)
     web.debug('DEBUG: ipaddr=%s, op=%s, ipt_cmd=%s' % (ipaddr, op, ipt_cmd))
     p = Popen(ipt_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
@@ -308,10 +319,14 @@ class Index:
 
     def GET(self):
         ipaddr = get_client_public_ip()
+        is_ipv4 = web.net.validipaddr(ipaddr)
+        is_ipv6 = web.net.validip6addr(ipaddr)
+        
         if AUTO_AUTH:            
             if ipaddr:
                 web.debug('AUTO_AUTH: %s' % ipaddr)
-                result = run_ipt_cmd(ipaddr, 'I')
+                if is_ipv4: result = run_ipt_cmd(ipaddr, 'I')
+                if is_ipv6: result = run_ipt6_cmd(ipaddr, 'I')
                 web.debug('iptables_update: %s' % [result])
                 if result[0] == 0: 
                     flash('success', 'automatically authorized %s' % ipaddr)
@@ -403,9 +418,11 @@ class Add:
         if not auth_form.validates():
             flash('error', 'form validation failed')
             return render.form(get_form())
-        
-        if web.net.validipaddr(auth_form['ipaddr'].value) == False:
-            flash('error', '%s is not a valid IPv4 address' % auth_form['ipaddr'].value)
+
+        is_ipv4 = web.net.validipaddr(auth_form['ipaddr'].value)
+        is_ipv6 = web.net.validip6addr(auth_form['ipaddr'].value)
+        if is_ipv4 == False and is_ipv6 == False:
+            flash('error', '%s is not a valid ipv4/6 address' % auth_form['ipaddr'].value)
             return render.form(get_form())
 
         if session.already_authorized:
@@ -415,7 +432,8 @@ class Add:
         if session.auth_ip_count <= MAX_AUTH_IP_COUNT - 1 or session.user['privilege'] == 1:
             web.debug('Authorising ipaddr=%s' % auth_form['ipaddr'].value)
             web.header('Content-Type', 'text/html')
-            result = run_ipt_cmd(auth_form['ipaddr'].value, 'I')
+            if is_ipv4: result = run_ipt_cmd(auth_form['ipaddr'].value, 'I')
+            if is_ipv6: result = run_ipt6_cmd(auth_form['ipaddr'].value, 'I')       
             web.debug('iptables_update: %s' % [result])
             
             if result[0] == 0:
@@ -462,8 +480,10 @@ class Delete:
             flash('error', 'form validation failed')
             return render.form(get_form(name='delete'))
 
-        if web.net.validipaddr(auth_form['ipaddr'].value) == False:
-            flash('error', '%s is not a valid IPv4 address' % auth_form['ipaddr'].value)
+        is_ipv4 = web.net.validipaddr(auth_form['ipaddr'].value)
+        is_ipv6 = web.net.validip6addr(auth_form['ipaddr'].value)
+        if is_ipv4 == False and is_ipv6 == False:
+            flash('error', '%s is not a valid ipv4/6 address' % auth_form['ipaddr'].value)
             return render.form(get_form(name='delete'))
         
         web.debug('De-authorising ipaddr=%s' % auth_form['ipaddr'].value)
@@ -473,7 +493,8 @@ class Delete:
         web.debug('db.delete: %s' % db_result)
         if db_result == 0: db_result = 1
         for i in range(0, db_result):
-            result = run_ipt_cmd(auth_form['ipaddr'].value, 'D')
+            if is_ipv4: result = run_ipt_cmd(auth_form['ipaddr'].value, 'D')
+            if is_ipv6: result = run_ipt6_cmd(auth_form['ipaddr'].value, 'D') 
             web.debug('iptables_update: %s' % [result])
         session.auth_ip_count -= 1
         flash('success', '%s de-authorized' % auth_form['ipaddr'].value)

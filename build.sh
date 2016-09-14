@@ -219,7 +219,7 @@ if [[ -n "${CLIENTIP}" ]]; then
     fi
     log_action_end_msg $?
 else
-    log_action_cont_msg "unable to resovle and authorise client ip"
+    log_action_cont_msg "unable to resolve and authorise client ip"
 fi
 
 log_action_begin_msg "adding IPv4 iptables rules"
