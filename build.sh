@@ -464,18 +464,21 @@ for ip in $(echo ${IAPDDR} ${IPADDR6}); do
     log_action_end_msg $?
 done
 
-log_action_begin_msg "testing netflix-proxy admin site ipv4"
-(with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
-log_action_end_msg $?
-printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+for ip in $(echo ${EXTIP} ${EXTIP6}); do
+    log_action_begin_msg "testing netflix-proxy admin site extip=${ip}"
+    (with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+    printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+done
 
-log_action_begin_msg "testing netflix-proxy admin site ipv4"
-(with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
-log_action_end_msg $?
-printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
-
+for ip in $(echo ${IAPDDR} ${IPADDR6}); do
+    log_action_begin_msg "testing netflix-proxy admin site ipaddr=${ip}"
+    (with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+    printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+done
 
 # change back to original directory
 popd &>> ${BUILD_ROOT}/netflix-proxy.log
