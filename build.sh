@@ -450,7 +450,7 @@ for ip in $(echo ${IAPDDR} ${IPADDR6}); do
     log_action_begin_msg "testing proxy (OpenSSL) ipaddr=$ip"
       printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${ip}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-fi
+done
 
 for ip in $(echo ${EXTIP} ${EXTIP6}); do
     log_action_begin_msg "testing proxy (cURL) extip=${ip}"
