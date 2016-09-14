@@ -25,7 +25,7 @@ dnsmasq:
   ports:
     - "5353:5353"
     - "5353:5353/udp"
-  command: --port=5353 --log-facility=- -A /#/${EXTIP}
+  command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
   restart: always
 
 reverse-proxy:
