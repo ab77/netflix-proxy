@@ -353,10 +353,17 @@ sudo cp ${BUILD_ROOT}/data/conf/zones.override.template ${BUILD_ROOT}/data/conf/
 log_action_end_msg $?
 
 log_action_begin_msg "updating db.override with extip=${EXTIP} extip6=${EXTIP6} and date=${DATE}"
-sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo $(which sed) -i "s/::1/${EXTIP6}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+
+if [[ -n "${EXTIP}" ]]; then
+    sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+fi
+
+if [[ -n "${EXTIP6}" ]]; then
+    sudo $(which sed) -i "s/::1/${EXTIP6}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+fi
+
+sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "installing python-pip and docker-compose"
