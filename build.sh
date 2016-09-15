@@ -439,71 +439,52 @@ elif [[ `cat /etc/os-release | grep '^ID='` =~ debian ]]; then
     log_action_end_msg $?
 fi
 
-for ip in $(echo ${EXTIP} ${EXTIP6}); do
-    log_action_begin_msg "testing DNS on extip=${ip}"
-    with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_begin_msg "testing DNS"
+with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing DNS ipv6"
+    with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+      with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-done
+fi
 
-for ip in $(echo ${IAPDDR} ${IPADDR6}); do 
-    log_action_begin_msg "testing DNS ipaddr=$ip"
-      with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_begin_msg "testing proxy (OpenSSL)"
+printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${EXTIP}:443 &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${IPADDR}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
+if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing proxy (OpenSSL) ipv6"
+    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ip6-localhost:443 &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-done
+fi
 
-# OpenSSL does not suppport connections to IPv6 addresses, hack using ip6-localhost
-for ip in $(echo ${EXTIP} ip6-localhost); do
-    log_action_begin_msg "testing proxy (OpenSSL) on extip=${ip}"
-    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${ip}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_begin_msg "testing proxy (cURL)"
+with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing proxy (cURL) ipv6"
+    with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-done
+fi
 
-# OpenSSL does not suppport connections to IPv6 addresses, hack using ip6-localhost
-for ip in $(echo ${IAPDDR} ip6-localhost); do
-    log_action_begin_msg "testing proxy (OpenSSL) ipaddr=$ip"
-      printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${ip}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_begin_msg "testing netflix-proxy admin site"
+(with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing netflix-proxy admin site ipv6"
+    with_backoff $(which curl) --fail http://ip6-localhost:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-done
-
-for ip in $(echo ${EXTIP} ip6-localhost); do
-    if [[ "${ip}" != "[]" ]]; then
-        log_action_begin_msg "testing proxy (cURL) extip=${ip}"
-        with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
-        log_action_end_msg $?
-    fi
-done
-
-for ip in $(echo ${IAPDDR} ip6-localhost); do    
-    if [[ "${ip}" != "[]" ]]; then
-        log_action_begin_msg "testing proxy (cURL) ipaddr=${ip}"
-        with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
-        log_action_end_msg $?
-    fi
-done
-
-for ip in $(echo ${EXTIP} ip6-localhost); do
-    if [[ "${ip}" != "[]" ]]; then
-        log_action_begin_msg "testing netflix-proxy admin site extip=${ip}"
-        with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log &>> ${BUILD_ROOT}/netflix-proxy.log
-        if [[ "${ip}" != "ip6-localhost" ]]; then
-            with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
-        fi
-        log_action_end_msg $?
-        printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
-    fi
-done
-
-for ip in $(echo ${IAPDDR} ip6-localhost); do
-    if [[ "${ip}" != "[]" ]]; then
-        log_action_begin_msg "testing netflix-proxy admin site ipaddr=${ip}"
-        with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
-        if [[ "${ip}" != "ip6-localhost" ]]; then
-            with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
-        fi
-        log_action_end_msg $?
-        printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
-    fi
-done
+    printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+fi
 
 # change back to original directory
 popd &>> ${BUILD_ROOT}/netflix-proxy.log
