@@ -402,6 +402,7 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
     log_action_begin_msg "configuring upstart"
     sudo cp ./upstart/* /etc/init/ &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/init/ndp-proxy-helper.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/init/netflix-proxy-admin.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service docker restart &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service netflix-proxy-admin start &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service ndp-proxy-helper start &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -413,6 +414,7 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo tee /lib/systemd/system/docker.service.d/custom.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo cp ./systemd/* /lib/systemd/system/ &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/ndp-proxy-helper.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/netflix-proxy-admin.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl daemon-reload &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl restart docker &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl enable netflix-proxy-admin &>> ${BUILD_ROOT}/netflix-proxy.log && \
