@@ -465,7 +465,7 @@ for ip in $(echo ${IAPDDR} ip6-localhost); do
     log_action_end_msg $?
 done
 
-for ip in $(echo ${EXTIP} [${EXTIP6}]); do
+for ip in $(echo ${EXTIP} ip6-localhost); do
     if [[ "${ip}" != "[]" ]]; then
         log_action_begin_msg "testing proxy (cURL) extip=${ip}"
         with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -473,7 +473,7 @@ for ip in $(echo ${EXTIP} [${EXTIP6}]); do
     fi
 done
 
-for ip in $(echo ${IAPDDR} [${IPADDR6}]); do    
+for ip in $(echo ${IAPDDR} ip6-localhost); do    
     if [[ "${ip}" != "[]" ]]; then
         log_action_begin_msg "testing proxy (cURL) ipaddr=${ip}"
         with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${ip} &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -481,21 +481,25 @@ for ip in $(echo ${IAPDDR} [${IPADDR6}]); do
     fi
 done
 
-for ip in $(echo ${EXTIP} [${EXTIP6}]); do
+for ip in $(echo ${EXTIP} ip6-localhost); do
     if [[ "${ip}" != "[]" ]]; then
         log_action_begin_msg "testing netflix-proxy admin site extip=${ip}"
-        with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log &>> ${BUILD_ROOT}/netflix-proxy.log && \
-          with_backoff $(which curl) --fail http://{ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+        with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log &>> ${BUILD_ROOT}/netflix-proxy.log
+        if [[ "${ip}" != "ip6-localhost" ]]; then
+            with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+        fi
         log_action_end_msg $?
         printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
     fi
 done
 
-for ip in $(echo ${IAPDDR} [${IPADDR6}]); do
+for ip in $(echo ${IAPDDR} ip6-localhost); do
     if [[ "${ip}" != "[]" ]]; then
         log_action_begin_msg "testing netflix-proxy admin site ipaddr=${ip}"
-        with_backoff $(which curl) --fail http://${ip}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
-          with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+        with_backoff $(which curl) --fail http://${ip}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log
+        if [[ "${ip}" != "ip6-localhost" ]]; then
+            with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+        fi
         log_action_end_msg $?
         printf "\nnetflix-proxy-admin site=http://${ip}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
     fi
