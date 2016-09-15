@@ -496,7 +496,7 @@ done
 for ip in $(echo ${IAPDDR} ip6-localhost); do
     if [[ "${ip}" != "[]" ]]; then
         log_action_begin_msg "testing netflix-proxy admin site ipaddr=${ip}"
-        with_backoff $(which curl) --fail http://${ip}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log
+        with_backoff $(which curl) --fail http://${ip}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
         if [[ "${ip}" != "ip6-localhost" ]]; then
             with_backoff $(which curl) --fail http://${ip}:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
         fi
