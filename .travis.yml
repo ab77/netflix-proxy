@@ -54,8 +54,11 @@ before_script:
 
 script:
 - tests/__isfork.sh
-- sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
-- sudo python tests/testvideo.py hulu --email=$hulu_email --password=$hulu_passwd --tries=1; true
+# Netflix blocked everything, so no point testing video playback
+#- sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
+# Hulu also block everything and now also require a subscription/trial to view previously "free" content, which I don't have
+#- sudo python tests/testvideo.py hulu --email=$hulu_email --password=$hulu_passwd --tries=1; true
+- true
 
 after_script:
 - tests/__isfork.sh
@@ -64,4 +67,6 @@ after_script:
 
 after_success:
 - tests/__isfork.sh
-- sudo tests/gh-pages-push.sh
+# no assets to push since video tests are disabled
+#- sudo tests/gh-pages-push.sh
+- true
