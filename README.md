@@ -314,7 +314,7 @@ Similarly, `testvideo.py` is executed to test Hulu video playback using one of t
 ![Hulu VideoPlaybackTest screenshot](https://raw.githubusercontent.com/ab77/netflix-proxy/gh-pages/artifacts/waitForPlayer.png)
 
 ### IPv6 and Docker
-This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).<sup>[n6](#footnotes)</sup> Having said that, the current iteration uses `HE Eectric's` free tunnel broker service to provide IPv6 connectivity, since `HE Electric` is geo-located in the US, Netflix geoblocking (or `geo-bollocking`, if you like), allows the traffic through.
+This solution uses IPv6 downstream from the proxy to unblock IPv6 enabled providers, such as Netflix. No IPv6 support on the client is required for this to work<sup>[n17](#footnotes)</sup>, only the VPS must public IPv6 connectivity. You may also need to turn off IPv6 on your local network (and/or relevant devices).<sup>[n6](#footnotes)</sup> Having said that, the current iteration uses `HE Eectric's` free tunnel broker service to provide IPv6 connectivity, since `HE Electric` is geo-located in the US, Netflix geoblocking (or `geo-bollocking`, if you like), allows the traffic through.
 
 ```
 +----------+                  +-----------+                 +-----------------+
@@ -440,6 +440,8 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 [n15] See, https://openvz.org/Docker_inside_CT.
 
 [n16] Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution.
+
+[n17] IPv6 client support is enabled by default, so `AAAA` queries to `netflix-proxy` DNS will return an IPv6 record.
 
 ```
 -- v2.5
