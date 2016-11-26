@@ -5,7 +5,7 @@ After=docker.service
 
 [Service]
 Restart=always
-WorkingDirectory=/opt/netflix-proxy/auth
+WorkingDirectory={{BUILD_ROOT}}/auth
 ExecStart=/usr/bin/python ./auth.py 43867
 
 [Install]
