@@ -24,3 +24,7 @@ DEFAULT_PORT = 8080
 
 # form input mode
 FORM_INPUTS_HIDDEN = False
+
+# form validators
+USERNAME_MAX_LEN = 8
+PASSWORD_MAX_LEN = 16

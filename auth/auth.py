@@ -9,12 +9,9 @@ author: anton@belodedenko.me
 from subprocess import Popen, PIPE
 from collections import defaultdict
 import datetime, traceback, sys, socket
-from settings import (MAX_AUTH_IP_COUNT,
-                      SQLITE_DB,
-                      DEBUG, VERSION,
-                      AUTO_AUTH,
-                      DEFAULT_PORT,
-                      FORM_INPUTS_HIDDEN)
+from settings import (MAX_AUTH_IP_COUNT, SQLITE_DB, DEBUG, VERSION,
+                      AUTO_AUTH, DEFAULT_PORT, FORM_INPUTS_HIDDEN,
+                      USERNAME_MAX_LEN, PASSWORD_MAX_LEN)
 
 try:
     import web
@@ -343,8 +340,14 @@ class Index:
 
 class Login:
 
-    loginform = web.form.Form(web.form.Textbox('username', web.form.notnull),
-                              web.form.Password('password', web.form.notnull))
+    loginform = web.form.Form(web.form.Textbox('username',
+                                               web.form.notnull,
+                                               web.form.regexp('^[a-zA-Z0-9]+$', 'Alpha-numeric characters only (maximum %s)' % USERNAME_MAX_LEN),
+                                               web.form.Validator('Not more than %s characters.' % USERNAME_MAX_LEN, lambda x: len(x)<USERNAME_MAX_LEN)),
+                              web.form.Password('password',
+                                                web.form.notnull,
+                                                web.form.regexp('[ -~]', 'Printable characters only (maximum %s)' % PASSWORD_MAX_LEN),
+                                                web.form.Validator('Not more than %s characters.' % PASSWORD_MAX_LEN, lambda x: len(x)<PASSWORD_MAX_LEN)))
 
     def get_login_form(self):
         login_form = Login.loginform()
