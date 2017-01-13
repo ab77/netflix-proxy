@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update January/2017**: Unblocking gizmo limited pre-launch trial http://bit.ly/2jBafcd. Email blackbox@belodedenko.me for PayPal sandbox credentials or use Testnet coins to activate.
+**Update January/2017**: Unblocking gizmo limited pre-launch trial [http://bit.ly/2jBafcd](http://bit.ly/2jBafcd). Email blackbox@belodedenko.me for PayPal sandbox credentials or use Testnet coins to activate.
 
 Update August/2016: Some providers and/or apps bypass DNS entirely, which invalidates all DNS based solutions. To participate in a free limited trial of a new unblocking service, please [register](http://eepurl.com/cb4rUv) your email and be notified when it is available (You'll need to BYO [Raspberry Pi](https://www.raspberrypi.org) or [Intel NUC](http://www.intel.com/content/www/us/en/nuc/overview.html) device).
 
@@ -407,7 +407,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 | Paypal | Bitcoin |
 | ------ | ------- |
-|<center>[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)</center>|<center>![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)<br />91c446adbd54ef84eef1c6c1c723586aa0ba85d7</center>|
+|[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)|![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)91c446adbd54ef84eef1c6c1c723586aa0ba85d7|
 
 ### Petition
 If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix (and other) subscriptions(s) and/or by signing the petition:
