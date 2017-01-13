@@ -252,6 +252,7 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 This project is linked with `Travis CI` to deploy and test the project automatically. The Python script `testbuild.py` is used to deploy and test `netflix-proxy`. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that all `Docker` containers start; (b) the `built.sh` script outputs the correct message at the end; (c) all the relevant services survive a reboot; and (d) proxy is able to comunicate with Netflix over SSL.
 
 The `testbuild.py` script can also be used to programatically deploy `Droplets` from the command line:
+
 ```
 usage: testbuild.py digitalocean [-h] --api_token API_TOKEN
                                  [--client_ip CLIENT_IP]
@@ -332,6 +333,7 @@ When IPv6 public address is present on the host, Docker is configured with publi
 RamNode (and any other provider which uses SolusVM as its VPS provisioning system[n10]) assign a `/64` subnet to the VPS, but don't route it. Instead, individual addresses must be added in the portal if they are to be used on the host. After speaking with RamNode support, it appears this is a side-effect of MAC address filtering, which prevents IP address theft. This means that even though the subnet can be further divided on the host, only the main IPv6 address bound to `eth0` is ever accessible from the outside and none of the IPv6 addresses on the bridges below can communicate over IPv6 to the outside.
 
 To demonstrate this behavour, follow these steps:
+
 ```
 IPV6_SUBNET=<allocated-ipv6-subnet> (e.g. 2604:180:2:abc)
 IPV6_ADDR=<allocated-ipv6-addr> (e.g. 2604:180:2:abc::abcd)
@@ -366,6 +368,7 @@ docker run -it ubuntu:14.04 bash -c "ping6 google.com"
 ```
 
 However, if we NAT all IPv6 traffic from this host using `eth0`, communication will be allowed:
+
 ```
 # NAT all IPv6 traffic behind eth0
 ip6tables -t nat -A POSTROUTING -o eth0  -j MASQUERADE
@@ -376,20 +379,24 @@ docker run -it ubuntu:14.04 bash -c "ping6 google.com"
 
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
+
 ```
     zone "." {
         type master;
         file "/data/conf/db.override";
     };
 ```
+
 This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. This will unfortunately invalidate the original purpose of this project. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
 
 There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
 
 If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. `netflix.com` to your VPS IP by creating a file at `/etc/resolver/netflix.com` with these contents:
+
 ```
     nameserver xxx.yyy.zzz.ttt
 ```
+
 replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 
 ### Contributing
