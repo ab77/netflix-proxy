@@ -374,23 +374,22 @@ ip6tables -t nat -A POSTROUTING -o eth0  -j MASQUERADE
 docker run -it ubuntu:14.04 bash -c "ping6 google.com"
 ```
 
-
 ### Further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[n4] statement:
-
+```
     zone "." {
         type master;
         file "/data/conf/db.override";
     };
-
+```
 This will in effect proxy every request that ends up on your VPS if you set your VPS IP as your main and only DNS server at home. This will unfortunately invalidate the original purpose of this project. Ideally, what you really want to do, is to have some form of DNS proxy at home, which selectively sends DNS requests to your VPS only for the domains you care about (i.e. netflix.com) and leaves everything else going out to your ISP DNS server(s). [Dnsmasq](https://en.wikipedia.org/wiki/Dnsmasq) could be used to achieve this, in combination, perhaps, with a small Linux device like Raspberry Pi or a router which can run OpenWRT.
 
 There is a [similar](https://github.com/trick77/dockerflix) project to this, which automates the Dnsmasq configuration.
 
 If your client is running OS X, you can skip dnsmasq and simply redirect all DNS requests for e.g. `netflix.com` to your VPS IP by creating a file at `/etc/resolver/netflix.com` with these contents:
-
+```
     nameserver xxx.yyy.zzz.ttt
-
+```
 replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 
 ### Contributing
