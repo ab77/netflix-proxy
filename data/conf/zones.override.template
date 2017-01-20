@@ -1,3 +1,33 @@
+// Swedish zones
+
+zone "svtstatic.se." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "akamaihd.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "tv4play.se." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "dplay.se." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "mittip.se." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+
+// Default added zones
+
 zone "netflix.com." {
     type master;
     file "/data/conf/db.override";
@@ -43,292 +73,7 @@ zone "ssl-images-amazon.com." {
     file "/data/conf/db.override";
 };
 
-zone "amazon.co.uk." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "crackle.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "pandora.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vudu.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "blinkbox.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "tvegolf-i.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "tvenbcsn-i.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "abc.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "abc.go.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "fox.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "link.theplatform.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "nbc.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "nbcuni.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "broadband.espn.go.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "ip2location.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "pbs.org." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "warnerbros.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "southpark.cc.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "ipad-streaming.cbs.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "brightcove.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "cwtv.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "spike.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "go.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "mtv.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "mtvnservices.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "video.dl.playstation.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "uplynk.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "maxmind.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "disney.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "disneyjunior.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "marketplace-xb.xboxlive.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
 zone "lovefilm.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "fbchdvod-f.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "turner.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "amctv.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "sho.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "tveusa-vh.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "mog.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "wdtvlive.com." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "pga-lh.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "beinsportsconnect.tv." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "beinsportsconnect.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenabs-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenaas-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenacs-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenads-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenaes-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "besmenafs-s.akamaihd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "bbc.co.uk." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "bbci.co.uk." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vod-rtmp-uk-live.edgesuite.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vs-hds-uk-live.edgesuite.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vs-hls-uk-live.edgesuite.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vod-hds-uk-live.edgesuite.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "vod-hls-uk-live.edgesuite.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "bbcfmt.vo.llnwd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "bbcfmt.fcod.llnwd.net." {
-    type master;
-    file "/data/conf/db.override";
-};
-
-zone "crunchyroll.com." {
     type master;
     file "/data/conf/db.override";
 };
