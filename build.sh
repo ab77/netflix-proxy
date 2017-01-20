@@ -243,7 +243,7 @@ if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         # https://github.com/docker/docker/issues/9889
         IPV6=1
         log_action_begin_msg "enabling sniproxy IPv6 priority"
-        printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n" | \
+        printf "\nresolver {\n  nameserver 4.2.2.1\n  mode ipv6_first\n}\n" | \
           sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log
         log_action_end_msg $?
         
@@ -277,7 +277,7 @@ else
     log_action_end_msg $?
     IPV6=0
     log_action_begin_msg "configuring sniproxy and Docker"
-    printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
+    printf "\nresolver {\n  nameserver 4.2.2.1\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       printf "DOCKER_OPTS=\"--iptables=false\"\n" | sudo tee -a /etc/default/docker &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
