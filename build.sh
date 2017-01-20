@@ -222,6 +222,7 @@ sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --t
   sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT && \
   sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT && \
   sudo iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT && \
+  sudo iptables -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT && \
   sudo iptables -A INPUT -p udp -m udp --dport 5353 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT && \
