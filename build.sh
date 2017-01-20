@@ -217,6 +217,7 @@ log_action_begin_msg "adding IPv4 iptables rules"
 sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080 && \
   sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080  && \
   sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353 && \
+  sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 53 -j REDIRECT --to-port 5353 && \
   sudo iptables -A INPUT -p icmp -j ACCEPT && \
   sudo iptables -A INPUT -i lo -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT && \
@@ -224,6 +225,7 @@ sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --t
   sudo iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT && \
   sudo iptables -A INPUT -p udp -m udp --dport 5353 -j ACCEPT && \
+  sudo iptables -A INPUT -p tcp -m tcp --dport 5353 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT && \
