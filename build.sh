@@ -353,6 +353,12 @@ sudo cp ${BUILD_ROOT}/Caddyfile.template ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROO
   printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    proxy_header Host {host}\n    proxy_header X-Forwarded-For {remote}\n    proxy_header X-Real-IP {remote}\n    proxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
+log_action_begin_msg "creating cron scripts"
+sudo cp ${BUILD_ROOT}/crond.template /etc/cron.d/netflix-proxy &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/cron.d/netflix-proxy &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  sudo service cron restart &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
 if [[ "${b}" == "1" ]]; then
     log_action_begin_msg "building docker containers from source"
     sudo $(which docker) build -t ab77/bind docker-bind &>> ${BUILD_ROOT}/netflix-proxy.log && \
