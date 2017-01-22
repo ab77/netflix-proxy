@@ -1,0 +1,17 @@
+$def with (ips)
+
+<table>
+<tr>
+<th>IP</th>
+<th>Action</th>
+</tr>
+$for ip in ips:
+    <tr>
+    <td>$ip</td>
+    <td><form action="/delete" method="post">
+    			<input type="hidden" name="ipaddr" value="$ip"/>
+    			<input type="hidden" name="csrf_token" value="$csrf_token()"/>
+                <input type="submit" value="Delete"/>
+            </form>
+    </tr>
+</table>
