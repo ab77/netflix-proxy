@@ -318,7 +318,7 @@ class Index:
                     return render.redirect(get_redirect_page())
                 else:
                     flash('error', 'unable to automatically authorize %s' % ipaddr)
-                    raise web.seeother('/')
+                    raise web.seeother('/add')
             else:
                 flash('error', 'something went wrong, please login to authorize')
                 raise web.seeother('/')
