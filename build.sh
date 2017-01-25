@@ -350,7 +350,7 @@ log_action_end_msg $?
 
 log_action_begin_msg "configuring netflix-proxy-admin reverse-proxy"
 sudo cp ${BUILD_ROOT}/Caddyfile.template ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    proxy_header Host {host}\n    proxy_header X-Forwarded-For {remote}\n    proxy_header X-Real-IP {remote}\n    proxy_header X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log
+  printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    header_upstream Host {host}\n    header_upstream X-Forwarded-For {remote}\n    header_upstream X-Real-IP {remote}\n    header_upstream X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ "${b}" == "1" ]]; then
