@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update January/2017**: Unblocking gizmo limited pre-launch trial [http://bit.ly/2jBafcd](http://bit.ly/2jBafcd). Email [blackbox@belodedenko.me](mailto:blackbox@belodedenko.me) for PayPal sandbox credentials or use [Testnet](http://testnetwallet.com/) coins to activate.
+**Update January/2017**: Turnkey Netflix un-blocking solution on a Raspberry Pi free preview [http://black-box.belodedenko.me/](http://black-box.belodedenko.me/).
 
 Update August/2016: Some providers and/or apps bypass DNS entirely, which invalidates all DNS based solutions. To participate in a free limited trial of a new unblocking service, please [register](http://eepurl.com/cb4rUv) your email and be notified when it is available (You'll need to BYO [Raspberry Pi](https://www.raspberrypi.org) or [Intel NUC](http://www.intel.com/content/www/us/en/nuc/overview.html) device).
 
