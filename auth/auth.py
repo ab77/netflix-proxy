@@ -327,7 +327,7 @@ class Index:
                 if session.user:
                     ipaddrs = get_ipaddrs()
                     if len(ipaddrs) == 0:
-                        raise web.seeother('/add')
+                        return web.seeother('/add')
                     return render.index(ipaddrs)
             except Exception, e:
                 web.debug(traceback.print_exc())
