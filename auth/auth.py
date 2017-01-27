@@ -490,7 +490,6 @@ class DDNSIndex:
             if session.user:
                 domains = db.query('SELECT * FROM DDNS WHERE user_id=$user_id',
                        vars={'user_id': session.user['ID']})
-                web.debug('domains: %s' % [domains.first()])
                 return render.ddns(domains, DDNSIndex.ddns_add_form())
         except Exception, e:
             web.debug(traceback.print_exc())
@@ -524,7 +523,7 @@ class DDNSDelete:
             flash('error', 'form validation failed')
             raise web.seeother('/ddns')
 
-        web.debug('Removinf domain=%s' % form['domain'].value)
+        web.debug('Removing domain=%s' % form['domain'].value)
         web.header('Content-Type', 'text/html')
         db_result = db.delete('DDNS', where="user_id=%s AND domain='%s'" % (session.user['ID'],
                                                                                form['domain'].value))
