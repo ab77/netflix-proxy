@@ -3,11 +3,9 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update January/2017**: Turnkey Netflix un-blocking solution on a Raspberry Pi free preview [http://black-box.belodedenko.me/](http://black-box.belodedenko.me/).
+**Update January/2017**: Free preview un-blocking solution on a Raspberry Pi [http://black-box.belodedenko.me/](http://black-box.belodedenko.me/). You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org). Be [notified](http://eepurl.com/cb4rUv) when it is launched.
 
-Update August/2016: Some providers and/or apps bypass DNS entirely, which invalidates all DNS based solutions. To participate in a free limited trial of a new unblocking service, please [register](http://eepurl.com/cb4rUv) your email and be notified when it is available (You'll need to BYO [Raspberry Pi](https://www.raspberrypi.org) or [Intel NUC](http://www.intel.com/content/www/us/en/nuc/overview.html) device).
-
-If you have access to a residential Internet connection in the United States with a decent up/down bandwdith and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please [register](http://eepurl.com/cchiJ9) your interest and be noified when this opportunity becomes available.
+If you have access to a high-speed residential Internet connection in the United States and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please [register](http://eepurl.com/cchiJ9) your interest and be noified when this opportunity becomes available.
 
 Update June/2016: HE TunnelBroker IPv6 endpoints are now also blocked. Your best bet now is to find a small VPS which offers native IPv6 support and which isn't yet blocked by Netflix (and keep it quiet :grimacing:). For other, non-IPv6 enabled services that honour DNS settings, this solution should still work fine.
 
