@@ -28,7 +28,6 @@ printf "Current database schema version is ${CURRENT_VERSION}\n"
 
 UPDATE_SCRIPT="${BUILD_ROOT}/auth/db/updates/${CURRENT_VERSION}-to-${SCHEMA_VERSION}.sql"
 if [ -e "${UPDATE_SCRIPT}" ]; then
-	printf "Updating database schema to ${SCHEMA_VERSION}\n"
 	log_action_begin_msg "Updating database schema from  ${CURRENT_VERSION} to ${SCHEMA_VERSION}"
 	$(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db < $UPDATE_SCRIPT &>> ${BUILD_ROOT}/netflix-proxy.log
 	log_action_end_msg $?
