@@ -4,7 +4,7 @@
 """
 
 # version
-VERSION = '0.2'
+VERSION = '0.3'
 
 # sqlite DB file
 SQLITE_DB = 'db/auth.db' 
