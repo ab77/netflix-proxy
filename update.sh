@@ -23,7 +23,7 @@ BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "${BUILD_ROOT}/scripts/functions" ] && . ${BUILD_ROOT}/scripts/functions
 
 
-CURRENT_VERSION=`$(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "PRAGMA user_version" &>> ${BUILD_ROOT}/netflix-proxy.log`
+CURRENT_VERSION=`$(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "PRAGMA user_version"`
 printf "Current database schema version is ${CURRENT_VERSION}\n"
 
 UPDATE_SCRIPT="${BUILD_ROOT}/auth/db/updates/${CURRENT_VERSION}-to-${SCHEMA_VERSION}.sql"
