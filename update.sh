@@ -23,13 +23,13 @@ BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "${BUILD_ROOT}/scripts/functions" ] && . ${BUILD_ROOT}/scripts/functions
 
 
-CURRENT_VERSION=`$(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "PRAGMA user_version"`
+CURRENT_VERSION=`sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "PRAGMA user_version"`
 printf "Current database schema version is ${CURRENT_VERSION}\n"
 
 UPDATE_SCRIPT="${BUILD_ROOT}/auth/db/updates/${CURRENT_VERSION}-to-${SCHEMA_VERSION}.sql"
 if [ -e "${UPDATE_SCRIPT}" ]; then
 	log_action_begin_msg "Updating database schema from  ${CURRENT_VERSION} to ${SCHEMA_VERSION}"
-	$(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db < $UPDATE_SCRIPT &>> ${BUILD_ROOT}/netflix-proxy.log
+	sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db < $UPDATE_SCRIPT &>> ${BUILD_ROOT}/netflix-proxy.log
 	log_action_end_msg $?
 fi
 printf "Done!\n"
