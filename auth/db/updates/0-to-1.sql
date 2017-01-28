@@ -7,5 +7,6 @@ CREATE TABLE "DDNS"(
 	"last_ipaddr" Text,
 	"domain" Text NOT NULL  );
 
-PRAGMA user_version = 2.5
+PRAGMA user_version = 1
+
 END; 

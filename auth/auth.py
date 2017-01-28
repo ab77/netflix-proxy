@@ -487,13 +487,16 @@ class DDNSIndex:
     ddns_add_form = web.form.Form(web.form.Textbox('domain', web.form.notnull))
     def GET(self):
         try:
-            if session.user:
+            if session.has_key('user'):
                 domains = db.query('SELECT * FROM DDNS WHERE user_id=$user_id',
                        vars={'user_id': session.user['ID']})
                 return render.ddns(domains, DDNSIndex.ddns_add_form())
+            else:
+                web.seeother('/login')
         except Exception, e:
+            flash('error', 'Please update the database schema. See README for details.')
             web.debug(traceback.print_exc())
-            raise web.seeother('/login')
+            raise web.seeother('/')
 
 class DDNSAdd:
     
