@@ -321,10 +321,18 @@ class Index:
                     raise web.seeother('/add')
             else:
                 flash('error', 'something went wrong, please login to authorize')
-                raise web.seeother('/add')
-        else:       
-            raise web.seeother('/add')
-
+                raise web.seeother('/')
+        else:
+            try:
+                if session.user:
+                    ipaddrs = get_ipaddrs()
+                    if len(ipaddrs) == 0:
+                        return web.seeother('/add')
+                    return render.index(ipaddrs)
+            except Exception, e:
+                web.debug(traceback.print_exc())
+                raise web.seeother('/login')
+            
 
 class Login:
 
@@ -342,7 +350,7 @@ class Login:
         web.config.session_parameters['cookie_domain'] = web.ctx.environ['HTTP_HOST']
         try:
             if session.user:
-                raise web.seeother('/add')
+                raise web.seeother('/')
             else:
                 flash('success', 'welcome, please login to authorize %s' % ipaddr)                
                 return render.login(self.get_login_form())
@@ -366,7 +374,7 @@ class Login:
             session.user = user
             web.debug(web.config.session_parameters)
             flash('success', """you are now logged in, "Add" to authorize %s""" % get_client_public_ip())
-            raise web.seeother('/add')
+            raise web.seeother('/')
         else:
             session.user = None
             flash('error', 'login failed for user %s' % username)
