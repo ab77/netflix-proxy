@@ -15,13 +15,8 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
 fi
 
 # gobals
-VERSION=2.4
-TIMEOUT=10
 BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-SDNS_ADMIN_PORT=43867
-HE_TUNNEL_INDEX=1
-HE_IFACE=he-ipv6
-NETFLIX_HOST=netflix.com
+[ -e "${BUILD_ROOT}/scripts/globals" ] && . ${BUILD_ROOT}/scripts/globals
 
 # import functions
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
