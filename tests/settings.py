@@ -3,7 +3,7 @@
 """Default options for the application.
 """
 
-VERSION = '2.4' # current version
+VERSION = '2.5' # current version
 BASE_API_URL = 'https://api.digitalocean.com/v2'
 DEFAULT_PROXY = None # proxy URL (e.g. 'localhost:8080')
 DEFAULT_NFLX_HOST = 'www.netflix.com' # default Netflix host

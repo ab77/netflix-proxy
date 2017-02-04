@@ -107,6 +107,11 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <pass
         -n      HE tunnel index (default: 1)
 ```
 
+### Updates
+
+In order to update your existing database schema, please run the provided `update.sh` script.
+Alternatively you can run the schema updates manually (e.g. if you skipped a version). 
+
 ## Other Cloud Providers
 
 ### Locale Issues

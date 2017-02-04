@@ -1,0 +1,28 @@
+$def with (domains, form)
+
+<h1>DynDNS Domains</h1>
+
+<table>
+<tr>
+<th>Domain</th>
+<th>Last IP</th>
+<th>Action</th>
+</tr>
+$for entry in domains:
+    <tr>
+    <td>$entry.domain</td>
+    <td>$entry.last_ipaddr</td>
+    <td><form action="/ddns/delete" method="post">
+    			<input type="hidden" name="domain" value="$entry.domain">
+    			<input type="hidden" name="csrf_token" value="$csrf_token()"/>
+                <input type="submit" value="Delete"/>
+            </form>
+    </tr>
+</table>
+
+<h2>Add domain</h2>
+<form action="/ddns/add" method="post">
+    			<input type="hidden" name="csrf_token" value="$csrf_token()"/>
+    			$:form.render()
+                <input type="submit" value="Add"/>
+            </form>

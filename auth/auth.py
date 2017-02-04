@@ -272,6 +272,9 @@ urls = (
     r'/logout', 'Logout',
     r'/add', 'Add',
     r'/delete', 'Delete',
+    r'/ddns', 'DDNSIndex',
+    r'/ddns/add', 'DDNSAdd',
+    r'/ddns/delete', 'DDNSDelete',
     r'.*', 'Index'
 )
 
@@ -487,6 +490,57 @@ class Delete:
         flash('success', '%s de-authorized' % auth_form['ipaddr'].value)
         return render.form(get_form(name='delete'))
 
+class DDNSIndex:
+
+    ddns_add_form = web.form.Form(web.form.Textbox('domain', web.form.notnull))
+    def GET(self):
+        try:
+            if session.has_key('user'):
+                domains = db.query('SELECT * FROM DDNS WHERE user_id=$user_id',
+                       vars={'user_id': session.user['ID']})
+                return render.ddns(domains, DDNSIndex.ddns_add_form())
+            else:
+                web.seeother('/login')
+        except Exception, e:
+            flash('error', 'Please update the database schema. See README for details.')
+            web.debug(traceback.print_exc())
+            raise web.seeother('/')
+
+class DDNSAdd:
+    
+    @csrf_protected # Verify this is not CSRF, or fail
+    def POST(self):
+        form = DDNSIndex.ddns_add_form()
+        if not form.validates():
+            flash('error', 'form validation failed')
+            raise web.seeother('/ddns')
+        
+        web.debug('Adding domain=%s' % form['domain'].value)
+        web.header('Content-Type', 'text/html')
+        db_result = db.insert('DDNS',
+                                  user_id=session.user['ID'],
+                                  domain=form['domain'].value)
+        web.debug('db.insert: %s' % db_result)
+        flash('success', 'succesfully added %s' % form['domain'].value)
+        return web.seeother('/ddns')
+ 
+class DDNSDelete:
+
+    @csrf_protected # Verify this is not CSRF, or fail
+    def POST(self):
+        form = DDNSIndex.ddns_add_form()
+
+        if not form.validates():
+            flash('error', 'form validation failed')
+            raise web.seeother('/ddns')
+
+        web.debug('Removing domain=%s' % form['domain'].value)
+        web.header('Content-Type', 'text/html')
+        db_result = db.delete('DDNS', where="user_id=%s AND domain='%s'" % (session.user['ID'],
+                                                                               form['domain'].value))
+        web.debug('db.delete: %s' % db_result)
+        flash('success', '%s removed' % form['domain'].value)
+        return web.seeother('/ddns')        
 
 # Adds a wsgi callable for uwsgi
 application = app.wsgifunc()

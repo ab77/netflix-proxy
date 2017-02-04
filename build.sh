@@ -15,13 +15,8 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
 fi
 
 # gobals
-VERSION=2.4
-TIMEOUT=10
 BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-SDNS_ADMIN_PORT=43867
-HE_TUNNEL_INDEX=1
-HE_IFACE=he-ipv6
-NETFLIX_HOST=netflix.com
+[ -e "${BUILD_ROOT}/scripts/globals" ] && . ${BUILD_ROOT}/scripts/globals
 
 # import functions
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
@@ -351,6 +346,12 @@ log_action_end_msg $?
 log_action_begin_msg "configuring netflix-proxy-admin reverse-proxy"
 sudo cp ${BUILD_ROOT}/Caddyfile.template ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log && \
   printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    header_upstream Host {host}\n    header_upstream X-Forwarded-For {remote}\n    header_upstream X-Real-IP {remote}\n    header_upstream X-Forwarded-Proto {scheme}\n}\n" | sudo tee -a ${BUILD_ROOT}/Caddyfile &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
+log_action_begin_msg "creating cron scripts"
+sudo cp ${BUILD_ROOT}/crond.template /etc/cron.d/netflix-proxy &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/cron.d/netflix-proxy &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  sudo service cron restart &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ "${b}" == "1" ]]; then
