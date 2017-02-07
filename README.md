@@ -40,6 +40,10 @@ The following paragraphs show how to get this solution up and running with a few
 
 (Netflix is **blocked**[n16]) The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed. ~~Do **not** enable native IPv6 on the host.~~
 
+A tutorial was recently made by one of our users: https://www.youtube.com/watch?v=vPNG878IBJU&ab_channel=TheATBVCopyrightChannel
+
+The YouTube link will update if the video is taken down.
+
 1. Head over to [Digital Ocean](https://m.do.co/c/937b01397c94) to get **$10 USD credit**
 2. Create a Droplet in a geographic location of interest using `Docker 1.x` on `Ubuntu 14.04` (find in under `One-click Apps` tab).
 3. ~~Create a free [tunnel broker](https://tunnelbroker.net/register.php) account.~~
