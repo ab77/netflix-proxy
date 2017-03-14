@@ -3,7 +3,7 @@
 
 This solution will only work with devices supporting Server Name Indication (SNI)[n7] and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [this](https://sni.velox.ch/) site (`https://sni.velox.ch/`).
 
-**Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org). [Subscribe](http://eepurl.com/cb4rUv) to the mailing list to be notified of new fetures, updates, outages, etc..
+**Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org). You could also [subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new fetures, updates, outages, etc..
 
 If you have access to a high-speed residential Internet connection and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please email [blackbox@unzoner.com](mailto:blackbox@unzoner.com) your interest.
 
