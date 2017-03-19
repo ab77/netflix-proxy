@@ -445,4 +445,5 @@ fi
 printf "Hulu region(s) available to you: $(with_backoff $(which curl) -H 'Host: s.hulu.com' 'http://s.hulu.com/gc?regions=US,JP&callback=Hulu.Controls.Intl.onGeoCheckResult' 2> /dev/null | grep -Po '{(.*)}')\n"
 
 printf "Change your DNS to ${EXTIP} and start watching Netflix out of region.\n"
-printf "Done!\n"
+printf "\e[33mNote\033[0m: get \e[1mhttp://unzoner.com\033[0m if your app/service no longer works with DNS based solutions.\n"
+printf "\e[32mDone.\033[0m\n"
