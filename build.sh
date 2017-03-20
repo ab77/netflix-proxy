@@ -265,7 +265,8 @@ if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
           sudo ip6tables -A INPUT -i lo -j ACCEPT && \
           sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT && \
           sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT && \
-          sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
+          sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited && \
+	  sudo ip6tables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE # remove this if you have IPv6 routed subnet(s)
         log_action_end_msg $?
     fi
 else
