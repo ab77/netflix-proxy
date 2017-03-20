@@ -256,7 +256,7 @@ if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         fi
 
         log_action_begin_msg "enabling Docker IPv6 dual-stack support with fixed-cidr-v6=${IPV6_SUBNET}"
-        printf "DOCKER_OPTS='--iptables=false --ipv6 --fixed-cidr-v6=\"${IPV6_SUBNET}\"'\n" | \
+        printf "DOCKER_OPTS=\"--iptables=false --ipv6 --fixed-cidr-v6 ${IPV6_SUBNET}\"\n" | \
           sudo tee -a /etc/default/docker &>> ${BUILD_ROOT}/netflix-proxy.log
         log_action_end_msg $?
 
