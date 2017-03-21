@@ -35,13 +35,13 @@ function add_tunnel_iface_config() {
 
 function get_iface() {
     local iface=$(ip -4 route | grep default | awk '{print $5}')
-    echo ${iface}
+    echo ${iface} | awk '{print $1}'
 }
 
 
 function get_iface6() {
     local iface6=$(ip -6 route | grep default | awk '{print $5}')
-    echo ${iface6}
+    echo ${iface6} | awk '{print $1}'
 }
 
 
