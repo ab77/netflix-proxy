@@ -17,7 +17,7 @@ Please see the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) fo
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/poll_results.png)](http://www.poll-maker.com/results622505xfcC7F6aA-26)
 
-# Supported Services
+# supported services
 The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart bind`:
 * Netflix
 * Hulu[[n2]](#footnotes)
@@ -30,10 +30,10 @@ The following are supported out of the box, however adding additional services i
 * BBC iPlayer[[n5]](#footnotes)
 * NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/data/conf/zones.override)
 
-# License
+# license
 This project is **free**, covered by the [MIT License](https://github.com/ab77/netflix-proxy/blob/master/LICENSE.md). It is provided without any warranty and can be used for any purpose, including private and commercial. However, if you are planning to use it for commercial purposes (i.e make money off it), please do not expect me to provide support for free, as it would be unfair. A commercial support model can always be negotiated, if required. Please [contact](https://www.upwork.com/freelancers/~016da2a2dc195af5ec) me if this is something that interests you.
 
-# Instructions
+# instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. If you prefer a video tutorial, [here](https://www.youtube.com/watch?v=8DrNgnq_cdM) is one prapared by one of the users. Note, OpenVZ **won't work**[[n15]](#footnotes), make sure to get a proper virtual machine using KVM or Xen. These instructions are based on the assumption, that access to the US region access is desired. If a different region is required (e.g. France), you may struggle with HE tunnel broker, as their entire network appears to be [geo-located](https://www.maxmind.com/en/geoip-demo) in the US. Instead, you could try to find a small hosting provider in the desired region and install with native IPv6 (or even just IPv4) instead of tunnel. To do this, run the build normally, but omit all parameters to `build.sh`.
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
@@ -76,24 +76,24 @@ apt-get update && apt-get -y install vim dnsutils curl sudo git && \
 6. Finally, enjoy `Netflix` and others out of region.
 7. Enjoy or raise a new [issue](https://github.com/ab77/netflix-proxy/issues/new) if something doesn't work quite right (also `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy)).
 
-### Authorising Additional IPs
+### authorising additional IPs
 If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build. If you've forgotten your admin credentials, [reset](https://github.com/ab77/netflix-proxy/wiki/Changing-Admin-Password-For-Auth-Version).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)
 
 The `admin` account does not restrict the entry or removal of IPs. If you want to restrict the entry of IPs to the current client IP using an automatically populated drop-down, create a standard user account using the `account-creator.sh` script located in the `auth` directory, which will prompt you for the input and create the user account.
 
-#### Dynamic IPs
+#### dynamic IPs
 You can also use the `netflix-proxy` admin site to update your IP address, should your ISP assign you a new one (e.g. via DHCP). If your IP address does change, all HTTP/HTTPS requests will automatically be redirected to the admin site on port `8080`. All DNS requests will be redirected to `dnsmasq` instance running on port `5353`. You will most likely need to purge your browser and system DNS caches after this (e.g. `ipconfig /flushdns` and `chrome://net-internals/#dns`) and/or reboot the relevant devices. This mechanism should work on browsers, but will most likely cause errors on other devices, such as Apple TVs and smart TVs. If you Internet stops working all of a sudden, try loading a browser and going to `netflix.com`.
 
-#### Automatic IP Authorization
+#### automatic IP authorization
 **WARNING**: do not do enable this unless you know what you are doing.
 
 To enable automatic authorization of every IP that hits your proxy, set `AUTO_AUTH = True` in `auth/settings.py` and run `service netflix-proxy-admin restart`. This setting will effectively authorize any IP hitting your proxy IP with a web browser for the first time, including bots, hackers, spammers, etc. Upon successful authorization, the browser will be redirected to [Google](http://google.com/).
 
 The DNS service is configured with recursion turned on by [default](https://github.com/ab77/netflix-proxy#security), so after a successful authorization, anyone can use your VPS in DNS amplification attacks, which will probably put you in breach of contract with the VPS provider. You have been **WARNED**.
 
-### Security
+### security
 The build script automatically configures the system with **DNS recursion turned on**. This has security implications, since it potentially opens your DNS server to a DNS amplification attack, a kind of a [DDoS attack](https://en.wikipedia.org/wiki/Denial-of-service_attack). This should not be a concern however, as long as the `iptables` firewall rules configured automatically by the build script for you remain in place. However if you ever decide to turn the firewall off, please be aware of this.
 
 If you want to turn DNS recursion off, please be aware that you will need a mechanism to selectively send DNS requests for domains your DNS server knows about (i.e. netflix.com) to your VPS and send all of the other DNS traffic to your local ISP's DNS server. Something like [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) can be used for this and some Internet routers even have it built in. In order to switch DNS recursion off, you will need to build your system using the following command:
@@ -102,7 +102,7 @@ If you want to turn DNS recursion off, please be aware that you will need a mech
 git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -r 0 -b 1
 ```
 
-### Command Line Options
+### command line options
 The following command line options can be optionaly passed to `build.sh` for additional control:
 
 ```
@@ -118,13 +118,13 @@ Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <pass
         -n      HE tunnel index (default: 1)
 ```
 
-### Updates
+### updates
 In order to update your existing database schema, please run the provided `update.sh` script.
 Alternatively you can run the schema updates manually (e.g. if you skipped a version). 
 
-## Other Cloud Providers
+## other cloud providers
 
-### Locale Issues
+### locale issues
 
 The build script has been designed to work on `Ubuntu 14.x` and `Debian 8.x`. It will most likely fail on all other distributions. Some pre-requisites require the locale to be set correctly and some provider OS images need extra help. If you get `locale` issues reported by `Python` and/or `pip` during the build, try running the following first:
 ```
@@ -287,9 +287,9 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 11. Use the [Azure Management Portal](https://manage.windowsazure.com/) to add `DNS (UDP)`, `HTTP (TCP)` and `HTTPS (TCP)` endpoints and secure them to your home/work/whatever IPs using the Azure `ACL` feature.
 12. SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
 
-### Automated Tests
+### automated Tests
 
-#### Test Build
+#### test build
 This project is linked with `Travis CI` to deploy and test the project automatically. The Python script `testbuild.py` is used to deploy and test `netflix-proxy`. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that all `Docker` containers start; (b) the `built.sh` script outputs the correct message at the end; (c) all the relevant services survive a reboot; and (d) proxy is able to comunicate with Netflix over SSL.
 
 The `testbuild.py` script can also be used to programatically deploy `Droplets` from the command line:
@@ -326,7 +326,7 @@ optional arguments:
 
 Note, you will need a working `Python 2.7` environment and the modules listed in `tests/requirements.txt` (run `pip install -r tests/requirements.txt`).
 
-#### Test Video Playback
+#### test video playback
 Video playback tests are **currently disabled** due to Netflix DigitalOCean/HE Tunnel Broker blocking.
 
 ##### Netflix
@@ -417,7 +417,7 @@ ip6tables -t nat -A POSTROUTING -o eth0  -j MASQUERADE
 docker run -it ubuntu:14.04 bash -c "ping6 google.com"
 ```
 
-### Further Work
+### further Work
 This solution is meant to be a quick and dirty (but functional) method of bypassing geo-restrictions for various services. While it is (at least in theory) called a `smart DNS proxy`, the only `smart` bit is in the `zones.override` file, which tells the system which domains to proxy and which to pass through. You could easilly turn this into a `dumb/transparent DNS proxy`, by replacing the contents of `zones.override` with a simple[[n4]](#footnotes) statement:
 
 ```
@@ -439,58 +439,42 @@ If your client is running OS X, you can skip dnsmasq and simply redirect all DNS
 
 replacing `xxx.yyy.zzz.ttt` with your VPS IP, of course.
 
-### Contributing
+### contributing
 If you have any idea, feel free to fork it and submit your changes back to me.
 
-### Donate
+### donate
 If you find this useful, please feel free to make a small donation with [PayPal](https://www.paypal.me/belodetech) or Bitcoin.
 
 | Paypal | Bitcoin |
 | ------ | ------- |
 |[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)|![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)91c446adbd54ef84eef1c6c1c723586aa0ba85d7|
 
-### Petition
+### -etition
 If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix (and other) subscriptions(s) and/or by signing the petition:
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png)](https://act.openmedia.org/netflix)
 
 [![ab1](https://avatars2.githubusercontent.com/u/2033996?v=3&s=96)](http://ab77.github.io/)
 
-#### Footnotes
-[n1] https://github.com/dlundquist/sniproxy by Dustin Lundquist `dustin@null-ptr.net`
-
-[n2] `Hulu` is heavily geo-restricted from most non-residential IP ranges and doesn't support IPv6.
-
-[n3] You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
-
-[n4] See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
-
-[n5] See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
-
-[n6] If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056). Also [client-ipv6](https://github.com/ab77/netflix-proxy/tree/client-ipv6) branch is being developed.
-
-[n7] See, https://en.wikipedia.org/wiki/Server_Name_Indication.
-
-[n8] See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
-
-[n9] See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).
-
-[n10] See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
-
-[n11] See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/) and [Wiki](https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..).
-
-[n12] [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
-
-[n13] See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
-
-[n14] If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
-
-[n15] See, https://openvz.org/Docker_inside_CT.
-
-[n16] Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
-
-[n17] GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass.
+#### footnotes
+1. https://github.com/dlundquist/sniproxy by Dustin Lundquist `dustin@null-ptr.net`
+2. `Hulu` is heavily geo-restricted from most non-residential IP ranges and doesn't support IPv6.
+3. You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
+4. See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
+5. See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
+6. If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056). Also [client-ipv6](https://github.com/ab77/netflix-proxy/tree/client-ipv6) branch is being developed.
+7. See, https://en.wikipedia.org/wiki/Server_Name_Indication.
+8. See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
+9. See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).
+10. See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
+11. See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/) and [Wiki](https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..).
+12. [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
+13. See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
+14. If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
+15. See, https://openvz.org/Docker_inside_CT.
+16. Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
+17. GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass, try `black.box` [unzoner](http://unzoner.com).
 
 ```
--- v2.4
+-- v2.5
 ```
