@@ -7,6 +7,12 @@ env:
   global:
   - secure: kDAI818hwV0MF87EI0PANbIsX/AIiNrsI0+hdiOd4bmH7VGM71/qjaaoZVyDmfkkEvA/qrn4LUuH3YQ7VTtrgZm/ggDLxi03XIvJwez9knSc9x/XLdd/Xj/Q36KYrccuZwJsDUAtjiL6oWp84wbuvESeuFdp9ufn5mSMRAcaQbIdYudxGbU7AQrP0CC5huJvF8aoaIZFwhV2d+n9YLqxpZ9Etax5BV+cWAu9AXGu+gt4xF1dKcYxqsdSvUahrq8Z2IbCcy/KSBbZLjmwP8ze4nFl0yocW++sNqr0oEa0KNBEgwO6vvolmkPm93dz7AewMxkWSeDFCSZKHmZWuqVVllUuJfKOUOeF18NjYSKUayuHzml7CBQZgMBjPYdaa8jIgp/uHwMwPYYP/a6zSkevZ0Dqkq/qREF3NCVXs8BLgM8c9XcI1r6D9U80sMVj4829/tEikK9QqO6W0Q7qf0+V9j48PR5qZXbIthj+pon7Q6k3dNUvaAKWOalOT5IS5bBp9gLrGDakhnB+iRTZ8MnFXMT59XI9pvTsoFYxBsWcY0zTaxiivKJ25eCeESNVnqBWR01/TotsdeIcyF9dbsAT/hmp8hMtmi009eIPdVkyMoKHQXEYN3z4B7Ux11clVLDIsY9BX91XVaagXKEUppaIadlEnRb5heZRzXBENgRa/XI=
 
+addons:
+  artifacts:
+    s3_region: us-west-2
+    paths:
+    - $(ls tests/artifacts/*.png | tr "\n" ":")
+
 cache:
   directories:
   - "$HOME/.cache/pip"
@@ -18,7 +24,16 @@ before_install:
 - tests/__isfork.sh
 - openssl aes-256-cbc -K $encrypted_45757fbb12c0_key
   -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d
+- export CHROME_BIN=/usr/bin/google-chrome
+- export DISPLAY=:99.0
+- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
+  --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
 - sudo apt-get -y update
+- sudo apt-get -y install -y libappindicator1 fonts-liberation
+#- wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#- sudo dpkg -i google-chrome-stable_current_amd64.deb
+- wget https://s3-eu-central-1.amazonaws.com/belodetech/google-chrome-stable_49.0.2623.112-1_amd64.deb
+- sudo dpkg -i google-chrome-stable_49.0.2623.112-1_amd64.deb
 - sudo apt-get -y install build-essential python-dev libffi-dev libssl-dev
 - sudo -H pip install --upgrade cryptography
 - sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
@@ -39,7 +54,8 @@ before_script:
 
 script:
 - tests/__isfork.sh
-- true
+- sudo python tests/testvideo.py netflix --email=$netflix_email --password=$netflix_passwd
+- sudo python tests/testvideo.py hulu --email=$hulu_email --password=$hulu_passwd --tries=1; true
 
 after_script:
 - tests/__isfork.sh
@@ -48,4 +64,4 @@ after_script:
 
 after_success:
 - tests/__isfork.sh
-- true 
+- sudo tests/gh-pages-push.sh
