@@ -1,4 +1,4 @@
-# netflix-proxy [![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)  [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
+[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)  [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
 
 > `TL;DR`
 
@@ -11,11 +11,12 @@ apt-get update && apt-get -y install vim dnsutils curl sudo git && \
   ./build.sh
 ```
 
-`Docker` packaged smart DNS proxy to watch `Netflix`, `Hulu`[[n2]](#footnotes), `HBO Now` and others out of region using `BIND` and `SNIProxy`[[n1]](#footnotes). Bypasses[[n17]](#footnotes) [The Great Firewall](https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063) and works for blocked sites too, such as [PornHub](http://www.pornhub.com/). And if you happen to live in Germany and want to [watch](https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany) YouTube like the rest of the world does, just add `googlevideo.com` to `zones.override` file and run `docker restart bind`.
+# about
+`netflix-proxy` is a smart DNS proxy to watch `Netflix`, `Hulu`[[n2]](#footnotes), `HBO Now` and others out of region. It is deployed using Docker and uses `BIND` and `SNIProxy`[[n1]](#footnotes) to provide proxy and DNS functionality. It helps to bypass[[n17]](#footnotes) [The Great Firewall](https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063) and works for blocked sites too, such as [PornHub](http://www.pornhub.com/). And if you happen to live in Germany and want to [watch](https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany) YouTube like the rest of the world does, just add `googlevideo.com` to `zones.override` file and run `docker restart bind`.
 
-This solution will only work with devices supporting Server Name Indication (SNI)[[n7]](#footnotes) and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [https://sni.velox.ch/](https://sni.velox.ch/).
+However, this solution will only work with devices supporting Server Name Indication (SNI)[[n7]](#footnotes) and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [https://sni.velox.ch/](https://sni.velox.ch/).
 
-**Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org). You could also [subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new fetures, updates, outages, etc..
+**Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live and works on all devices. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org) or compatible device. You could also [subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new fetures, updates, outages, etc..
 
 If you have access to a high-speed residential Internet connection and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please email [blackbox@unzoner.com](mailto:blackbox@unzoner.com) your interest.
 
