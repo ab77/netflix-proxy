@@ -449,7 +449,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 | ------ | ------- |
 |[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)|![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)91c446adbd54ef84eef1c6c1c723586aa0ba85d7|
 
-### -etition
+### petition
 If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix (and other) subscriptions(s) and/or by signing the petition:
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png)](https://act.openmedia.org/netflix)
