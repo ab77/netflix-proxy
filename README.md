@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/) [![BIND layers](https://images.microbadger.com/badges/image/ab77/bind.svg)](https://microbadger.com/images/ab77/bind "Get your own image badge on microbadger.com") [![SNIProxy layers](https://images.microbadger.com/badges/image/ab77/sniproxy.svg)](https://microbadger.com/images/ab77/sniproxy "Get your own image badge on microbadger.com")
+[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)
 
 > `TL;DR`
 
