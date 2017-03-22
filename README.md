@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)  [![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)
+[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)
 
 > `TL;DR`
 
@@ -460,7 +460,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 
 | Paypal | Bitcoin |
 | ------ | ------- |
-|[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)|![91c446adbd54ef84eef1c6c1c723586aa0ba85d7](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)91c446adbd54ef84eef1c6c1c723586aa0ba85d7|
+|[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5UUCDR8YXWERQ)|![1GUrKgkaCkdsrCzb4pq3bJwkmjTVv9X7eG](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/bitcoin_qr.png)1GUrKgkaCkdsrCzb4pq3bJwkmjTVv9X7eG|
 
 ### petition
 If you feel all of this is too complicated, I don't blame you. If you want change, vote with your wallet by cancelling your Netflix (and other) subscriptions(s) and/or by signing the petition:
