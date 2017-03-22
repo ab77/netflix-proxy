@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/)
+[![Build Status](https://travis-ci.org/ab77/netflix-proxy.svg?branch=master)](https://travis-ci.org/ab77/netflix-proxy) [![Docker Pulls](https://img.shields.io/docker/pulls/ab77/sniproxy.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/sniproxy/) [![Docker Stars](https://img.shields.io/docker/stars/ab77/bind.svg?maxAge=2592000)](https://hub.docker.com/r/ab77/bind/) [![BIND layers](https://images.microbadger.com/badges/image/ab77/bind.svg)](https://microbadger.com/images/ab77/bind "Get your own image badge on microbadger.com") [![SNIProxy layers](https://images.microbadger.com/badges/image/ab77/sniproxy.svg)](https://microbadger.com/images/ab77/sniproxy "Get your own image badge on microbadger.com")
 
 > `TL;DR`
 
@@ -467,8 +467,6 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/petition.png)](https://act.openmedia.org/netflix)
 
-[![ab1](https://avatars2.githubusercontent.com/u/2033996?v=3&s=96)](http://ab77.github.io/)
-
 #### footnotes
 1. https://github.com/dlundquist/sniproxy by Dustin Lundquist `dustin@null-ptr.net`
 2. `Hulu` is heavily geo-restricted from most non-residential IP ranges and doesn't support IPv6.
@@ -491,3 +489,7 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 ```
 -- v2.5
 ```
+
+<hr>
+<p align="center">&copy; 2016 <a href="http://ab77.github.io/">belodetek</a></p>
+<p align="center"><a href="http://anton.belodedenko.me/"><img src="https://avatars2.githubusercontent.com/u/2033996?v=3&s=50"></a></p>
