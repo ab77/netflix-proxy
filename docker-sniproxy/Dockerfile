@@ -5,7 +5,7 @@ MAINTAINER anton@belodedenko.me
 RUN apt-get update && \
     apt-get -y install vim dnsutils curl git sipcalc iptables autotools-dev \
     cdbs debhelper dh-autoreconf dpkg-dev gettext libev-dev libpcre3-dev \
-    libudns-dev pkg-config fakeroot
+    libudns-dev pkg-config fakeroot inetutils-traceroute net-tools iputils-ping
 
 RUN git clone https://github.com/dlundquist/sniproxy.git ${HOME}/sniproxy && \
     cd ${HOME}/sniproxy && \
