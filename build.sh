@@ -298,7 +298,7 @@ else
     log_action_end_msg $?
     IPV6=0
     log_action_begin_msg "configuring sniproxy and Docker"
-    printf "\nresolver {\n  nameserver 8.8.8.8\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
+    printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv4_only\n}\n" | sudo tee -a ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       printf "DOCKER_OPTS=\"--iptables=false\"\n" | sudo tee -a /etc/default/docker &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
@@ -450,14 +450,14 @@ elif [[ `cat /etc/os-release | grep '^ID='` =~ debian ]]; then
 fi
 
 log_action_begin_msg "testing DNS"
-with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
-  with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
+with_backoff $(which dig) -4 +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  with_backoff $(which dig) -4 +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing DNS ipv6"
-    with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${BUILD_ROOT}/netflix-proxy.log || \
-      with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${BUILD_ROOT}/netflix-proxy.log
+    with_backoff $(which dig) -6 +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+      with_backoff $(which dig) -6 +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
@@ -473,25 +473,25 @@ if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
 fi
 
 log_action_begin_msg "testing proxy (cURL)"
-with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
-  with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
+with_backoff $(which curl) -4 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  with_backoff $(which curl) -4 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing proxy (cURL) ipv6"
-    with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${BUILD_ROOT}/netflix-proxy.log
+    with_backoff $(which curl) -6 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
 log_action_begin_msg "testing netflix-proxy admin site"
-(with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
+(with_backoff $(which curl) -4 --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  with_backoff $(which curl) -4 --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing netflix-proxy admin site ipv6"
-    with_backoff $(which curl) --fail http://ip6-localhost:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
+    with_backoff $(which curl) -6 --fail http://ip6-localhost:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
     printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
