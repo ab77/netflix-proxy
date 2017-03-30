@@ -252,7 +252,7 @@ log_action_end_msg $?
 # check if public IPv6 access is available
 log_action_begin_msg "creating Docker and sniproxy configuration templates"
 sudo cp ${BUILD_ROOT}/data/conf/sniproxy.conf.template ${BUILD_ROOT}/data/conf/sniproxy.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo cp ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml.template ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml &>> ${BUILD_ROOT}/netflix-proxy.log
+  sudo cp ${BUILD_ROOT}/docker-compose.yaml.template ${BUILD_ROOT}/docker-compose.yaml &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "checking IPv6 connectivity"
@@ -306,7 +306,7 @@ fi
 if [[ ${z} == 1 ]]; then
     log_action_begin_msg "enabling caching-resolver support"
     printf "  links:\n    - caching-resolver\n" | \
-      sudo tee -a ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml &>> ${BUILD_ROOT}/netflix-proxy.log
+      sudo tee -a ${BUILD_ROOT}/docker-compose.yaml &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
     
@@ -396,7 +396,7 @@ if [[ "${b}" == "1" ]]; then
 fi
 
 log_action_begin_msg "creating and starting Docker containers"
-sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} EXTIP6=${EXTIP6} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d &>> ${BUILD_ROOT}/netflix-proxy.log
+sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} EXTIP6=${EXTIP6} $(which docker-compose) up -d &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 # configure appropriate init system
