@@ -489,7 +489,7 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 [n17] IPv6 client support is enabled by default, so `AAAA` queries to `netflix-proxy` DNS will return an IPv6 record.
 
 ```
--- v2.5
+-- v2.6
 ```
 
 <hr>
