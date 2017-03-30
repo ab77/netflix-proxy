@@ -12,6 +12,3 @@ $TTL  86400
 ns1 IN  A    127.0.0.1
 @   IN  A    127.0.0.1
 *   IN  A    127.0.0.1
-ns1 IN  AAAA ::1
-@   IN  AAAA ::1
-*   IN  AAAA ::1

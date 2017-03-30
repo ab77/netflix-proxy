@@ -351,6 +351,14 @@ log_action_end_msg $?
 log_action_begin_msg "updating db.override with extip=${EXTIP} extip6=${EXTIP6} and date=${DATE}"
 sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
 
+if [[ "${IPV6}" == "1" ]] && [[ -n "${EXTIP6}" ]]; then
+cat << EOF >> ${BUILD_ROOT}/data/conf/db.override
+ns1 IN  AAAA ::1
+@   IN  AAAA ::1
+*   IN  AAAA ::1
+EOF
+fi
+
 if [[ -n "${EXTIP}" ]]; then
     sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
 fi
