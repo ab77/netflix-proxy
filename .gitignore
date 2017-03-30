@@ -5,4 +5,5 @@ sessions/
 auth/db/auth.db
 id_rsa.travis
 tunnelInfo.xml
+chromedriver.*
 ChromeProfile/

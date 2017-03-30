@@ -1,5 +1,17 @@
 # common functions
 
+function is_ipv4() {
+    echo ${1} | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}' > /dev/null
+    echo $?
+}
+
+
+function is_ipv6() {
+    echo ${1} | grep -Po '[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}::[a-zA-Z0-9]{1,4}' > /dev/null
+    echo $?
+}
+
+
 function get_tunnel_clientv4() {
     local clientv4=$(cat ${BUILD_ROOT}/tunnelInfo.xml | $(which xpath) -q -e "//tunnel[${1}]/clientv4/text()" | grep -Po '[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}')
     echo ${clientv4}
@@ -70,8 +82,14 @@ function get_ip6addr() {
 
 
 function get_ext_ipaddr() {
-    local extip=$(dig +short myip.opendns.com @resolver1.opendns.com)
+    local extip=$(curl -4 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://ifconfig.co)
     echo $(echo ${extip} | awk '{print $1}')
+}
+
+
+function get_ext_ip6addr() {
+    local extip6=$(curl -6 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://ifconfig.co)
+    echo $(echo ${extip6} | awk '{print $1}')
 }
 
 

@@ -486,6 +486,8 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 16. Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
 17. GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass, try `black.box` [unzoner](http://unzoner.com).
 
+[n17] IPv6 client support is enabled by default, so `AAAA` queries to `netflix-proxy` DNS will return an IPv6 record.
+
 ```
 -- v2.5
 ```

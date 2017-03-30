@@ -14,7 +14,7 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
     exec ${0} $@
 fi
 
-# gobals
+# globals
 BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "${BUILD_ROOT}/scripts/globals" ] && . ${BUILD_ROOT}/scripts/globals
 
@@ -27,10 +27,14 @@ IFACE=$(get_iface)
 
 # obtain IP address of the Internet facing interface
 IPADDR=$(get_ipaddr)
+IPADDR6=$(get_ip6addr)
 EXTIP=$(get_ext_ipaddr)
+EXTIP6=$(get_ext_ip6addr)
 
-# obtain client (home) ip address
+# obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
+IS_IPV4=$(is_ipv4 ${CLIENTIP})
+IS_IPV6=$(is_ipv6 ${CLIENTIP})
 
 # get the current date
 DATE=$(/bin/date +'%Y%m%d')
@@ -132,7 +136,7 @@ fi
 
 # diagnostics info
 sudo touch ${BUILD_ROOT}/netflix-proxy.log
-printf "resolved params: clientip=${CLIENTIP} ipaddr=${IPADDR} extip=${EXTIP}\n"
+printf "resolved params: clientip=${CLIENTIP} client_ipv4=${IS_IPV4} client_ipv6=${IS_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}\n"
 printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n"
 
 # automatically enable IPv6 (tunnel)
@@ -202,10 +206,15 @@ pushd ${BUILD_ROOT} &>> ${BUILD_ROOT}/netflix-proxy.log
 # configure iptables
 if [[ -n "${CLIENTIP}" ]]; then
     log_action_begin_msg "authorising clientip=${CLIENTIP} on iface=${IFACE}"
-    sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+    if [[ "${IS_IPV4}" == "0" ]]; then
+        sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+    fi
+    if [[ "${IS_IPV6}" == "0" ]]; then
+        sudo ip6tables -t nat -A PREROUTING -s ${CLIENTIP}/128 -i ${IFACE} -j ACCEPT
+    fi
     log_action_end_msg $?
 else
-    log_action_cont_msg "unable to resovle and authorise client ip"
+    log_action_cont_msg "unable to resolve and authorise client ip"
 fi
 
 log_action_begin_msg "adding IPv4 iptables rules"
@@ -222,6 +231,22 @@ sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --t
   sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT && \
   sudo iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT && \
   sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
+log_action_end_msg $?
+
+log_action_begin_msg "adding IPv6 iptables rules"
+sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080 && \
+  sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080  && \
+  sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353 && \
+  sudo ip6tables -A INPUT -p ipv6-icmp -j ACCEPT && \
+  sudo ip6tables -A INPUT -i lo -j ACCEPT && \
+  sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT && \
+  sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT && \
+  sudo ip6tables -A INPUT -p udp -m udp --dport 53 -j ACCEPT && \
+  sudo ip6tables -A INPUT -p udp -m udp --dport 5353 -j ACCEPT && \
+  sudo ip6tables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT && \
+  sudo ip6tables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT && \
+  sudo ip6tables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT && \
+  sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
 log_action_end_msg $?
 	
 # check if public IPv6 access is available
@@ -323,10 +348,18 @@ log_action_begin_msg "creating zones.override from template"
 sudo cp ${BUILD_ROOT}/data/conf/zones.override.template ${BUILD_ROOT}/data/conf/zones.override &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "updating db.override with extip=${EXTIP} and date=${DATE}"
-sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_begin_msg "updating db.override with extip=${EXTIP} extip6=${EXTIP6} and date=${DATE}"
+sudo cp ${BUILD_ROOT}/data/conf/db.override.template ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+
+if [[ -n "${EXTIP}" ]]; then
+    sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+fi
+
+if [[ -n "${EXTIP6}" ]]; then
+    sudo $(which sed) -i "s/::1/${EXTIP6}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
+fi
+
+sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${BUILD_ROOT}/data/conf/db.override &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "installing python-pip and docker-compose"
@@ -363,7 +396,7 @@ if [[ "${b}" == "1" ]]; then
 fi
 
 log_action_begin_msg "creating and starting Docker containers"
-sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d &>> ${BUILD_ROOT}/netflix-proxy.log
+sudo BUILD_ROOT=${BUILD_ROOT} EXTIP=${EXTIP} EXTIP6=${EXTIP6} $(which docker-compose) -f ${BUILD_ROOT}/docker-compose/netflix-proxy.yaml up -d &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 # configure appropriate init system
@@ -371,6 +404,7 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
     log_action_begin_msg "configuring upstart"
     sudo cp ./upstart/* /etc/init/ &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/init/ndp-proxy-helper.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /etc/init/netflix-proxy-admin.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service docker restart &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service netflix-proxy-admin start &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo service ndp-proxy-helper start &>> ${BUILD_ROOT}/netflix-proxy.log
@@ -382,6 +416,7 @@ elif [[ `systemctl` =~ -\.mount ]]; then
       sudo tee /lib/systemd/system/docker.service.d/custom.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo cp ./systemd/* /lib/systemd/system/ &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/ndp-proxy-helper.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/netflix-proxy-admin.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl daemon-reload &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl restart docker &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo systemctl enable netflix-proxy-admin &>> ${BUILD_ROOT}/netflix-proxy.log && \
@@ -411,21 +446,47 @@ with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${BUILD
   with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing DNS ipv6"
+    with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${BUILD_ROOT}/netflix-proxy.log || \
+      with_backoff $(which dig) +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+fi
+
 log_action_begin_msg "testing proxy (OpenSSL)"
 printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${EXTIP}:443 &>> ${BUILD_ROOT}/netflix-proxy.log || \
   printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${IPADDR}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
+
+if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing proxy (OpenSSL) ipv6"
+    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ip6-localhost:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+fi
 
 log_action_begin_msg "testing proxy (cURL)"
 with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${BUILD_ROOT}/netflix-proxy.log || \
   with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing proxy (cURL) ipv6"
+    with_backoff $(which curl) --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+fi
+
 log_action_begin_msg "testing netflix-proxy admin site"
 (with_backoff $(which curl) --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
   with_backoff $(which curl) --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+
+if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    log_action_begin_msg "testing netflix-proxy admin site ipv6"
+    with_backoff $(which curl) --fail http://ip6-localhost:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
+    log_action_end_msg $?
+    printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+fi
 
 # change back to original directory
 popd &>> ${BUILD_ROOT}/netflix-proxy.log

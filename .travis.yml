@@ -48,4 +48,4 @@ after_script:
 
 after_success:
 - tests/__isfork.sh
-- true 
+- true
