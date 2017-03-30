@@ -23,8 +23,12 @@ before_install:
 
 install:
 - tests/__isfork.sh
-- sudo -H pip install pip --upgrade
-- sudo -H $(which pip) install -r tests/requirements.txt --upgrade
+- which pip
+- pip --version 
+- sudo -H pip install pip --upgrade --user
+- which pip
+- pip --version
+- sudo -H $(which pip) install -r tests/requirements.txt --upgrade --user
 
 before_script:
 - tests/__isfork.sh
