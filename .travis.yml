@@ -20,7 +20,7 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_45757fbb12c0_key
   -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d
 - sudo apt-get -y update
-- sudo apt-get -y install build-essential python-dev libffi-dev libssl-dev
+- sudo apt-get -y install build-essential python-dev openssl libffi-dev libssl-dev
 
 install:
 - tests/__isfork.sh
