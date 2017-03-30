@@ -156,7 +156,7 @@ function get_ip_first_words() {
 
 function get_public6_prefix() {
     IFACE6=$(get_iface6)
-    local public6_prefix=$(ifconfig ${IFACE6} | grep inet6 | grep Global | awk -F' ' '{print $3}' | grep -Po '\/([0-9]+)')
+    local public6_prefix=$(ifconfig ${IFACE6} | grep inet6 | grep Global | awk -F' ' '{print $3}' | grep -Po '\/([0-9]+)' | head -n 1)
     echo ${public6_prefix}
 }
 
