@@ -2,7 +2,9 @@ requests[secure]
 urllib3[secure]
 termcolor
 dnspython
-pyopenssl
+pyOpenSSL
+idna
+certifi
 cryptography
 ndg-httpsclient
 pyasn1
