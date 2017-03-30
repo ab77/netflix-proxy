@@ -24,7 +24,8 @@ before_install:
 install:
 - tests/__isfork.sh
 - export PATH=$HOME/.local/bin:$PATH
-- pip install -r tests/requirements.txt --user `whoami` --upgrade
+- pip install pip --upgrade
+- pip install -r tests/requirements.txt --upgrade
 
 before_script:
 - tests/__isfork.sh
