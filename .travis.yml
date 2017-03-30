@@ -23,7 +23,7 @@ before_install:
 
 install:
 - tests/__isfork.sh
-- sudo -H pip install -r tests/requirements.txt
+- sudo -H pip install -r tests/requirements.txt --upgrade
 
 before_script:
 - tests/__isfork.sh

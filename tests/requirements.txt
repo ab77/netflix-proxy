@@ -1,5 +1,5 @@
 requests
-urllib3[secure]
+urllib3
 termcolor
 dnspython
 pyopenssl
