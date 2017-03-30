@@ -462,13 +462,13 @@ if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
 fi
 
 log_action_begin_msg "testing proxy (OpenSSL)"
-printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${EXTIP}:443 &>> ${BUILD_ROOT}/netflix-proxy.log || \
-  printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${IPADDR}:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${EXTIP}:443 -tls1_2 &>> ${BUILD_ROOT}/netflix-proxy.log || \
+  printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${IPADDR}:443 -tls1_2 &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing proxy (OpenSSL) ipv6"
-    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ip6-localhost:443 &>> ${BUILD_ROOT}/netflix-proxy.log
+    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ip6-localhost:443 -tls1_2 &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
 fi
 

@@ -26,7 +26,7 @@ except ImportError:
     exit(1)
 
 try:
-    from OpenSSL.SSL import TLSv1_METHOD, Context, Connection
+    from OpenSSL.SSL import TLSv1_METHOD, TLSv1_2_METHOD, Context, Connection
 except ImportError:
     stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
     exit(1)
@@ -302,7 +302,7 @@ def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_NFLX_HOST):
         client.connect((ip, port))
         print 'connected', client.getpeername()
         
-        client_ssl = Connection(Context(TLSv1_METHOD), client)
+        client_ssl = Connection(Context(TLSv1_2_METHOD), client)
         client_ssl.set_connect_state()
         client_ssl.set_tlsext_host_name(hostname)
         client_ssl.do_handshake()
