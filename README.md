@@ -473,7 +473,7 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 3. You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
 4. See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
 5. See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
-6. If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056). Also [client-ipv6](https://github.com/ab77/netflix-proxy/tree/client-ipv6) branch is being developed.
+6. If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056).
 7. See, https://en.wikipedia.org/wiki/Server_Name_Indication.
 8. See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 9. See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).
@@ -485,8 +485,6 @@ If you feel all of this is too complicated, I don't blame you. If you want chang
 15. See, https://openvz.org/Docker_inside_CT.
 16. Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
 17. GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass, try `black.box` [unzoner](http://unzoner.com).
-
-[n17] IPv6 client support is enabled by default, so `AAAA` queries to `netflix-proxy` DNS will return an IPv6 record.
 
 ```
 -- v2.6
