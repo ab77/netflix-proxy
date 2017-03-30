@@ -1,4 +1,4 @@
-requests[secure]
+requests
 urllib3[secure]
 termcolor
 dnspython
