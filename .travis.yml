@@ -21,12 +21,10 @@ before_install:
 - sudo apt-get -y update
 - sudo apt-get -y upgrade
 - sudo apt-get -y install build-essential python-dev libffi-dev libssl-dev
-- sudo -H pip install --upgrade cryptography
-- sudo -H pip install --upgrade pyopenssl ndg-httpsclient pyasn1
 
 install:
 - tests/__isfork.sh
-- sudo -H pip install -r tests/requirements.txt
+- sudo -H pip install -r tests/requirements.txt --upgrade
 
 before_script:
 - tests/__isfork.sh
