@@ -1,6 +1,6 @@
 FROM phusion/baseimage
 
-MAINTAINER anton@belodedenko.me
+MAINTAINER ahmednitul@gmail.com
 
 RUN apt-get update && \
     apt-get -y install vim dnsutils curl git sipcalc iptables autotools-dev \
