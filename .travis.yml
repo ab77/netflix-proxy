@@ -34,7 +34,7 @@ before_script:
 - export RESOLVER=$(grep nameserver /etc/resolv.conf)
 - python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
   --branch=$TRAVIS_BRANCH --region=$do_region --tb_user=$he_tunnel_broker_uname --tb_passwd=$he_tunnel_broker_passwd
-  --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index || (sudo python tests/testbuild.py
+  --tb_key=$he_tunnel_update_key --tb_index=$he_tunnel_index || (python tests/testbuild.py
   digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token && false)
 
 script:
@@ -44,7 +44,7 @@ script:
 after_script:
 - tests/__isfork.sh
 - printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
-- sudo python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+- python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
 
 after_success:
 - tests/__isfork.sh
