@@ -1,4 +1,5 @@
 dist: trusty
+group: edge
 sudo: required
 language: python
 python:
