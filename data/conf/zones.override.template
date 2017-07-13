@@ -13,6 +13,11 @@ zone "nflxvideo.net." {
     file "/data/conf/db.override";
 };
 
+zone "nflxso.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "hulu.com." {
     type master;
     file "/data/conf/db.override";
