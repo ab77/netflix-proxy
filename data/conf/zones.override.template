@@ -8,12 +8,22 @@ zone "netflix.net." {
     file "/data/conf/db.override";
 };
 
+zone "nflximg.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
 zone "nflxvideo.net." {
     type master;
     file "/data/conf/db.override";
 };
 
 zone "nflxso.net." {
+    type master;
+    file "/data/conf/db.override";
+};
+
+zone "nflxext.com." {
     type master;
     file "/data/conf/db.override";
 };
