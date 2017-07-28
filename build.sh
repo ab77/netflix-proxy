@@ -483,17 +483,17 @@ if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_end_msg $?
 fi
 
+printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 log_action_begin_msg "testing netflix-proxy admin site"
 (with_backoff $(which curl) -4 --fail http://${EXTIP}:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${BUILD_ROOT}/netflix-proxy.log && \
   with_backoff $(which curl) -4 --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
-printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
+    printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
     log_action_begin_msg "testing netflix-proxy admin site ipv6"
     with_backoff $(which curl) -6 --fail http://ip6-localhost:8080/ &>> ${BUILD_ROOT}/netflix-proxy.log
     log_action_end_msg $?
-    printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 fi
 
 # change back to original directory
