@@ -420,8 +420,8 @@ if [[ `/sbin/init --version` =~ upstart ]]; then
 elif [[ `systemctl` =~ -\.mount ]]; then
     log_action_begin_msg "configuring systemd"
     sudo mkdir -p /lib/systemd/system/docker.service.d &>> ${BUILD_ROOT}/netflix-proxy.log && \
-      printf '[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\nExecStart=/usr/bin/docker daemon $DOCKER_OPTS -H fd://\n' | \
-      sudo tee /lib/systemd/system/docker.service.d/custom.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
+      cmd=$(grep [E]xecStart /lib/systemd/system/docker.service | sed 's/-H/$DOCKER_OPTS -H/g') && \
+      printf "[Service]\nEnvironmentFile=-/etc/default/docker\nExecStart=\n${cmd}\n" | sudo tee /lib/systemd/system/docker.service.d/custom.conf &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo cp ./systemd/* /lib/systemd/system/ &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/ndp-proxy-helper.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
       sudo $(which sed) -i'' "s#{{BUILD_ROOT}}#${BUILD_ROOT}#g" /lib/systemd/system/netflix-proxy-admin.service &>> ${BUILD_ROOT}/netflix-proxy.log && \
