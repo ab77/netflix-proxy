@@ -16,7 +16,7 @@ apt-get update && apt-get -y install vim dnsutils curl sudo git && \
 
 However, this solution will only work with devices supporting Server Name Indication (SNI)[[n7]](#footnotes) and only if they honour DNS settings. To test SNI, open a web browser on the device you are planning to watch content and go to [https://sni.velox.ch/](https://sni.velox.ch/).
 
-**Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live and works on all devices. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org) or compatible device. You could also [subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new fetures, updates, outages, etc..
+<img align="middle" src="https://raw.githubusercontent.com/ab77/black.box/master/images/logo.png" width="64"> **Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live and works on all devices. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org) or compatible device. You could also [subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new fetures, updates, outages, etc..
 
 If you have access to a high-speed residential Internet connection and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please email [blackbox@unzoner.com](mailto:blackbox@unzoner.com) your interest.
 
