@@ -151,14 +151,14 @@ def csrf_protected(f):
     return decorated
 
 
-def validate_user(f):
+def validate_user(username,password):
     try:
         results = db.query("SELECT * FROM users WHERE username=$username ORDER BY ROWID ASC LIMIT 1",
-                           vars={'username': f.username.value})
+                           vars={'username': username})
         user = results[0]
 
         try:
-            valid_hash = pbkdf2_sha256.verify(f.password.value, user.password)
+            valid_hash = pbkdf2_sha256.verify(password, user.password)
         except ValueError as e:
             web.debug('%s user=%s' % (str(e), user.username))
             valid_hash = None
@@ -173,7 +173,7 @@ def validate_user(f):
             else:
                 web.debug('login_failed_hash: incorrect password user=%s, fallback to plaintext' % user.username)
             
-                if f.password.value == user.password:
+                if password == user.password:
                     web.debug('login_success_plaintext: user=%s' % user.username)
                     return user
                 else:
@@ -184,7 +184,7 @@ def validate_user(f):
             return None
     
     except IndexError, e:
-        web.debug('login_failed: not found user=%s' % f.username.value)
+        web.debug('login_failed: not found user=%s' % username)
         return None
         
 
@@ -279,6 +279,7 @@ urls = (
     r'/login', 'Login',
     r'/logout', 'Logout',
     r'/add', 'Add',
+    r'/autoadd', 'AutoAdd',
     r'/delete', 'Delete',
     r'/ddns', 'DDNSIndex',
     r'/ddns/add', 'DDNSAdd',
@@ -390,7 +391,7 @@ class Login:
             return render.login(login_form)
         username = login_form['username'].value
         password = login_form['password'].value
-        user = validate_user(login_form)
+	user = validate_user(username,password)
         if user:
             session.user = user
             web.debug(web.config.session_parameters)
@@ -412,6 +413,41 @@ class Logout:
         session.kill()
         raise web.seeother('/login')
 
+class AutoAdd:
+
+    def GET(self):
+	try:
+            params = web.input(ip=get_client_public_ip())
+	    user = validate_user(params.username,params.password)
+            if user is None:
+                return 'Error: login'
+
+	    ipadr = params.ip
+            is_ipv4 = web.net.validipaddr(ipadr)
+            is_ipv6 = web.net.validip6addr(ipadr)
+            if is_ipv4 == False and is_ipv6 == False:
+                return 'Error: IP not in right form'
+
+            # userid = int(user.ID)
+	    userid = user.ID
+	    results = db.query('SELECT * FROM ipaddrs WHERE user_id=$user_id',
+                vars={'user_id': userid})
+
+	    ipaddrs = [ip['ipaddr'] for ip in results]
+	    if ipadr in ipaddrs:
+		return 'Error: already authorized.'
+
+	    db_result = db.insert('ipaddrs', user_id=userid, ipaddr=ipadr)
+	    web.debug('db_update: %s' % [db_result])
+
+            if is_ipv4: result = run_ipt_cmd(ipadr, 'I')
+            if is_ipv6: result = run_ipt6_cmd(ipadr, 'I')
+            web.debug('iptables_update: %s' % [result])
+	    return 'OK'
+
+	except Exception, e:
+	    web.debug(traceback.print_exc())
+            return user.ID
 
 class Add:
     
