@@ -99,6 +99,22 @@ The `admin` account does not restrict the entry or removal of IPs. If you want t
 #### dynamic IPs
 You can also use the `netflix-proxy` admin site to update your IP address, should your ISP assign you a new one (e.g. via DHCP). If your IP address does change, all HTTP/HTTPS requests will automatically be redirected to the admin site on port `8080`. All DNS requests will be redirected to `dnsmasq` instance running on port `5353`. You will most likely need to purge your browser and system DNS caches after this (e.g. `ipconfig /flushdns` and `chrome://net-internals/#dns`) and/or reboot the relevant devices. This mechanism should work on browsers, but will most likely cause errors on other devices, such as Apple TVs and smart TVs. If you Internet stops working all of a sudden, try loading a browser and going to `netflix.com`.
 
+#### scripted authorization of IPs
+In case you want to script authorization of specific IPs, it is possible through autoadd URL, This helps if you want your script/router automatically add IP
+address with simple HTTP request (wget/curl friendly). For example (if you want to add IP from where HTTP request will come):
+
+
+```
+http://ip:8080/autoadd?username=user&password=pass
+```
+
+or in case you want to specify specific IP address:
+
+```
+http://ip:8080/autoadd?ip=127.0.0.1&username=user&password=pass
+```
+
+
 #### automatic IP authorization
 **WARNING**: do not do enable this unless you know what you are doing.
 
