@@ -8,6 +8,9 @@
 # bomb on any error
 set -e
 
+# make sure basic paths are set
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin:$PATH
+
 CDW=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 . ${CDW}/functions
 
