@@ -307,7 +307,6 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 12. SSH to your VM as `azureuser` using custom public TCP port (not `22`) and use any non-root user Ubuntu instructions to build/install `netflix-proxy`.
 
 ### automated tests
-Automated build tests are **currently disabled** (known-unknown OpenSSL issue).
 
 #### test build
 This project is linked with `Travis CI` to deploy and test the project automatically. The Python script `testbuild.py` is used to deploy and test `netflix-proxy`. This script deploys a test `Droplet` and then runs a serious of tests to verify (a) that all `Docker` containers start; (b) the `built.sh` script outputs the correct message at the end; (c) all the relevant services survive a reboot; and (d) proxy is able to comunicate with Netflix over SSL.
