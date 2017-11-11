@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, time, inspect, traceback, argparse, json, uuid
+import sys, os, time, inspect, traceback, argparse, json, uuid
 from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
@@ -127,11 +127,11 @@ def args():
     return args
 
 
-def create_droplet(s, name, cip,
-                   fps, region, branch=DEFAULT_BRANCH,
-                   tb_user=None, tb_passwd=None, tb_key=None, tb_index=DEFAULT_HE_TB_INDEX):
+def create_droplet(
+    s, name, cip, fps, region, branch=DEFAULT_BRANCH,
+    tb_user=None, tb_passwd=None, tb_key=None, tb_index=DEFAULT_HE_TB_INDEX):
 
-    tunnel_params = None
+    tunnel_params = ''
     if tb_user and tb_passwd and tb_key:
         tunnel_params = '-u %s -p %s -k %s -n %s' % (tb_user, tb_passwd, tb_key, str(tb_index))
 
@@ -141,7 +141,7 @@ runcmd:
   - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
       && cd /opt/netflix-proxy\
       && ./build.sh -c %s -z 1 %s''' % (branch, cip, tunnel_params)
-
+    
     json_data = {'name': name,
                  'region': region,
                  'size': DEFAULT_MEMORY_SIZE_SLUG,
