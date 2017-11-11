@@ -135,12 +135,12 @@ def create_droplet(s, name, cip,
     if tb_user and tb_passwd and tb_key:
         tunnel_params = '-u %s -p %s -k %s -n %s' % (tb_user, tb_passwd, tb_key, str(tb_index))
 
-    user_data = '''
-#cloud-config
+    user_data = '''#cloud-config
 
 runcmd:
-  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy && cd /opt/netflix-proxy && ./build.sh -c %s -z 1 %s
-''' % (branch, cip, tunnel_params)
+  - git clone -b %s https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
+      && cd /opt/netflix-proxy\
+      && ./build.sh -c %s -z 1 %s''' % (branch, cip, tunnel_params)
 
     json_data = {'name': name,
                  'region': region,

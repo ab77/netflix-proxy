@@ -139,6 +139,11 @@ sudo touch ${BUILD_ROOT}/netflix-proxy.log
 printf "resolved params: clientip=${CLIENTIP} client_ipv4=${IS_IPV4} client_ipv6=${IS_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}\n"
 printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n"
 
+log_action_begin_msg "log diagnostics info"
+ printf "resolved params: clientip=${CLIENTIP} client_ipv4=${IS_IPV4} client_ipv6=${IS_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}\n" &>> ${BUILD_ROOT}/netflix-proxy.log
+ printf "cmd: $0 -r=${r} -b=${b} -s=${IPV6_SUBNET} -z=${z} -n=${HE_TUNNEL_INDEX} -u=${HE_TB_UNAME} -p [secret] -k [secret]\n\n" &>> ${BUILD_ROOT}/netflix-proxy.log
+log_action_end_msg $?
+
 # automatically enable IPv6 (tunnel)
 if [[ -n "${HE_TB_UNAME}" ]] && [[ -n "${HE_TB_PASSWD}" ]]; then
     log_action_begin_msg "disabling native IPv6 on ${IFACE}"
