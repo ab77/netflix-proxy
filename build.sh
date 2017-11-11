@@ -35,12 +35,12 @@ EXTIP6=$(get_ext_ip6addr)
 CLIENTIP=$(get_client_ipaddr)
 
 IS_IPV4=0
-if ! is_ipv4 ${CLIENTIP}; then
+if ! is_ipv4 ${CLIENTIP} &>> ${BUILD_ROOT}/netflix-proxy.log; then
     IS_IPV4=1
 fi
 
 IS_IPV6=1
-if is_ipv6 ${CLIENTIP}; then
+if is_ipv6 ${CLIENTIP} &>> ${BUILD_ROOT}/netflix-proxy.log; then
     IS_IPV6=0
 fi
 
