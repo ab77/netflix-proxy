@@ -481,7 +481,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 7. See, https://en.wikipedia.org/wiki/Server_Name_Indication.
 8. See, https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/.
 9. See, [Using NDP proxying](https://docs.docker.com/engine/userguide/networking/default_network/ipv6/). Both the caching resolver and Docker dual-stack support are disabled by default due to differences in IPv6 configurations provided by various hosting providers (i.e. RamNode).
-10. See, http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381.
+10. See, [post](http://www.webhostingtalk.com/showthread.php?t=1262537&p=9157381#post9157381).
 11. See, [https://www.facebook.com/GetflixAU/posts/650132888457824](https://www.facebook.com/GetflixAU/posts/650132888457824), [Netflix Geoblocking - Part 2](http://forums.whirlpool.net.au/forum-replies.cfm?t=2508180#r5) and read [How Netflix is blocking VPNs](http://www.techcentral.co.za/how-netflix-is-blocking-vpns/63882/) and [Wiki](https://github.com/ab77/netflix-proxy/wiki/On-how-Netflix-enforces-geographical-boundaries-in-the-Information-Age..).
 12. [Bypass Netflix Geoblocks with IPv6](https://www.ubermotive.com/?p=344).
 13. See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
