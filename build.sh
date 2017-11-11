@@ -34,16 +34,6 @@ EXTIP6=$(get_ext_ip6addr)
 # obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
 
-IS_IPV4=0
-if ! is_ipv4 ${CLIENTIP} &>> ${BUILD_ROOT}/netflix-proxy.log; then
-    IS_IPV4=1
-fi
-
-IS_IPV6=1
-if is_ipv6 ${CLIENTIP} &>> ${BUILD_ROOT}/netflix-proxy.log; then
-    IS_IPV6=0
-fi
-
 # get the current date
 DATE=$(/bin/date +'%Y%m%d')
 
@@ -140,6 +130,16 @@ fi
 
 if [[ -n "${n}" ]]; then
     HE_TUNNEL_INDEX="${n}"
+fi
+
+IS_IPV4=0
+if ! is_ipv4 ${CLIENTIP}; then
+    IS_IPV4=1
+fi
+
+IS_IPV6=1
+if is_ipv6 ${CLIENTIP}; then
+    IS_IPV6=0
 fi
 
 # diagnostics info
