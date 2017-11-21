@@ -385,9 +385,9 @@ log_action_end_msg $?
 
 log_action_begin_msg "installing python-pip and docker-compose"
 sudo apt-get -y update &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo apt-get -y install python-pip setuptools sqlite3 &>> ${BUILD_ROOT}/netflix-proxy.log && \
+  sudo apt-get -y install python-pip sqlite3 &>> ${BUILD_ROOT}/netflix-proxy.log && \
   sudo pip install --upgrade pip &>> ${BUILD_ROOT}/netflix-proxy.log && \
-  sudo pip install docker-compose &>> ${BUILD_ROOT}/netflix-proxy.log
+  sudo pip install setuptools docker-compose &>> ${BUILD_ROOT}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "configuring netflix-proxy-admin backend"
