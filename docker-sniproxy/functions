@@ -86,13 +86,13 @@ function get_ip6addr() {
 
 
 function get_ext_ipaddr() {
-    local extip=$(with_backoff curl -4 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://ifconfig.co)
+    local extip=$(with_backoff curl -4 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://mgmt.unzoner.com)
     echo $(echo ${extip} | awk '{print $1}')
 }
 
 
 function get_ext_ip6addr() {
-    local extip6=$(with_backoff curl -6 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://ifconfig.co)
+    local extip6=$(with_backoff curl -6 --connect-timeout ${TIMEOUT} --max-time $((${TIMEOUT}*2)) http://mgmt.unzoner.com)
     echo $(echo ${extip6} | awk '{print $1}')
 }
 
