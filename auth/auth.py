@@ -59,7 +59,7 @@ def get_client_public_ip():
 
 
 def get_iface():
-    cmd = "ip route | grep default | awk '{print $5}'"
+    cmd = "ip route | grep default | awk '{print $5}' | head -n 1"
     web.debug('DEBUG: getting public iface name cmd=%s' % cmd)
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
