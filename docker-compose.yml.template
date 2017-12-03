@@ -25,8 +25,7 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./resolv.dnsmasq:/etc/resolv.dnsmasq
-    command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/etc/resolv.dnsmasq --no-poll
+    command: --log-facility=- --bogus-priv --domain-needed --no-hosts --no-poll
     restart: always
 
   dnsmasq:
