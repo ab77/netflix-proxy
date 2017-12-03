@@ -36,15 +36,14 @@ IFACE=$(get_iface 4)
 
 # obtain IP address of the Internet facing interface
 IPADDR=$(get_ipaddr)
-IPADDR6=$(get_ipaddr6)
 EXTIP=$(get_ext_ipaddr 4)
 
 IPV6=0
-if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-    if $(which curl) mgmt.uznoner.com --silent -6 2> /dev/null; then
-        IPV6=1
-        EXTIP6=$(get_ext_ipaddr 6)
-    fi
+if cat /proc/net/if_inet6 | grep -v lo | grep -v fe80\
+  && $(which curl) mgmt.uznoner.com --fail --silent -6 2> /dev/null; then
+    IPV6=1
+    IPADDR6=$(get_ipaddr6)
+    EXTIP6=$(get_ext_ipaddr 6)
 fi
 
 # obtain client (home) ip address and address family
