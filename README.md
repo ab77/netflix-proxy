@@ -106,16 +106,11 @@ git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
 The following command line options can be optionaly passed to `build.sh` for additional control:
 
 ```
-Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1] [-u <username>] [-p <password>] [-k <update-key>] [-n <1..N>] [-s <subnet>]
+Usage: ./build.sh [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1]
         -r      enable (1) or disable (0) DNS recursion (default: 1)
         -b      grab docker images from repository (0) or build locally (1) (default: 0)
         -c      specify client-ip instead of being taken from ssh_connection
-        -s      specify IPv6 subnet for Docker (e.g. 2001:470:abcd:123::/64)
         -z      enable caching resolver (default: 0)
-        -u      HE tunnel broker username
-        -p      HE tunnel broker password
-        -k      HE tunnel broker update key
-        -n      HE tunnel index (default: 1)
 ```
 
 ### updates
@@ -316,8 +311,6 @@ usage: testbuild.py digitalocean [-h] --api_token API_TOKEN
                                  [--client_ip CLIENT_IP]
                                  [--fingerprint FINGERPRINT [FINGERPRINT ...]]
                                  [--region REGION] [--branch BRANCH]
-                                 [--tb_user TB_USER] [--tb_passwd TB_PASSWD]
-                                 [--tb_key TB_KEY] [--tb_index TB_INDEX]
                                  [--create] [--destroy] [--list_regions]
                                  [--name NAME]
 
@@ -331,11 +324,6 @@ optional arguments:
                         SSH key fingerprint
   --region REGION       region to deploy into; use --list_regions for a list
   --branch BRANCH       netflix-proxy branch to deploy (default: master)
-  --tb_user TB_USER     HE tunnel broker username
-  --tb_passwd TB_PASSWD
-                        HE tunnel broker password
-  --tb_key TB_KEY       HE tunnel broker update key
-  --tb_index TB_INDEX   HE tunnel broker tunnel index (default: 1)
   --create              Create droplet
   --destroy             Destroy droplet
   --list_regions        list all available regions
@@ -345,7 +333,7 @@ optional arguments:
 Note, you will need a working `Python 2.7` environment and the modules listed in `tests/requirements.txt` (run `pip install -r tests/requirements.txt`).
 
 #### test video playback
-Video playback tests are **currently disabled** due to Netflix DigitalOCean/HE Tunnel Broker blocking.
+Video playback tests are **currently disabled** due to provider blocking.
 
 ##### Netflix
 After a successfull build deployment, `testvideo.py` is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. [1,000 Times Good Night](https://www.netflix.com/title/80001898)).
