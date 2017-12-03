@@ -327,7 +327,8 @@ fi
 
 log_action_begin_msg "creating and starting Docker containers"
 sudo CWD=${CWD} EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
-  $(which docker-compose) up --no-build -d &>> ${CWD}/netflix-proxy.log
+  $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log\
+    && $(which docker-compose) up -d &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 
