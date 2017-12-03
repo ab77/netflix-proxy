@@ -179,7 +179,7 @@ log_action_end_msg $?
 
 log_action_begin_msg "checking IPv6 connectivity"
 if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-    if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
+    if [[ ! $($(which curl) v6.ident.me --silent -6 2> /dev/null)  =~ ^$ ]]; then
         IPV6=1
         log_action_end_msg $?
         log_action_begin_msg "enabling sniproxy IPv6 priority"
@@ -339,50 +339,76 @@ sudo service ${SERVICE}-persistent reload &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "testing DNS"
-with_backoff $(which dig) -4 +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${CWD}/netflix-proxy.log\
-  || with_backoff $(which dig) -4 +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${CWD}/netflix-proxy.log
+with_backoff $(which dig) -4\
+  +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP} &>> ${CWD}/netflix-proxy.log\
+  || with_backoff $(which dig) -4\
+  +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR} &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing DNS ipv6"
-    with_backoff $(which dig) -6 +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${CWD}/netflix-proxy.log\
-      || with_backoff $(which dig) -6 +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${CWD}/netflix-proxy.log
+    with_backoff $(which dig) -6\
+      +time=${TIMEOUT} ${NETFLIX_HOST} @${EXTIP6} &>> ${CWD}/netflix-proxy.log\
+      || with_backoff $(which dig) -6\
+      +time=${TIMEOUT} ${NETFLIX_HOST} @${IPADDR6} &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
 log_action_begin_msg "testing proxy (OpenSSL)"
-printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${EXTIP}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log\
-  || printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ${IPADDR}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
+printf "GET / HTTP/1.1\n"\
+  | with_backoff $(which timeout) ${TIMEOUT}\
+  $(which openssl) s_client -CApath /etc/ssl/certs\
+  -servername ${NETFLIX_HOST}\
+  -connect ${EXTIP}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log\
+  || printf "GET / HTTP/1.1\n"\
+  | with_backoff $(which timeout) ${TIMEOUT}\
+  $(which openssl) s_client -CApath /etc/ssl/certs\
+  -servername ${NETFLIX_HOST}\
+  -connect ${IPADDR}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing proxy (OpenSSL) ipv6"
-    printf "GET / HTTP/1.1\n" | with_backoff $(which timeout) ${TIMEOUT} $(which openssl) s_client -CApath /etc/ssl/certs -servername ${NETFLIX_HOST} -connect ip6-localhost:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
+    printf "GET / HTTP/1.1\n"\
+      | with_backoff $(which timeout) ${TIMEOUT}\
+      $(which openssl) s_client -CApath /etc/ssl/certs\
+      -servername ${NETFLIX_HOST}\
+      -connect ip6-localhost:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
 log_action_begin_msg "testing proxy (cURL)"
-with_backoff $(which curl) -4 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${CWD}/netflix-proxy.log\
-  || with_backoff $(which curl) -4 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${CWD}/netflix-proxy.log
+with_backoff $(which curl) --silent -4\
+  --fail -o /dev/null -L\
+  -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${CWD}/netflix-proxy.log\
+  || with_backoff $(which curl) --silent -4\
+  --fail -o /dev/null -L\
+  -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing proxy (cURL) ipv6"
-    with_backoff $(which curl) -6 --fail -o /dev/null -L -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${CWD}/netflix-proxy.log
+    with_backoff $(which curl) --silent -6\
+      --fail -o /dev/null -L\
+      -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
 printf "\nnetflix-proxy-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
 log_action_begin_msg "testing netflix-proxy admin site"
-(with_backoff $(which curl) -4 --fail http://${EXTIP}:8080/ &>> ${CWD}/netflix-proxy.log\
-  || with_backoff $(which curl) --fail http://${IPADDR}:8080/) &>> ${CWD}/netflix-proxy.log\
-  && with_backoff $(which curl) -4 --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${CWD}/netflix-proxy.log
+(with_backoff $(which curl) --silent -4\
+  --fail http://${EXTIP}:8080/ &>> ${CWD}/netflix-proxy.log\
+  || with_backoff $(which curl) --silent -4\
+  --fail http://${IPADDR}:8080/) &>> ${CWD}/netflix-proxy.log\
+  && with_backoff $(which curl) --silent -4\
+  --fail http://localhost:${SDNS_ADMIN_PORT}/ &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     printf "\nnetflix-proxy-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
     log_action_begin_msg "testing netflix-proxy admin site ipv6"
-    with_backoff $(which curl) -6 --fail http://ip6-localhost:8080/ &>> ${CWD}/netflix-proxy.log
+    with_backoff $(which curl) --silent -6\
+      --fail http://ip6-localhost:8080/ &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 

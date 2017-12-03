@@ -48,6 +48,7 @@ function get_ipaddr6() {
 
 function get_ext_ipaddr() {
     local extip=$(with_backoff curl -${1}\
+      --silent\
       --connect-timeout ${TIMEOUT}\
       --max-time $((${TIMEOUT}*2))\
       http://mgmt.unzoner.com)
