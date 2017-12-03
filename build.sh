@@ -3,15 +3,6 @@
 # bomb on any error
 set -e
 
-log_action_begin_msg "checking OS compatibility"
-if [[ ! $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
-  || [[ ! $(cat /etc/os-release | grep '^ID=') =~ debian ]]; then
-    false
-    log_action_end_msg $?
-    exit 1
-fi
-log_action_end_msg $?
-
 # fix terminfo
 # http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
 if [[ $(infocmp | grep 'hpa=') == "" ]]; then
@@ -28,6 +19,17 @@ CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 # import functions
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
 [ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
+
+log_action_begin_msg "checking OS compatibility"
+if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
+  || [[ $(cat /etc/os-release | grep '^ID=') =~ debian ]]; then
+    true
+    log_action_end_msg $?
+else
+    false
+    log_action_end_msg $?
+    exit 1
+fi
 
 # obtain the interface with the default gateway
 IFACE=$(get_iface 4)
@@ -268,7 +270,7 @@ if [[ -n "${EXTIP6}" ]]; then
     sudo $(which sed) -i "s/::1/${EXTIP6}/g" ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
 fi
 
-sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${CWD}/doker-bind/db.override &>> ${CWD}/netflix-proxy.log
+sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "installing python-pip and docker-compose"

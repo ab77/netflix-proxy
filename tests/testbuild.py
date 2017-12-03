@@ -138,8 +138,8 @@ def create_droplet(
     user_data = '''#cloud-config
 
 runcmd:
-  - git clone -b {} https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-      && cd /opt/netflix-proxy\
+  - git clone -b {} https://github.com/ab77/netflix-proxy\
+      && cd netflix-proxy\
       && ./build.sh -c {} -z 1 {}'''.format(branch, cip, tunnel_params)
     
     json_data = {'name': name,

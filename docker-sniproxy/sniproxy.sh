@@ -2,7 +2,7 @@
 
 # import common functions
 CDW=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-. ${CDW}/functions
+[ -f ${CDW}/functions ] && source ${CDW}/functions
 
 # set environment from linked container information
 RESOLVER_IP=$(grep caching-resolver /etc/hosts |  head -n 1 | awk '{print $1}')

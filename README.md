@@ -7,8 +7,8 @@ find a Debian or Ubuntu box with root on a clean public IP and run:
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && mkdir -p /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
@@ -50,8 +50,8 @@ The following paragraphs show how to get this solution up and running with a few
 3. SSH to your server and run:
 
 ```
-mkdir -p /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+mkdir -p ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
@@ -97,8 +97,8 @@ The build script automatically configures the system with **DNS recursion turned
 If you want to turn DNS recursion off, please be aware that you will need a mechanism to selectively send DNS requests for domains your DNS server knows about (i.e. netflix.com) to your VPS and send all of the other DNS traffic to your local ISP's DNS server. Something like [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) can be used for this and some Internet routers even have it built in. In order to switch DNS recursion off, you will need to build your system using the following command:
 
 ```
-git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh -r 0 -b 1
 ```
 
@@ -148,8 +148,8 @@ export LANGUAGE=en_US.UTF-8\
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 4. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -169,8 +169,8 @@ apt-get update\
 apt-get update\ 
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 
@@ -191,8 +191,8 @@ apt-get update\
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 
@@ -213,8 +213,8 @@ apt-get update\
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 
@@ -238,8 +238,8 @@ sudo apt-get update\
   && sudo apt-get -y install vim dnsutils curl git\
   && curl -sSL https://get.docker.com/ | sh\
   && sudo usermod -aG docker $(whoami | awk '{print $1}')\
-  && sudo git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && sudo git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 
@@ -259,8 +259,8 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo git\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy /opt/netflix-proxy\
-  && cd /opt/netflix-proxy\
+  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && cd ~/netflix-proxy\
   && ./build.sh
 ```
 
@@ -274,7 +274,7 @@ The following **has not been tested** and is based on a standard `Ubuntu` image 
 
 1. Head over to [Microsoft Azure](https://azure.microsoft.com/en-gb/) and sign-up for an account.
 2. Get [Python](https://www.python.org/downloads/).
-3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git /opt/cloud-harness`.
+3. On your workstation, run `git clone https://github.com/ab77/cloud-harness.git ~/cloud-harness`.
 4. Follow `cloud-harness` [Installation and Configuration](https://github.com/ab77/cloud-harness#installation-and-configuration) section to set it up.
 5. [Create](https://github.com/ab77/cloud-harness#create-storage-account-name-must-be-unique-as-it-forms-part-of-the-storage-url-check-with---action-check_storage_account_name_availability) a storage account.
 6. [Create](https://github.com/ab77/cloud-harness#create-a-new-hosted-service-name-must-be-unique-within-cloudappnet-domain-check-with---action-check_storage_account_name_availability) a new hosted service.

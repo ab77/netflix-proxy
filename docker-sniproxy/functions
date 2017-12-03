@@ -24,7 +24,7 @@ function get_iface() {
 
 function get_ipaddr() {
     local iface=$(get_iface 4)
-    local ipaddr=$(ip addr show dev ${IFACE}\
+    local ipaddr=$(ip addr show dev ${iface}\
       | grep inet\
       | grep -v inet6\
       | awk '{print $2}'\
@@ -35,7 +35,7 @@ function get_ipaddr() {
 
 function get_ipaddr6() {
     local iface=$(get_iface 6)
-    local ip6addr=$(ip -6 addr show dev ${IFACE6}\
+    local ip6addr=$(ip -6 addr show dev ${iface}\
       | grep inet6\
       | grep -v link\
       | grep 'scope global'\

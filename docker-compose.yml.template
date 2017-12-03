@@ -3,8 +3,6 @@ version: '1'
 bind:
   image: ab77/bind
   container_name: bind
-  build:
-    - context: .
   privileged: true
   net: host
   cap_add:
@@ -12,8 +10,8 @@ bind:
   ports:
     - "53:53/udp"
   volumes:
-    - docker-bind/zones.override:/etc/bind/zones.overide
-    - docker-bind/db.override:/etc/bind/db.override
+    - ./docker-bind/zones.override:/etc/bind/zones.overide
+    - ./docker-bind/db.override:/etc/bind/db.override
   restart: always
 
 caching-resolver:
@@ -24,7 +22,7 @@ caching-resolver:
   cap_add:
     - NET_ADMIN
   volumes:
-    - resolv.dnsmasq:/etc/resolv.dnsmasq
+    - ./resolv.dnsmasq:/etc/resolv.dnsmasq
   command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/etc/resolv.dnsmasq --no-poll
   restart: always
 
@@ -49,15 +47,13 @@ reverse-proxy:
   cap_add:
     - NET_ADMIN
   volumes:
-    - Caddyfile:/etc/Caddyfile
-    - wwwroot:/srv
+    - ./Caddyfile:/etc/Caddyfile
+    - ./wwwroot:/srv
   restart: always
   
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
-  build:
-    - context: .
   privileged: true
   net: host
   cap_add:
@@ -66,5 +62,5 @@ sniproxy:
     - "80:80"
     - "443:443"
   volumes:
-    - sniproxy.conf:/etc/sniproxy.conf
+    - ./docker-sniproxy/sniproxy.conf:/etc/sniproxy.conf
   restart: always
