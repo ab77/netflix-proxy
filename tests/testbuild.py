@@ -31,22 +31,7 @@ except ImportError:
     stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
     exit(1)
 
-from settings import (VERSION,
-                      DEFAULT_PROXY,                      
-                      BASE_API_URL,
-                      DEFAULT_NFLX_HOST,
-                      DOCKER_IMAGE_SLUG,
-                      DEFAULT_FINGERPRINT,
-                      DEFAULT_REGION_SLUG,
-                      DEFAULT_MEMORY_SIZE_SLUG,
-                      DEFAULT_VCPUS,
-                      DEFAULT_DISK_SIZE,
-                      DEFAULT_SLEEP,
-                      DEFAULT_BRANCH,
-                      DEFAULT_HE_TB_INDEX,
-                      DEFAULT_TRIES,
-                      DEFAULT_DELAY,
-                      DEFAULT_BACKOFF)
+from settings import *
 
 
 def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, cdata=None):
@@ -115,10 +100,6 @@ def args():
     digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
     digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
     digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: %s)' % DEFAULT_BRANCH)
-    digitalocean.add_argument('--tb_user', type=str, required=False, help='HE tunnel broker username')
-    digitalocean.add_argument('--tb_passwd', type=str, required=False, help='HE tunnel broker password')
-    digitalocean.add_argument('--tb_key', type=str, required=False, help='HE tunnel broker update key')
-    digitalocean.add_argument('--tb_index', type=int, required=False, default=DEFAULT_HE_TB_INDEX, help='HE tunnel broker tunnel index (default: %s)' % str(DEFAULT_HE_TB_INDEX))
     digitalocean.add_argument('--create', action='store_true', required=False, help='Create droplet')
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
@@ -127,20 +108,13 @@ def args():
     return args
 
 
-def create_droplet(
-    s, name, cip, fps, region, branch=DEFAULT_BRANCH,
-    tb_user=None, tb_passwd=None, tb_key=None, tb_index=DEFAULT_HE_TB_INDEX):
-
-    tunnel_params = ''
-    if tb_user and tb_passwd and tb_key:
-        tunnel_params = '-u %s -p %s -k %s -n %s' % (tb_user, tb_passwd, tb_key, str(tb_index))
-
+def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
     user_data = '''#cloud-config
 
 runcmd:
   - git clone -b {} https://github.com/ab77/netflix-proxy\
       && cd netflix-proxy\
-      && ./build.sh -c {} -z 1 {}'''.format(branch, cip, tunnel_params)
+      && ./build.sh -c {} -z 1'''.format(branch, cip)
     
     json_data = {'name': name,
                  'region': region,
@@ -382,9 +356,7 @@ if __name__ == '__main__':
         if arg.create:
             try:
                 print colored('Creating Droplet %s...' % name, 'yellow')
-                d = create_droplet(s, name, arg.client_ip,
-                                   arg.fingerprint, arg.region, branch=arg.branch,
-                                   tb_user=arg.tb_user, tb_passwd=arg.tb_passwd, tb_key=arg.tb_key, tb_index=arg.tb_index)                
+                d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region, branch=arg.branch)                
                 pprint(d)
                 
                 droplet_ip = get_droplet_ip_by_name(s, name)
