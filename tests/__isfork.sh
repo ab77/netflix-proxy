@@ -9,6 +9,6 @@ printf "target_branch=${GH_REPO}:${BRANCH}\n"
 if [ "${TRAVIS_REPO_SLUG}" == "${GH_REPO}" ] && [ "${TRAVIS_PULL_REQUEST}" == "false" ] && [ "${TRAVIS_BRANCH}" == "${BRANCH}" ]; then
     exit 0
 else
-    travis_terminate 0
+    exit 1
 fi
 
