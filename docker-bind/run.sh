@@ -4,5 +4,6 @@ set -e
 
 ls -la /etc/bind\
   && named-checkconf\
-  && named-checkzone netflix.com /etc/bind/zones.override\
+  && for zone in $(cat /etc/bind/zones.override | grep zone | awk -F'"' '{print $2}');\
+    do named-checkzone ${zone} /etc/bind/db.override; done\
   && $(which named) -c /etc/bind/named.conf -f
