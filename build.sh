@@ -107,13 +107,24 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 # diagnostics info
-debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} ipv4=${IS_CLIENT_IPV4} ipv6=${IS_CLIENT_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}"\
- && printf "${debug}\n"
+debug_v4="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"\
+ && printf "${debug_v4}\n"
+
+if [[ "${IPV6}" == '1' ]]; then
+    debug_v6="$0: ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"\
+      && printf "${debug_v6}\n"
+fi
 
 sudo touch ${CWD}/netflix-proxy.log
 log_action_begin_msg "log diagnostics info"
-  echo "${debug}\n" &>> ${CWD}/netflix-proxy.log
+printf "${debug_v4}\n" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
+
+if [[ ${debug_v6} ]]; then
+    log_action_begin_msg "log diagnostics info"
+    printf "${debug_v4}\n" &>> ${CWD}/netflix-proxy.log
+    log_action_end_msg $?
+fi
 
 # prepare BIND config
 if [[ "${r}" == '0' ]]; then
