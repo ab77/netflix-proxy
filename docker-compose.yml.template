@@ -24,7 +24,6 @@ services:
     network_mode: host
     cap_add:
       - NET_ADMIN
-    volumes:
     command: --log-facility=- --bogus-priv --domain-needed --no-hosts --no-poll
     restart: always
 
