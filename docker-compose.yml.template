@@ -13,7 +13,7 @@ services:
     ports:
       - "53:53/udp"
     volumes:
-      - ./docker-bind/zones.override:/etc/bind/zones.overide
+      - ./docker-bind/zones.override:/etc/bind/zones.override
       - ./docker-bind/db.override:/etc/bind/db.override
     restart: always
 
