@@ -38,7 +38,14 @@ IFACE=$(get_iface 4)
 IPADDR=$(get_ipaddr)
 IPADDR6=$(get_ipaddr6)
 EXTIP=$(get_ext_ipaddr 4)
-EXTIP6=$(get_ext_ipaddr 6)
+
+IPV6=0
+if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
+    if [[ $(which curl) mgmt.uznoner.com --silent -6 2> /dev/null) ]]; then
+        IPV6=1
+        EXTIP6=$(get_ext_ipaddr 6)
+    fi
+fi
 
 # obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
@@ -177,29 +184,21 @@ log_action_begin_msg "disabling Docker iptables control"
 cp ${CWD}/daemon.json /etc/docker/
 log_action_end_msg $?
 
-log_action_begin_msg "checking IPv6 connectivity"
-if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-    if [[ ! $($(which curl) v6.ident.me --silent -6 2> /dev/null)  =~ ^$ ]]; then
-        IPV6=1
-        log_action_end_msg $?
-        log_action_begin_msg "enabling sniproxy IPv6 priority"
-        printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
-          | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
-        log_action_end_msg $?
-        
-        log_action_begin_msg "adding IPv6 iptables rules"
-        sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT\
-          && sudo ip6tables -A INPUT -i lo -j ACCEPT\
-          && sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
-          && sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\
-          && sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited\
-	  && sudo ip6tables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE
-        log_action_end_msg $?
-    fi
-else
-    false
+if [[ "${IPV6}" == "1" ]]; then
+    log_action_begin_msg "enabling sniproxy IPv6 priority"
+    printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
+      | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
-    IPV6=0
+        
+    log_action_begin_msg "adding IPv6 iptables rules"
+    sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT\
+      && sudo ip6tables -A INPUT -i lo -j ACCEPT\
+      && sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
+      && sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\
+      && sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited\
+      && sudo ip6tables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE
+    log_action_end_msg $?
+else
     log_action_begin_msg "configuring sniproxy and Docker"
     printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv4_only\n}\n"\
       | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
