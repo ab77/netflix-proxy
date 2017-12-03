@@ -181,6 +181,7 @@ log_action_begin_msg "checking IPv6 connectivity"
 if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
     if [[ ! $($(which curl) v6.ident.me 2> /dev/null)  =~ ^$ ]]; then
         IPV6=1
+        log_action_end_msg $?
         log_action_begin_msg "enabling sniproxy IPv6 priority"
         printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
           | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
@@ -196,6 +197,7 @@ if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
         log_action_end_msg $?
     fi
 else
+    false
     log_action_end_msg $?
     IPV6=0
     log_action_begin_msg "configuring sniproxy and Docker"

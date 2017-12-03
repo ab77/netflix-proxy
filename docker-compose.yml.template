@@ -1,5 +1,3 @@
-version: '1'
-
 bind:
   image: ab77/bind
   container_name: bind
