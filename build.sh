@@ -319,7 +319,7 @@ sudo cp ${CWD}/crond.template /etc/cron.d/netflix-proxy &>> ${CWD}/netflix-proxy
   && sudo service cron restart &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-if [[ "${b}" == "1" ]]; then
+if [[ "${b}" == '1' ]]; then
     log_action_begin_msg "building docker containers from source"
     sudo $(which docker-compose) build &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
@@ -327,7 +327,7 @@ fi
 
 log_action_begin_msg "creating and starting Docker containers"
 sudo CWD=${CWD} EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
-  $(which docker-compose) up -d &>> ${CWD}/netflix-proxy.log
+  $(which docker-compose) up --no-build -d &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 
