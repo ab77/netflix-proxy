@@ -3,8 +3,6 @@
 # ddns_updater.sh: Checks DDNS sites and updates the IPs if needed.
 # author: patrice@brendamour.net
 
-# Note, this script assumes Ubuntu or Debian Linux and it will most likely fail on any other distribution.
-
 # bomb on any error
 set -e
 

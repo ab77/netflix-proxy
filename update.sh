@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Note, this script assumes Ubuntu or Debian Linux and it will most likely fail on any other distribution.
-
 # bomb on any error
 set -e
 
@@ -15,21 +13,21 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
 fi
 
 # gobals
-BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-[ -e "${BUILD_ROOT}/scripts/globals" ] && . ${BUILD_ROOT}/scripts/globals
+CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+[ -e "${CWD}/scripts/globals" ] && . ${CWD}/scripts/globals
 
 # import functions
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
-[ -e "${BUILD_ROOT}/scripts/functions" ] && . ${BUILD_ROOT}/scripts/functions
+[ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
 
 
-CURRENT_VERSION=`sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db "PRAGMA user_version"`
+CURRENT_VERSION=$(sudo $(which sqlite3) ${CWD}/auth/db/auth.db "PRAGMA user_version")
 printf "Current database schema version is ${CURRENT_VERSION}\n"
 
-UPDATE_SCRIPT="${BUILD_ROOT}/auth/db/updates/${CURRENT_VERSION}-to-${SCHEMA_VERSION}.sql"
+UPDATE_SCRIPT="${CWD}/auth/db/updates/${CURRENT_VERSION}-to-${SCHEMA_VERSION}.sql"
 if [ -e "${UPDATE_SCRIPT}" ]; then
 	log_action_begin_msg "Updating database schema from  ${CURRENT_VERSION} to ${SCHEMA_VERSION}"
-	sudo $(which sqlite3) ${BUILD_ROOT}/auth/db/auth.db < $UPDATE_SCRIPT &>> ${BUILD_ROOT}/netflix-proxy.log
+	sudo $(which sqlite3) ${CWD}/auth/db/auth.db < $UPDATE_SCRIPT &>> ${CWD}/update.log
 	log_action_end_msg $?
 fi
 printf "Done!\n"

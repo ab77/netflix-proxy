@@ -1,0 +1,4 @@
+{
+    "iptables": false,
+    "userland-proxy": false
+}

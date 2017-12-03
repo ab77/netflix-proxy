@@ -11,4 +11,4 @@ acl "trusted" {
 };
 
 include "/etc/bind/named.conf.logging";
-include "/data/conf/zones.override";
+include "/etc/bind/zones.override";

@@ -1,25 +1,38 @@
+version: '1'
+
 bind:
   image: ab77/bind
   container_name: bind
+  build:
+    - context: .
+  privileged: true
+  net: host
+  cap_add:
+    - NET_ADMIN
   ports:
     - "53:53/udp"
   volumes:
-    - ${BUILD_ROOT}/data:/data
+    - docker-bind/zones.override:/etc/bind/zones.overide
+    - docker-bind/db.override:/etc/bind/db.override
   restart: always
 
 caching-resolver:
   image: andyshinn/dnsmasq
   container_name: caching-resolver
+  privileged: true
+  net: host
   cap_add:
     - NET_ADMIN
   volumes:
-    - ${BUILD_ROOT}/data:/data
-  command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/data/conf/resolv.dnsmasq --no-poll
+    - resolv.dnsmasq:/etc/resolv.dnsmasq
+  command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/etc/resolv.dnsmasq --no-poll
   restart: always
 
 dnsmasq:
   image: andyshinn/dnsmasq
   container_name: dnsmasq
+  privileged: true
+  net: host
   cap_add:
     - NET_ADMIN
   ports:
@@ -31,20 +44,27 @@ dnsmasq:
 reverse-proxy:
   image: abiosoft/caddy
   container_name: caddy
+  privileged: true
   net: host
+  cap_add:
+    - NET_ADMIN
   volumes:
-    - ${BUILD_ROOT}/Caddyfile:/etc/Caddyfile
-    - ${BUILD_ROOT}/wwwroot:/srv
-    - ${HOME}/.caddy:/root/.caddy
+    - Caddyfile:/etc/Caddyfile
+    - wwwroot:/srv
   restart: always
   
 sniproxy:
   image: ab77/sniproxy
   container_name: sniproxy
+  build:
+    - context: .
   privileged: true
+  net: host
+  cap_add:
+    - NET_ADMIN
   ports:
     - "80:80"
     - "443:443"
   volumes:
-    - ${BUILD_ROOT}/data:/data
+    - sniproxy.conf:/etc/sniproxy.conf
   restart: always

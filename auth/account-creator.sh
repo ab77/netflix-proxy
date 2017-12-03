@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # globals
-BUILD_ROOT=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-SQLITE_DB=${BUILD_ROOT}/db/auth.db
+CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+SQLITE_DB=${CWD}/db/auth.db
 
 read -p "Please enter a username: " USERNAME
 read -sp "Please enter a password: " PASSWORD && printf "\n"
@@ -16,8 +16,8 @@ fi
 
 if [[ -n "${USERNAME}" && -n "${PASSWORD}" && -n "${EXPIRES}" && -n "${PRIVILEGE}" ]]; then
     printf "adding username=${USERNAME} expires=${EXPIRES} privilege=${PRIVILEGE}\n"
-    pushd ${BUILD_ROOT} && \
-      export HASH=`${BUILD_ROOT}/pbkdf2_sha256_hash.py ${PASSWORD} | awk '{print $2}'` && \
+    pushd ${CWD} && \
+      export HASH=`${CWD}/pbkdf2_sha256_hash.py ${PASSWORD} | awk '{print $2}'` && \
       sqlite3 ${SQLITE_DB} "INSERT INTO USERS (privilege, expires, username, password) VALUES (${PRIVILEGE}, '${EXPIRES}', '${USERNAME}', '${HASH}');" && \
       popd
 else

@@ -5,7 +5,7 @@ After=docker.service
 
 [Service]
 Restart=always
-WorkingDirectory={{BUILD_ROOT}}/auth
+WorkingDirectory={{CWD}}/auth
 ExecStart=/usr/bin/python ./auth.py 43867
 
 [Install]

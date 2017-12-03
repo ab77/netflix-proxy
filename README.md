@@ -488,7 +488,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 17. GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass, try `black.box` [unzoner](http://unzoner.com).
 
 ```
--- v2.6
+-- v3.0
 ```
 
 <hr>
