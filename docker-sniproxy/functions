@@ -1,7 +1,6 @@
 # common functions
 
 function is_ipv4() {
-    printf "testing IPv4: '${1}'\n"
     echo ${1} | grep -Po '^[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}+\.[0-9]{1,3}$' > /dev/null
     local rc=$?
     return ${rc}
@@ -9,7 +8,6 @@ function is_ipv4() {
 
 
 function is_ipv6() {
-    printf "testing IPv6: '${1}'\n"
     echo ${1} | grep -Po '^[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}:[a-zA-Z0-9]{1,4}::[a-zA-Z0-9]{1,4}$' > /dev/null
     local rc=$?
     return ${rc}

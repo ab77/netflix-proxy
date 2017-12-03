@@ -41,7 +41,7 @@ EXTIP=$(get_ext_ipaddr 4)
 
 IPV6=0
 if [[ ! $(cat /proc/net/if_inet6 | grep -v lo | grep -v fe80) =~ ^$ ]]; then
-    if [[ $(which curl) mgmt.uznoner.com --silent -6 2> /dev/null) ]]; then
+    if $(which curl) mgmt.uznoner.com --silent -6 2> /dev/null; then
         IPV6=1
         EXTIP6=$(get_ext_ipaddr 6)
     fi
@@ -97,14 +97,18 @@ if [[ -z "${b}" ]]; then b=0; fi
 if [[ -z "${z}" ]]; then z=0; fi
 if [[ -n "${c}" ]]; then CLIENTIP="${c}"; fi
 
-IS_IPV4=0
-if ! is_ipv4 ${CLIENTIP}; then IS_IPV4=1; fi
+IS_CLIENT_IPV4=0
+if ! is_ipv4 ${CLIENTIP}; then IS_CLIENT_IPV4=1; fi
 
-IS_IPV6=1
-if is_ipv6 ${CLIENTIP}; then IS_IPV6=0; fi
+IS_CLIENT_IPV6=1
+if [[ "${IPV6}" == '1' ]]; then
+    if is_ipv6 ${CLIENTIP}; then
+        IS_CLIENT_IPV6=0
+    fi
+fi
 
 # diagnostics info
-debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} ipv4=${IS_IPV4} ipv6=${IS_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}"\
+debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} ipv4=${IS_CLIENT_IPV4} ipv6=${IS_CLIENT_IPV6} ipaddr=${IPADDR} ipaddr6=${IPADDR6} extip=${EXTIP} extip6=${EXTIP6}"\
  && printf "${debug}\n"
 
 sudo touch ${CWD}/netflix-proxy.log
@@ -131,10 +135,10 @@ pushd ${CWD} &>> ${CWD}/netflix-proxy.log
 # configure iptables
 if [[ -n "${CLIENTIP}" ]]; then
     log_action_begin_msg "authorising clientip=${CLIENTIP} on iface=${IFACE}"
-    if [[ "${IS_IPV4}" == '0' ]]; then
+    if [[ "${IS_CLIENT_IPV4}" == '0' ]]; then
         sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
     fi
-    if [[ "${IS_IPV6}" == '0' ]]; then
+    if [[ "${IS_CLIENT_IPV6}" == '0' ]]; then
         sudo ip6tables -t nat -A PREROUTING -s ${CLIENTIP}/128 -i ${IFACE} -j ACCEPT
     fi
     log_action_end_msg $?
@@ -184,7 +188,7 @@ log_action_begin_msg "disabling Docker iptables control"
 cp ${CWD}/daemon.json /etc/docker/
 log_action_end_msg $?
 
-if [[ "${IPV6}" == "1" ]]; then
+if [[ "${IPV6}" == '1' ]]; then
     log_action_begin_msg "enabling sniproxy IPv6 priority"
     printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
       | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
@@ -255,7 +259,7 @@ log_action_end_msg $?
 log_action_begin_msg "updating db.override with extip=${EXTIP} extip6=${EXTIP6} and date=${DATE}"
 sudo cp ${CWD}/docker-bind/db.override.template ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
 
-if [[ "${IPV6}" == "1" ]] && [[ -n "${EXTIP6}" ]]; then
+if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
 cat << EOF >> ${CWD}/docker-bind/db.override
 ns1 IN  AAAA ::1
 @   IN  AAAA ::1
@@ -414,7 +418,7 @@ fi
 # change back to original directory
 popd &>> ${CWD}/netflix-proxy.log
 
-if [[ ${IPV6} == 1 ]]; then
+if [[ "${IPV6}" == '1' ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
     printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"
