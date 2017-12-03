@@ -1,64 +1,71 @@
-bind:
-  image: ab77/bind
-  container_name: bind
-  privileged: true
-  net: host
-  cap_add:
-    - NET_ADMIN
-  ports:
-    - "53:53/udp"
-  volumes:
-    - ./docker-bind/zones.override:/etc/bind/zones.overide
-    - ./docker-bind/db.override:/etc/bind/db.override
-  restart: always
+version: '2'
 
-caching-resolver:
-  image: andyshinn/dnsmasq
-  container_name: caching-resolver
-  privileged: true
-  net: host
-  cap_add:
-    - NET_ADMIN
-  volumes:
-    - ./resolv.dnsmasq:/etc/resolv.dnsmasq
-  command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/etc/resolv.dnsmasq --no-poll
-  restart: always
+services:
+  bind:
+    image: ab77/bind
+    container_name: bind
+    build:
+      context: docker-bind
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "53:53/udp"
+    volumes:
+      - ./docker-bind/zones.override:/etc/bind/zones.overide
+      - ./docker-bind/db.override:/etc/bind/db.override
+    restart: always
 
-dnsmasq:
-  image: andyshinn/dnsmasq
-  container_name: dnsmasq
-  privileged: true
-  net: host
-  cap_add:
-    - NET_ADMIN
-  ports:
-    - "5353:5353"
-    - "5353:5353/udp"
-  command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
-  restart: always
+  caching-resolver:
+    image: andyshinn/dnsmasq
+    container_name: caching-resolver
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./resolv.dnsmasq:/etc/resolv.dnsmasq
+    command: --log-facility=- --bogus-priv --domain-needed --no-hosts --resolv-file=/etc/resolv.dnsmasq --no-poll
+    restart: always
 
-reverse-proxy:
-  image: abiosoft/caddy
-  container_name: caddy
-  privileged: true
-  net: host
-  cap_add:
-    - NET_ADMIN
-  volumes:
-    - ./Caddyfile:/etc/Caddyfile
-    - ./wwwroot:/srv
-  restart: always
+  dnsmasq:
+    image: andyshinn/dnsmasq
+    container_name: dnsmasq
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "5353:5353"
+      - "5353:5353/udp"
+    command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
+    restart: always
+
+  reverse-proxy:
+    image: abiosoft/caddy
+    container_name: caddy
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./Caddyfile:/etc/Caddyfile
+      - ./wwwroot:/srv
+    restart: always
   
-sniproxy:
-  image: ab77/sniproxy
-  container_name: sniproxy
-  privileged: true
-  net: host
-  cap_add:
-    - NET_ADMIN
-  ports:
-    - "80:80"
-    - "443:443"
-  volumes:
-    - ./docker-sniproxy/sniproxy.conf:/etc/sniproxy.conf
-  restart: always
+  sniproxy:
+    image: ab77/sniproxy
+    container_name: sniproxy
+    build:
+      context: docker-sniproxy
+    privileged: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker-sniproxy/sniproxy.conf:/etc/sniproxy.conf
+    restart: always
