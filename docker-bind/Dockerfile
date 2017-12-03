@@ -15,4 +15,8 @@ ADD named.conf.logging ./named.conf.logging
 
 ADD named.recursion.conf ./named.recursion.conf
 
-CMD ["/usr/sbin/named", "-c", "/etc/bind/named.conf", "-f"]
+WORKDIR /root
+
+ADD bind.sh ./
+
+CMD ./run.sh
