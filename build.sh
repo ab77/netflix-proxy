@@ -39,8 +39,8 @@ IPADDR=$(get_ipaddr)
 EXTIP=$(get_ext_ipaddr 4)
 
 IPV6=0
-if cat /proc/net/if_inet6 | grep -v lo | grep -v fe80\
-  && $(which curl) mgmt.uznoner.com --fail --silent -6 2> /dev/null; then
+if cat /proc/net/if_inet6 | grep -v lo | grep -v fe80 > /dev/null\
+  && $(which curl) mgmt.unzoner.com --fail --silent -6 > /dev/null; then
     IPV6=1
     IPADDR6=$(get_ipaddr6)
     EXTIP6=$(get_ext_ipaddr 6)
