@@ -3,11 +3,10 @@
 """Default options for the application.
 """
 
-VERSION = '2.5' # current version
+VERSION = '3.0' # current version
 BASE_API_URL = 'https://api.digitalocean.com/v2'
 DEFAULT_PROXY = None # proxy URL (e.g. 'localhost:8080')
 DEFAULT_NFLX_HOST = 'www.netflix.com' # default Netflix host
-DEFAULT_HULU_HOST = 'www.hulu.com' # default Hulu host
 DEFAULT_NFLX_TITLEID = 80001898 # '1000 Times Good Night'
 DEFAULT_HULU_TITLEID = 249837 # South Park S01E01 "Cartman Gets an Anal Probe"
 DEFAULT_PLAYBACK = 60 # number of seconds to play video
@@ -23,4 +22,3 @@ DEFAULT_VCPUS = 1
 DEFAULT_DISK_SIZE = 20
 DEFAULT_SLEEP = 5
 DEFAULT_BRANCH = 'master'
-DEFAULT_HE_TB_INDEX = 1
