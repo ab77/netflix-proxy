@@ -17,6 +17,6 @@ ADD named.recursion.conf ./named.recursion.conf
 
 WORKDIR /root
 
-ADD bind.sh ./
+ADD run.sh ./
 
 CMD ./run.sh
