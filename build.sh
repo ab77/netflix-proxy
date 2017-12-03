@@ -266,7 +266,11 @@ log_action_begin_msg "creating zones.override from template"
 sudo cp ${CWD}/docker-bind/zones.override.template ${CWD}/docker-bind/zones.override &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "updating db.override with extip=${EXTIP} extip6=${EXTIP6} and date=${DATE}"
+if [[ "${IPV6}" == '1' ]] && [[ ${EXTIP6} ]]; then
+    log_action_begin_msg "updating db.override extip=${EXTIP} extip6=${EXTIP6} date=${DATE}"
+else
+    log_action_begin_msg "updating db.override extip=${EXTIP} date=${DATE}"
+fi
 sudo cp ${CWD}/docker-bind/db.override.template ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
 
 if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
