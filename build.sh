@@ -126,7 +126,7 @@ fi
 debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
 
 if [[ "${IPV6}" == '1' ]]; then
-    debug_v6="$0: is_client_ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"\
+    debug_v6="$0: is_client_ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"
 fi
 
 sudo touch ${CWD}/netflix-proxy.log
