@@ -33,7 +33,7 @@ The following are supported out of the box, however adding additional services i
 * Vudu
 * blinkbox
 * BBC iPlayer[[n5]](#footnotes)
-* NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/data/conf/zones.override)
+* NBC Sports and potentially many [more](https://github.com/ab77/netflix-proxy/blob/master/docker-bind/zones.override.template)
 
 # license
 This project is **free**, covered by the [MIT License](https://github.com/ab77/netflix-proxy/blob/master/LICENSE.md). It is provided without any warranty and can be used for any purpose, including private and commercial. However, if you are planning to use it for commercial purposes (i.e make money off it), please do not expect me to provide support for free, as it would be unfair. A commercial support model can always be negotiated, if required. Please [contact](https://www.upwork.com/freelancers/~016da2a2dc195af5ec) me if this is something that interests you.
@@ -434,7 +434,7 @@ This solution is meant to be a quick and dirty (but functional) method of bypass
 ```
     zone "." {
         type master;
-        file "/data/conf/db.override";
+        file "/etc/bind/db.override";
     };
 ```
 
