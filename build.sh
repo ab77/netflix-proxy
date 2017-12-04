@@ -123,22 +123,23 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 # diagnostics info
-debug_v4="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"\
- && printf "${debug_v4}\n"
+debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
 
 if [[ "${IPV6}" == '1' ]]; then
-    debug_v6="$0: ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"\
-      && printf "${debug_v6}\n"
+    debug_v6="$0: is_client_ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"\
 fi
 
 sudo touch ${CWD}/netflix-proxy.log
 log_action_begin_msg "log diagnostics info"
-printf "${debug_v4}\n" &>> ${CWD}/netflix-proxy.log
+printf "recursion=${r} build=${b} resolver=${z}\n"
+printf "client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
+printf "${debug}\n" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ ${debug_v6} ]]; then
-    log_action_begin_msg "log diagnostics info"
-    printf "${debug_v4}\n" &>> ${CWD}/netflix-proxy.log
+    log_action_begin_msg "log diagnostics info (IPv6)"
+    printf "local6=${IPADDR6} public6=${EXTIP6}\n"
+    printf "${debug_v6}\n" &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
