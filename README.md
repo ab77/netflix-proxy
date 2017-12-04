@@ -5,7 +5,7 @@
 find a Debian or Ubuntu box with root on a clean public IP and run:
 ```
 apt-get update\
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
@@ -97,9 +97,7 @@ The build script automatically configures the system with **DNS recursion turned
 If you want to turn DNS recursion off, please be aware that you will need a mechanism to selectively send DNS requests for domains your DNS server knows about (i.e. netflix.com) to your VPS and send all of the other DNS traffic to your local ISP's DNS server. Something like [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) can be used for this and some Internet routers even have it built in. In order to switch DNS recursion off, you will need to build your system using the following command:
 
 ```
-git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
-  && cd ~/netflix-proxy\
-  && ./build.sh -r 0 -b 1
+./build.sh -r 0 -b 1
 ```
 
 ### command line options
@@ -141,10 +139,11 @@ export LANGUAGE=en_US.UTF-8\
 3. SSH to your server and run:
 ```
 apt-get update\
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 4. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -162,10 +161,11 @@ apt-get update\
 
 ```
 apt-get update\ 
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -184,10 +184,11 @@ apt-get update\
 
 ```
 apt-get update\
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -206,10 +207,11 @@ apt-get update\
 
 ```
 apt-get update\
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -230,11 +232,12 @@ apt-get update\
 
 ```
 sudo apt-get update\
-  && sudo apt-get -y install vim dnsutils curl git\
+  && sudo apt-get -y install vim dnsutils curl\
   && curl -sSL https://get.docker.com/ | sh\
   && sudo usermod -aG docker $(whoami | awk '{print $1}')\
-  && sudo git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -252,10 +255,11 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 
 ```
 apt-get update\
-  && apt-get -y install vim dnsutils curl sudo git\
+  && apt-get -y install vim dnsutils curl sudo\
   && curl -sSL https://get.docker.com/ | sh\
-  && git clone https://github.com/ab77/netflix-proxy ~/netflix-proxy\
+  && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
+  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | tar xz --strip-components=1\
   && ./build.sh
 ```
 

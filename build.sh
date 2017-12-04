@@ -20,6 +20,22 @@ CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
 [ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
 
+log_action_begin_msg "checking if cURL is installed"
+which curl > /dev/null
+log_action_end_msg $?
+
+log_action_begin_msg "checking if Docker is installed"
+which docker > /dev/null
+log_action_end_msg $?
+
+log_action_begin_msg "checking if sudo is installed"
+which sudo > /dev/null
+log_action_end_msg $?
+
+log_action_begin_msg "checking if dig is installed"
+which dig > /dev/null
+log_action_end_msg $?
+
 log_action_begin_msg "checking OS compatibility"
 if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
   || [[ $(cat /etc/os-release | grep '^ID=') =~ debian ]]; then
