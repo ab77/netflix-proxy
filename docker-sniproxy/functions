@@ -37,7 +37,6 @@ function get_ipaddr6() {
       | grep inet6\
       | grep -v link\
       | grep 'scope global'\
-      | grep '/64'\
       | awk '{print $2}'\
       | grep -Po '[0-9a-fA-F:].+[^/.+]{4}')
     echo ${ip6addr} | head -n 1 | awk '{print $1}'
