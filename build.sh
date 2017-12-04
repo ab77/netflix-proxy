@@ -177,6 +177,7 @@ log_action_begin_msg "adding IPv4 iptables rules"
 sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080\
   && sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080\
   && sudo iptables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353\
+  && sudo iptables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE\
   && sudo iptables -A INPUT -p icmp -j ACCEPT\
   && sudo iptables -A INPUT -i lo -j ACCEPT\
   && sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
@@ -193,6 +194,7 @@ log_action_begin_msg "adding IPv6 iptables rules"
 sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080\
   && sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080\
   && sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353\
+  && sudo iptables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE\
   && sudo ip6tables -A INPUT -p ipv6-icmp -j ACCEPT\
   && sudo ip6tables -A INPUT -i lo -j ACCEPT\
   && sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
@@ -219,15 +221,6 @@ if [[ "${IPV6}" == '1' ]]; then
     log_action_begin_msg "enabling sniproxy IPv6 priority"
     printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
       | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?
-        
-    log_action_begin_msg "adding IPv6 iptables rules"
-    sudo ip6tables -A INPUT -p icmpv6 -j ACCEPT\
-      && sudo ip6tables -A INPUT -i lo -j ACCEPT\
-      && sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
-      && sudo ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\
-      && sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited\
-      && sudo ip6tables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE
     log_action_end_msg $?
 else
     log_action_begin_msg "configuring sniproxy and Docker"
