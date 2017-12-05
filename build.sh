@@ -3,6 +3,14 @@
 # bomb on any error
 set -e
 
+# display usage
+usage() {
+    echo "Usage: $0 [-b 0|1] [-c <ip>]" 1>&2;\
+    printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n";\
+    printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n";\
+    exit 1;
+}
+
 # fix terminfo
 # http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
 if [[ $(infocmp | grep 'hpa=') == "" ]]; then
@@ -64,14 +72,6 @@ fi
 
 # obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
-
-# display usage
-usage() {
-    echo "Usage: $0 [-b 0|1] [-c <ip>]" 1>&2;\
-    printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n";\
-    printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n";\
-    exit 1;
-}
 
 # process options
 while getopts ":b:c" o; do
