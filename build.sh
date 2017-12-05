@@ -66,7 +66,7 @@ log_action_end_msg $?
 
 log_action_begin_msg "checking ports"
 for port in 80 443 53; do 
-    netstat -a -n -p | grep :${port} | grep LISTEN > /dev/null || false
+   ! netstat -a -n -p | grep :${port} | grep LISTEN > /dev/null
 done
 log_action_end_msg $?
 
