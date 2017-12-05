@@ -48,6 +48,17 @@ CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
 [ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
 
+log_action_begin_msg "checking OS compatibility"
+if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
+  || [[ $(cat /etc/os-release | grep '^ID=') =~ debian ]]; then
+    true
+    log_action_end_msg $?
+else
+    false
+    log_action_end_msg $?
+    exit 1
+fi
+
 log_action_begin_msg "checking if cURL is installed"
 which curl > /dev/null
 log_action_end_msg $?
@@ -64,22 +75,11 @@ log_action_begin_msg "checking if dig is installed"
 which dig > /dev/null
 log_action_end_msg $?
 
-log_action_begin_msg "checking ports"
+log_action_begin_msg "testing available ports"
 for port in 80 443 53; do 
    ! netstat -a -n -p | grep :${port} | grep LISTEN > /dev/null
 done
 log_action_end_msg $?
-
-log_action_begin_msg "checking OS compatibility"
-if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
-  || [[ $(cat /etc/os-release | grep '^ID=') =~ debian ]]; then
-    true
-    log_action_end_msg $?
-else
-    false
-    log_action_end_msg $?
-    exit 1
-fi
 
 log_action_begin_msg "disabling ufw"
 if which ufw > /dev/null; then ufw disable &>> ${CWD}/netflix-proxy.log; fi
@@ -196,12 +196,12 @@ log_action_end_msg $?
 
 if [[ "${IPV6}" == '1' ]]; then
     log_action_begin_msg "enabling sniproxy IPv6 priority"
-    printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv6_first\n}\n"\
+    printf "\nresolver {\n  nameserver ${RESOLVER_PRI}\n  nameserver ${RESOLVER_SEC}\n  mode ipv6_first\n}\n"\
       | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 else
     log_action_begin_msg "configuring sniproxy and Docker"
-    printf "\nresolver {\n  nameserver 8.8.8.8\n  mode ipv4_only\n}\n"\
+    printf "\nresolver {\n  nameserver ${RESOLVER_PRI}\n  nameserver ${RESOLVER_SEC}\n  mode ipv4_only\n}\n"\
       | sudo tee -a ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
@@ -260,14 +260,21 @@ else
 fi
 
 if [[ -n "${EXTIP}" ]]; then
-    for domain in $(cat ${CWD}/netflix-proxy.txt); do
+    for domain in $(cat ${CWD}/proxy-domains.txt); do
         printf "address=/${domain}/${EXTIP}\n"\
           | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
     done
 fi
 
+for domain in $(cat ${CWD}/bypass-domains.txt); do
+    printf "server=/${domain}/${RESOLVER_PRI}\n"\
+      | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
+    printf "server=/${domain}/${RESOLVER_SEC}\n"\
+      | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
+done
+
 if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
-    for domain in $(cat ${CWD}/netflix-proxy.txt); do
+    for domain in $(cat ${CWD}/proxy-domains.txt); do
         printf "address=/${domain}/${EXTIP6}\n"\
           | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
     done
@@ -319,7 +326,7 @@ log_action_begin_msg "configuring init system"
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ${CWD}/init/*.conf /etc/init/ &>> ${CWD}/netflix-proxy.log\
       && sudo service docker restart &>> ${CWD}/netflix-proxy.log\
-      && sudo service netflix-proxy-admin start &>> ${CWD}/netflix-proxy.log
+      && sudo service netflix-proxy-admin restart &>> ${CWD}/netflix-proxy.log
 fi
 
 if [[ `systemctl` =~ -\.mount ]]; then
@@ -330,7 +337,7 @@ if [[ `systemctl` =~ -\.mount ]]; then
         && sudo systemctl enable netflix-proxy-admin &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl enable systemd-networkd &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl enable systemd-networkd-wait-online &>> ${CWD}/netflix-proxy.log\
-        && sudo systemctl start netflix-proxy-admin &>> ${CWD}/netflix-proxy.log
+        && sudo systemctl restart netflix-proxy-admin &>> ${CWD}/netflix-proxy.log
 fi
 log_action_end_msg $?
 
