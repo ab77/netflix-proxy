@@ -1,33 +1,21 @@
 version: '2'
 
 services:
-  bind:
-    image: ab77/bind
-    container_name: bind
-    build:
-      context: docker-bind
-    privileged: true
-    network_mode: host
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "53:53/udp"
-    volumes:
-      - ./docker-bind/zones.override:/etc/bind/zones.override
-      - ./docker-bind/db.override:/etc/bind/db.override
-    restart: always
-
-  caching-resolver:
+  dnsmasq-service:
     image: andyshinn/dnsmasq
     container_name: caching-resolver
     privileged: true
     network_mode: host
     cap_add:
       - NET_ADMIN
-    command: --log-facility=- --bogus-priv --domain-needed --no-hosts --no-poll
+    ports:
+      - "53:53"
+      - "53:53/udp"
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
     restart: always
 
-  dnsmasq:
+  dnsmasq-bogus-service:
     image: andyshinn/dnsmasq
     container_name: dnsmasq
     privileged: true
@@ -40,7 +28,7 @@ services:
     command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
     restart: always
 
-  reverse-proxy:
+  reverse-proxy-service:
     image: abiosoft/caddy
     container_name: caddy
     privileged: true
@@ -52,7 +40,7 @@ services:
       - ./wwwroot:/srv
     restart: always
   
-  sniproxy:
+  sniproxy-service:
     image: ab77/sniproxy
     container_name: sniproxy
     build:

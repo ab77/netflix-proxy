@@ -65,37 +65,24 @@ fi
 # obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
 
-# get the current date
-DATE=$(/bin/date +'%Y%m%d')
-
 # display usage
 usage() {
-    echo "Usage: $0 [-r 0|1] [-b 0|1] [-c <ip>] [-z 0|1]" 1>&2;\
-    printf "\t-r\tenable (1) or disable (0) DNS recursion (default: 1)\n";\
+    echo "Usage: $0 [-b 0|1] [-c <ip>]" 1>&2;\
     printf "\t-b\tgrab docker images from repository (0) or build locally (1) (default: 0)\n";\
     printf "\t-c\tspecify client-ip instead of being taken from ssh_connection\n";\
-    printf "\t-z\tenable caching resolver (default: 0)\n";\
     exit 1;
 }
 
 # process options
-while getopts ":r:b:c:z" o; do
+while getopts ":b:c" o; do
     case "${o}" in
         v)
             printf "${VERSION}\n"
             exit
             ;;
-        r)
-            r=${OPTARG}
-            ((r == 0|| r == 1)) || usage
-            ;;
         b)
             b=${OPTARG}
             ((b == 0|| b == 1)) || usage
-            ;;
-        z)
-            z=${OPTARG}
-            ((z == 0|| z == 1)) || usage
             ;;
         c)
             c=${OPTARG}
@@ -107,9 +94,7 @@ while getopts ":r:b:c:z" o; do
 done
 shift $((OPTIND-1))
 
-if [[ -z "${r}" ]]; then r=1; fi
 if [[ -z "${b}" ]]; then b=0; fi
-if [[ -z "${z}" ]]; then z=0; fi
 if [[ -n "${c}" ]]; then CLIENTIP="${c}"; fi
 
 IS_CLIENT_IPV4=0
@@ -123,7 +108,7 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 # diagnostics info
-debug="$0: recursion=${r} build=${b} resolver=${z} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
+debug="$0: build=${b} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
 
 if [[ "${IPV6}" == '1' ]]; then
     debug_v6="$0: is_client_ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"
@@ -131,8 +116,7 @@ fi
 
 sudo touch ${CWD}/netflix-proxy.log
 log_action_begin_msg "log diagnostics info"
-printf "recursion=${r} build=${b} resolver=${z}\n"
-printf "client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
+printf "build=${b} client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
 printf "${debug}\n" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
@@ -140,19 +124,6 @@ if [[ ${debug_v6} ]]; then
     log_action_begin_msg "log diagnostics info (IPv6)"
     printf "local6=${IPADDR6} public6=${EXTIP6}\n"
     printf "${debug_v6}\n" &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?
-fi
-
-# prepare BIND config
-if [[ "${r}" == '0' ]]; then
-    log_action_begin_msg "disabling DNS recursion"
-    printf "\t\tallow-recursion { none; };\n\t\trecursion no;\n\t\tadditional-from-auth no;\n\t\tadditional-from-cache no;\n"\
-      | sudo tee ${CWD}/docker-bind/named.recursion.conf &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?
-else
-    log_action_begin_msg "enabling DNS recursion"
-    printf "\t\tallow-recursion { trusted; };\n\t\trecursion yes;\n\t\tadditional-from-auth yes;\n\t\tadditional-from-cache yes;\n"\
-      | sudo tee ${CWD}/docker-bind/named.recursion.conf &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
@@ -272,34 +243,29 @@ log_action_begin_msg "saving iptables rules"
 sudo service ${SERVICE}-persistent save &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "creating zones.override from template"
-sudo cp ${CWD}/docker-bind/zones.override.template ${CWD}/docker-bind/zones.override &>> ${CWD}/netflix-proxy.log
+log_action_begin_msg "creating dnsmasq.conf from template"
+sudo cp ${CWD}/dnsmasq.conf.template ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ "${IPV6}" == '1' ]] && [[ ${EXTIP6} ]]; then
-    log_action_begin_msg "updating db.override extip=${EXTIP} extip6=${EXTIP6} date=${DATE}"
+    log_action_begin_msg "updating dnsmasq.conf extip=${EXTIP} extip6=${EXTIP6}"
 else
-    log_action_begin_msg "updating db.override extip=${EXTIP} date=${DATE}"
-fi
-sudo cp ${CWD}/docker-bind/db.override.template ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
-
-if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
-cat << EOF >> ${CWD}/docker-bind/db.override
-ns1 IN  AAAA ::1
-@   IN  AAAA ::1
-*   IN  AAAA ::1
-EOF
+    log_action_begin_msg "updating dnsmasq.conf extip=${EXTIP}"
 fi
 
 if [[ -n "${EXTIP}" ]]; then
-    sudo $(which sed) -i "s/127.0.0.1/${EXTIP}/g" ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
+    for domain in $(cat ${CWD}/netflix-proxy.txt); do
+        printf "address=/${domain}/${EXTIP}\n"\
+          | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
+    done
 fi
 
-if [[ -n "${EXTIP6}" ]]; then
-    sudo $(which sed) -i "s/::1/${EXTIP6}/g" ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
+if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
+    for domain in $(cat ${CWD}/netflix-proxy.txt); do
+        printf "address=/${domain}/${EXTIP6}\n"\
+          | sudo tee -a ${CWD}/dnsmasq.conf &>> ${CWD}/netflix-proxy.log
+    done
 fi
-
-sudo $(which sed) -i "s/YYYYMMDD/${DATE}/g" ${CWD}/docker-bind/db.override &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "installing python-pip and docker-compose"
