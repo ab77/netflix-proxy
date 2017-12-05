@@ -14,10 +14,6 @@ usage() {
 # process options
 while getopts ":b:c" o; do
     case "${o}" in
-        v)
-            printf "${VERSION}\n"
-            exit
-            ;;
         b)
             b=${OPTARG}
             ((b == 0|| b == 1)) || usage
@@ -66,6 +62,16 @@ log_action_end_msg $?
 
 log_action_begin_msg "checking if dig is installed"
 which dig > /dev/null
+log_action_end_msg $?
+
+log_action_begin_msg "checking if ufw is installed"
+if which ufw > /dev/null; then ufw disable &>> ${CWD}/netflix-proxy.log
+log_action_end_msg $?
+
+log_action_begin_msg "checking ports"
+for port in 80 443 53; do 
+    netstat -a -n -p | grep :${port} | grep LISTEN > /dev/null || false
+done
 log_action_end_msg $?
 
 log_action_begin_msg "checking OS compatibility"
