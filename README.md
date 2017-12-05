@@ -16,14 +16,14 @@ apt-get update\
 See the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
 # about
-`netflix-proxy` is a smart DNS proxy to stream `Netflix`, `Hulu`[[n2]](#footnotes), `HBO Now` and others out of region. It is deployed using Docker containers and uses `dnsmasq` and `sniproxy`[[n1]](#footnotes) to provide SmartDNS services. It can also be used to bypass[[n17]](#footnotes) [The Great Firewall](https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063) and works for some blocked sites, such as [PornHub](http://www.pornhub.com/). And if you happen to live in Germany and want to [watch](https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany) YouTube like the rest of the world does, just add `googlevideo.com` to `zones.override` file and run `docker restart dnsmasq-service`.
+`netflix-proxy` is a smart DNS proxy to stream `Netflix`, `Hulu`[[n2]](#footnotes), `HBO Now` and others out of region. It is deployed using Docker containers and uses `dnsmasq` and `sniproxy`[[n1]](#footnotes) to provide SmartDNS services. It can also be used to bypass[[n17]](#footnotes) [The Great Firewall](https://github.com/ab77/netflix-proxy/issues/153#issuecomment-211442063) and works for some blocked sites, such as [PornHub](http://www.pornhub.com/). And if you happen to live in Germany and want to [watch](https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany) YouTube like the rest of the world does, just add `googlevideo.com` to `zones.override` file and run `docker restart dnsmasq`.
 
 <img align="middle" src="https://raw.githubusercontent.com/ab77/black.box/master/images/logo.png" width="64"> **Update March/2017**: Raspberry Pi un-blocking solution [http://unzoner.com/](http://unzoner.com/) is live and works on all devices. You'll need to supply your own [Raspberry Pi](https://www.raspberrypi.org) or compatible device. [Subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new features, updates, etc.
 
 If you have access to a high-speed residential Internet connection and would like to have your ISP fees paid in exchange for hosting a small piece of kit, please email [blackbox@unzoner.com](mailto:blackbox@unzoner.com) your interest.
 
 # supported services
-The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart dnsmasq-service`:
+The following are supported out of the box, however adding additional services is trivial and is done by updating `zones.override` file and running `docker restart dnsmasq`:
 * Netflix
 * Hulu[[n2]](#footnotes)
 * HBO Now 

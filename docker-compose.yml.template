@@ -3,7 +3,7 @@ version: '2'
 services:
   dnsmasq-service:
     image: andyshinn/dnsmasq
-    container_name: caching-resolver
+    container_name: dnsmasq
     privileged: true
     network_mode: host
     cap_add:
@@ -17,7 +17,7 @@ services:
 
   dnsmasq-bogus-service:
     image: andyshinn/dnsmasq
-    container_name: dnsmasq
+    container_name: dnsmasq-bogus
     privileged: true
     network_mode: host
     cap_add:
@@ -28,7 +28,7 @@ services:
     command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
     restart: always
 
-  reverse-proxy-service:
+  caddy-service:
     image: abiosoft/caddy
     container_name: caddy
     privileged: true
