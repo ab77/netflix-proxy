@@ -11,6 +11,30 @@ usage() {
     exit 1;
 }
 
+# process options
+while getopts ":b:c" o; do
+    case "${o}" in
+        v)
+            printf "${VERSION}\n"
+            exit
+            ;;
+        b)
+            b=${OPTARG}
+            ((b == 0|| b == 1)) || usage
+            ;;
+        c)
+            c=${OPTARG}
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+    
+if [[ -z "${b}" ]]; then b=0; fi
+if [[ -n "${c}" ]]; then CLIENTIP="${c}"; fi
+
 # fix terminfo
 # http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
 if [[ $(infocmp | grep 'hpa=') == "" ]]; then
@@ -72,30 +96,6 @@ fi
 
 # obtain client (home) ip address and address family
 CLIENTIP=$(get_client_ipaddr)
-
-# process options
-while getopts ":b:c" o; do
-    case "${o}" in
-        v)
-            printf "${VERSION}\n"
-            exit
-            ;;
-        b)
-            b=${OPTARG}
-            ((b == 0|| b == 1)) || usage
-            ;;
-        c)
-            c=${OPTARG}
-            ;;
-        *)
-            usage
-            ;;
-    esac
-done
-shift $((OPTIND-1))
-
-if [[ -z "${b}" ]]; then b=0; fi
-if [[ -n "${c}" ]]; then CLIENTIP="${c}"; fi
 
 IS_CLIENT_IPV4=0
 if ! is_ipv4 ${CLIENTIP}; then IS_CLIENT_IPV4=1; fi
