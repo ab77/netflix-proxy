@@ -3,6 +3,14 @@
 # bomb on any error
 set -e
 
+# globals
+CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+[ -e "${CWD}/scripts/globals" ] && . ${CWD}/scripts/globals
+
+# import functions
+[ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
+[ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
+
 # display usage
 usage() {
     echo "Usage: $0 [-b 0|1] [-c <ip>]" 1>&2;\
@@ -12,7 +20,7 @@ usage() {
 }
 
 # process options
-while getopts ":b:c" o; do
+while getopts "b:c:" o; do
     case "${o}" in
         b)
             b=${OPTARG}
@@ -27,9 +35,9 @@ while getopts ":b:c" o; do
     esac
 done
 shift $((OPTIND-1))
-    
-if [[ -z "${b}" ]]; then b=0; fi
-if [[ -n "${c}" ]]; then CLIENTIP="${c}"; fi
+
+if [ ${b} ]; then DOCKER_BUILD=${b}; fi
+if [ ${c} ]; then CLIENTIP=${c}; fi
 
 # fix terminfo
 # http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
@@ -39,14 +47,6 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
     rm tmp-$$.tic && \
     exec ${0} $@
 fi
-
-# globals
-CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-[ -e "${CWD}/scripts/globals" ] && . ${CWD}/scripts/globals
-
-# import functions
-[ -e "/lib/lsb/init-functions" ] && . /lib/lsb/init-functions
-[ -e "${CWD}/scripts/functions" ] && . ${CWD}/scripts/functions
 
 log_action_begin_msg "checking OS compatibility"
 if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
@@ -101,7 +101,9 @@ if cat /proc/net/if_inet6 | grep -v lo | grep -v fe80 > /dev/null\
 fi
 
 # obtain client (home) ip address and address family
-CLIENTIP=$(get_client_ipaddr)
+if ! [ ${CLIENTIP} ]; then
+    CLIENTIP=$(get_client_ipaddr)
+fi
 
 IS_CLIENT_IPV4=0
 if ! is_ipv4 ${CLIENTIP}; then IS_CLIENT_IPV4=1; fi
@@ -114,7 +116,7 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 # diagnostics info
-debug="$0: build=${b} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
+debug="$0: build=${DOCKER_BUILD} client=${CLIENTIP} is_client_ipv4=${IS_CLIENT_IPV4} ipaddr=${IPADDR} extip=${EXTIP}"
 
 if [[ "${IPV6}" == '1' ]]; then
     debug_v6="$0: is_client_ipv6=${IS_CLIENT_IPV6} ipaddr6=${IPADDR6} extip6=${EXTIP6}"
@@ -122,7 +124,7 @@ fi
 
 sudo touch ${CWD}/netflix-proxy.log
 log_action_begin_msg "log diagnostics info"
-printf "build=${b} client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
+printf "build=${DOCKER_BUILD} client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
 printf "${debug}\n" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
@@ -301,7 +303,7 @@ sudo cp ${CWD}/crond.template /etc/cron.d/netflix-proxy &>> ${CWD}/netflix-proxy
   && sudo service cron restart &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-if [[ "${b}" == '1' ]]; then
+if [[ "${DOCKER_BUILD}" == '1' ]]; then
     log_action_begin_msg "building docker containers from source"
     sudo $(which docker-compose) build &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
