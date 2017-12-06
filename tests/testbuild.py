@@ -114,7 +114,7 @@ def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
 runcmd:
   - git clone -b {} https://github.com/ab77/netflix-proxy\
       && cd netflix-proxy\
-      && ./build.sh -c {} -z 1'''.format(branch, cip)
+      && ./build.sh -c {}'''.format(branch, cip)
     
     json_data = {'name': name,
                  'region': region,
@@ -355,7 +355,8 @@ if __name__ == '__main__':
 
         if arg.create:
             try:
-                print colored('Creating Droplet %s...' % name, 'yellow')
+                print colored('client_ip={}'.format(arg.client_ip), 'cyan')
+                print colored('Creating Droplet {}...'.format(name), 'yellow')
                 d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region, branch=arg.branch)                
                 pprint(d)
                 
