@@ -206,13 +206,6 @@ else
     log_action_end_msg $?
 fi
 
-if [[ ${z} == 1 ]]; then
-    log_action_begin_msg "enabling caching-resolver support"
-    printf "  links:\n    - caching-resolver\n"\
-      | sudo tee -a ${CWD}/docker-compose.yml &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?
-fi
-    
 log_action_begin_msg "installing iptables|netfilter-persistent service"
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true\
   | sudo debconf-set-selections &>> ${CWD}/netflix-proxy.log\
@@ -315,9 +308,9 @@ if [[ "${b}" == '1' ]]; then
 fi
 
 log_action_begin_msg "creating and starting Docker containers"
-sudo CWD=${CWD} EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
-  $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log\
-    && $(which docker-compose) up -d &>> ${CWD}/netflix-proxy.log
+sudo $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log\
+  && EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
+  $(which docker-compose) up -d &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 
@@ -426,12 +419,6 @@ if [[ "${IPV6}" == '1' ]]; then
     printf "IPv6=\e[32mEnabled\033[0m\n"
 else
     printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"
-fi
-
-if [[ ${z} == 1 ]]; then
-    printf "caching-resolver=\e[32mEnabled\033[0m\n"
-else
-    printf "caching-resolver=\e[33mDisabled\033[0m\n"
 fi
 
 # DO NOT change the text between these lines
