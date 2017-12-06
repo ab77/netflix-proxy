@@ -318,7 +318,7 @@ log_action_end_msg $?
 log_action_begin_msg "configuring init system"
 if [[ `/sbin/init --version` =~ upstart ]]; then
     sudo cp ${CWD}/init/*.conf /etc/init/ &>> ${CWD}/netflix-proxy.log\
-      && sudo service docker restart &>> ${CWD}/netflix-proxy.log\
+      && sudo $(which sed) -i'' "s#{{CWD}}#${CWD}#g" /etc/init/netflix-proxy-admin.conf &>> ${CWD}/netflix-proxy.log\
       && sudo service netflix-proxy-admin restart &>> ${CWD}/netflix-proxy.log
 fi
 
@@ -326,7 +326,6 @@ if [[ `systemctl` =~ -\.mount ]]; then
       sudo cp ${CWD}/init/*.service /lib/systemd/system/ &>> ${CWD}/netflix-proxy.log\
         && sudo $(which sed) -i'' "s#{{CWD}}#${CWD}#g" /lib/systemd/system/netflix-proxy-admin.service &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl daemon-reload &>> ${CWD}/netflix-proxy.log\
-        && sudo systemctl restart docker &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl enable netflix-proxy-admin &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl enable systemd-networkd &>> ${CWD}/netflix-proxy.log\
         && sudo systemctl enable systemd-networkd-wait-online &>> ${CWD}/netflix-proxy.log\
