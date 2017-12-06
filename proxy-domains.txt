@@ -63,8 +63,9 @@ mog.com
 wdtvlive.com
 beinsportsconnect.tv
 beinsportsconnect.net
-bbc.com
-bbc.co.uk
-a.files.bbci.co.uk
+fig.bbc.co.uk
+open.live.bbc.co.uk
+sa.bbc.co.uk
+www.bbc.co.uk
 crunchyroll.com
 ifconfig.co

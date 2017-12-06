@@ -1,5 +1,0 @@
-static.bbc.co.uk
-emp.bbc.co.uk
-www.bbc.co.uk
-sa.bbc.co.uk
-stats.bbc.co.uk
