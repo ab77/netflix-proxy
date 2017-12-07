@@ -15,7 +15,7 @@ CDW=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 SQLITE_DB=${CDW}/../auth/db/auth.db
 
 # obtain the interface with the default gateway
-IFACE=$(get_iface)
+IFACE=$(get_iface 4)
 
 LIST=`sudo $(which sqlite3) ${SQLITE_DB} "SELECT domain,last_ipaddr FROM DDNS"`
 for ROW in $LIST; do
