@@ -347,7 +347,7 @@ Note, you will need a working `Python 2.7` environment and the modules listed in
 Video playback tests are **currently disabled** due to provider blocking.
 
 ##### Netflix
-After a successfull build deployment, `testvideo.py` is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. [1,000 Times Good Night](https://www.netflix.com/title/80001898)).
+After a successful build deployment, `testvideo.py` is executed to test Netflix video playback. This is done by playing back 60 seconds of a title known to only be available in the US region (e.g. [1,000 Times Good Night](https://www.netflix.com/title/80001898)).
 
 ```
 usage: testvideo.py netflix [-h] --email EMAIL --password PASSWORD
@@ -409,7 +409,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 13. See, [IPv6 on Amazon AWS EC2](http://blog.iphoting.com/blog/2012/06/02/ipv6-on-amazon-aws-ec2/).
 14. If Netflix still thinks you are in a wrong country, try a different tunnel server (e.g. in a US location).
 15. See, [article](https://openvz.org/Docker_inside_CT).
-16. Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yeild an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
+16. Netflix have most definitely blocked this service provider network ranges, so following the process is unlikely to yield an unblocking solution. If you own a compatible device, you could try `black.box` [unzoner](http://unzoner.com).
 17. GFW is probably re-writing DNS responses for certain very sensitive domains (i.e. facebook.com), so unfortunately a simple proxy solution like this won't work. VPN technology is required to bypass, try `black.box` [unzoner](http://unzoner.com).
 
 ```
