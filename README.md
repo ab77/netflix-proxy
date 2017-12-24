@@ -398,7 +398,7 @@ If you find this useful, please feel free to make a small donation with [PayPal]
 2. `Hulu` is heavily geo-restricted from most non-residential IP ranges and doesn't support IPv6.
 3. You can now specify your home/office/etc. IP manually using `-c <ip>` option to `build.sh`.
 4. See, serverfault [post](http://serverfault.com/questions/396958/configure-dns-server-to-return-same-ip-for-all-domains).
-5. See, this [issue](https://github.com/ab77/netflix-proxy/issues/42#issuecomment-152128091).
+5. See, [this](https://daniel.haxx.se/blog/2016/08/18/http2-connection-coalescing/) and [this](https://github.com/dlundquist/sniproxy/issues/178). The following [four](https://github.com/ab77/netflix-proxy/blob/master/proxy-domains.txt#L66-L69) hosts all need to resolve to different public IPs.
 6. If you have a working IPv6 stack, then your device may be preferring it over IPv4, see this [issue](https://forums.he.net/index.php?topic=3056).
 7. See, [article](https://en.wikipedia.org/wiki/Server_Name_Indication).
 8. See, [post](https://www.reddit.com/r/VPN/comments/48v03v/netflix_begins_geo_checks_on_cdn/).
