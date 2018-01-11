@@ -76,8 +76,9 @@ which dig > /dev/null
 log_action_end_msg $?
 
 log_action_begin_msg "testing available ports"
-for port in 80 443 53; do 
-   ! netstat -a -n -p | grep :${port} | grep LISTEN > /dev/null
+for port in 80 443 53; do
+    ! netstat -a -n -p | grep LISTEN | grep -P '\d+\.\d+\.\d+\.\d+::${port}' > /dev/null\
+      || (printf "required port ${port} already in use\n" && exit 1)
 done
 log_action_end_msg $?
 
@@ -304,17 +305,22 @@ sudo cp ${CWD}/crond.template /etc/cron.d/netflix-proxy &>> ${CWD}/netflix-proxy
 log_action_end_msg $?
 
 if [[ "${DOCKER_BUILD}" == '1' ]]; then
-    log_action_begin_msg "building docker containers from source"
+    log_action_begin_msg "pulling and building docker containers from source"
     sudo $(which docker-compose) build &>> ${CWD}/netflix-proxy.log
+    for service in dnsmasq-service dnsmasq-bogus-service caddy-service; do
+        sudo $(which docker-compose) pull ${service} &>> ${CWD}/netflix-proxy.log
+    done
     log_action_end_msg $?
+else
+    log_action_begin_msg "pulling Docker containers"
+    sudo $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log
+    log_action_end_msg $?   
 fi
 
 log_action_begin_msg "creating and starting Docker containers"
-sudo $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log\
-  && EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
+  EXTIP=${EXTIP} EXTIP6=${EXTIP6}\
   $(which docker-compose) up -d &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
-
 
 # configure appropriate init system
 log_action_begin_msg "configuring init system"
@@ -355,43 +361,17 @@ if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_end_msg $?
 fi
 
-log_action_begin_msg "testing proxy (OpenSSL)"
-printf "GET / HTTP/1.1\n"\
-  | with_backoff $(which timeout) ${TIMEOUT}\
-  $(which openssl) s_client -CApath /etc/ssl/certs\
-  -servername ${NETFLIX_HOST}\
-  -connect ${EXTIP}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log\
-  || printf "GET / HTTP/1.1\n"\
-  | with_backoff $(which timeout) ${TIMEOUT}\
-  $(which openssl) s_client -CApath /etc/ssl/certs\
-  -servername ${NETFLIX_HOST}\
-  -connect ${IPADDR}:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
+log_action_begin_msg "testing proxy (cURL)"
+with_backoff $(which curl) -v -4 -L --fail -o /dev/null https://${NETFLIX_HOST}\
+  --resolve ${NETFLIX_HOST}:443:${EXTIP} &>> ${CWD}/netflix-proxy.log\
+  || with_backoff $(which curl) -v -4 -L --fail -o /dev/null https://${NETFLIX_HOST}\
+  --resolve ${NETFLIX_HOST}:443:${IPADDR} &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] || [[ -n "${IPADDR6}" ]]; then
-    log_action_begin_msg "testing proxy (OpenSSL) ipv6"
-    printf "GET / HTTP/1.1\n"\
-      | with_backoff $(which timeout) ${TIMEOUT}\
-      $(which openssl) s_client -CApath /etc/ssl/certs\
-      -servername ${NETFLIX_HOST}\
-      -connect ip6-localhost:443 -tls1_2 &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?
-fi
-
-log_action_begin_msg "testing proxy (cURL)"
-with_backoff $(which curl) --silent -4\
-  --fail -o /dev/null -L\
-  -H "Host: ${NETFLIX_HOST}" http://${EXTIP} &>> ${CWD}/netflix-proxy.log\
-  || with_backoff $(which curl) --silent -4\
-  --fail -o /dev/null -L\
-  -H "Host: ${NETFLIX_HOST}" http://${IPADDR} &>> ${CWD}/netflix-proxy.log
-log_action_end_msg $?
-
-if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
     log_action_begin_msg "testing proxy (cURL) ipv6"
-    with_backoff $(which curl) --silent -6\
-      --fail -o /dev/null -L\
-      -H "Host: ${NETFLIX_HOST}" http://ip6-localhost &>> ${CWD}/netflix-proxy.log
+    with_backoff $(which curl) -v -6 -L --fail -o /dev/null https://${NETFLIX_HOST}\
+      --resolve ${NETFLIX_HOST}:443:::1 &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
 
