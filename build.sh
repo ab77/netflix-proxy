@@ -284,7 +284,7 @@ sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\
   && sudo $(which pip) install docker-compose &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "configuring netflix-proxy-admin backend"
+log_action_begin_msg "configuring admin backend"
 sudo $(which pip) install -r ${CWD}/auth/requirements.txt &>> ${CWD}/netflix-proxy.log\
   && PLAINTEXT=$(${CWD}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')\
   && HASH=$(${CWD}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}')\
@@ -292,7 +292,7 @@ sudo $(which pip) install -r ${CWD}/auth/requirements.txt &>> ${CWD}/netflix-pro
   && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "configuring netflix-proxy-admin reverse-proxy"
+log_action_begin_msg "configuring reverse-proxy"
 sudo cp ${CWD}/Caddyfile.template ${CWD}/Caddyfile &>> ${CWD}/netflix-proxy.log\
   && printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    header_upstream Host {host}\n    header_upstream X-Forwarded-For {remote}\n    header_upstream X-Real-IP {remote}\n    header_upstream X-Forwarded-Proto {scheme}\n}\n"\
   | sudo tee -a ${CWD}/Caddyfile &>> ${CWD}/netflix-proxy.log
