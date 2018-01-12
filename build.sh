@@ -86,6 +86,16 @@ log_action_begin_msg "disabling ufw"
 if which ufw > /dev/null; then ufw disable &>> ${CWD}/netflix-proxy.log; fi
 log_action_end_msg $?
 
+if [[ $(cat /proc/swaps | wc -l) -le 1 ]]; then
+    log_action_begin_msg "setting up swapfile"
+    fallocate -l 2G /swapfile && \
+      chmod 600 /swapfile && \
+      mkswap /swapfile && \
+      swapon /swapfile && \
+      printf "/swapfile   none    swap    sw    0   0\n" >> /etc/fstab
+    log_action_end_msg $?
+fi
+
 # obtain the interface with the default gateway
 IFACE=$(get_iface 4)
 
@@ -292,7 +302,7 @@ sudo $(which pip) install -r ${CWD}/auth/requirements.txt &>> ${CWD}/netflix-pro
   && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
-log_action_begin_msg "configuring reverse-proxy"
+log_action_begin_msg "configuring admin frontend"
 sudo cp ${CWD}/Caddyfile.template ${CWD}/Caddyfile &>> ${CWD}/netflix-proxy.log\
   && printf "proxy / localhost:${SDNS_ADMIN_PORT} {\n    except /static\n    header_upstream Host {host}\n    header_upstream X-Forwarded-For {remote}\n    header_upstream X-Real-IP {remote}\n    header_upstream X-Forwarded-Proto {scheme}\n}\n"\
   | sudo tee -a ${CWD}/Caddyfile &>> ${CWD}/netflix-proxy.log

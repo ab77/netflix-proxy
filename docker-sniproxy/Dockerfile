@@ -1,23 +1,15 @@
-FROM phusion/baseimage
+FROM alpine:latest
 
 MAINTAINER anton@belodedenko.me
 
-RUN apt-get update\
-      && apt-get upgrade -y -o Dpkg::Options::="--force-confold"
-
-RUN apt-get -y install --no-install-recommends\
-      build-essential vim dnsutils curl git iptables\
-      autotools-dev cdbs debhelper dh-autoreconf dpkg-dev gettext\
-      libev-dev libpcre3-dev libudns-dev pkg-config fakeroot\
-      inetutils-traceroute net-tools iputils-ping libssl-dev
+RUN apk add --no-cache\
+      sniproxy curl vim wget bash iputils bind-tools\
+      iproute2 util-linux net-tools tcpdump mtr iftop\
+      iperf iptables psmisc socat jq lsof ca-certificates\
+      findutils sipcalc grep openntpd ip6tables openssl\
+      procps gawk coreutils libev udns libressl
 
 WORKDIR /root
-
-RUN git clone https://github.com/dlundquist/sniproxy.git\
-      && cd sniproxy\
-      && ./autogen.sh\
-      && dpkg-buildpackage\
-      && dpkg -i ../sniproxy_*.deb
 
 ADD functions ./
 
