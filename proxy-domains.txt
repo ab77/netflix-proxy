@@ -27,8 +27,8 @@ huluim.com
 hbonow.com
 hbogo.com
 amazon.com
-ssl-images-amazon.com
 amazon.co.uk
+amazonvideo.com
 crackle.com
 pandora.com
 vudu.com
