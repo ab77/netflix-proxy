@@ -70,3 +70,7 @@ sa.bbc.co.uk
 www.bbc.co.uk
 crunchyroll.com
 ifconfig.co
+*.bbc.co.uk
+*.bbc.net.uk
+*.bbc.com
+*.itv.com
