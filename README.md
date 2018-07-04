@@ -6,11 +6,10 @@ find a Debian or Ubuntu box with root on a clean public IP and run:
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -53,8 +52,7 @@ The following paragraphs show how to get this solution up and running with a few
 ```
 mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -141,11 +139,10 @@ export LANGUAGE=en_US.UTF-8\
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 4. Make sure to **record the credentials** for the `netflix-proxy` admin site.
@@ -164,10 +161,10 @@ apt-get update\
 ```
 apt-get update\ 
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   | tar xz --strip-components=1\
   && ./build.sh
 ```
@@ -188,11 +185,10 @@ apt-get update\
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -212,11 +208,10 @@ apt-get update\
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -238,12 +233,11 @@ apt-get update\
 ```
 sudo apt-get update\
   && sudo apt-get -y install vim dnsutils curl\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && sudo usermod -aG docker $(whoami | awk '{print $1}')\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
@@ -262,11 +256,10 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -sSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
-  && curl -L https://github.com/ab77/netflix-proxy/archive/latest.tar.gz\
-  | tar xz --strip-components=1\
+  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar xz --strip-components=1\
   && ./build.sh
 ```
 
