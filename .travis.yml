@@ -21,14 +21,17 @@ install:
 - tests/__isfork.sh || travis_terminate 0
 - export PATH=$HOME/.local/bin:$PATH
 - pip install pip setuptools --upgrade
-- pip install -r tests/requirements.txt --upgrade
+- $(which pip) install virtualenv
+- $(which virtualenv) venv
+- source venv/bin/activate
+- $(which pip) install -r tests/requirements.txt
 before_script:
 - tests/__isfork.sh || travis_terminate 0
 - chmod 600 id_rsa.travis && chmod 644 id_rsa.travis.pub
 - export NAME=$(uuidgen)
 - export RESOLVER=$(grep nameserver /etc/resolv.conf)
-- python tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
-  --branch=$TRAVIS_BRANCH --region=$do_region || (python tests/testbuild.py digitalocean
+- $(which python) tests/testbuild.py digitalocean --create --name ${NAME} --api_token=$do_api_v2_token
+  --branch=$TRAVIS_BRANCH --region=$do_region || ($(which python) tests/testbuild.py digitalocean
   --destroy --name ${NAME} --api_token=$do_api_v2_token && false)
 script:
 - tests/__isfork.sh || travis_terminate 0
@@ -36,7 +39,7 @@ script:
 after_script:
 - tests/__isfork.sh || travis_terminate 0
 - printf "${RESOLVER}\n" | sudo tee /etc/resolv.conf
-- python tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
+- $(which python) tests/testbuild.py digitalocean --destroy --name ${NAME} --api_token=$do_api_v2_token
 after_success:
 - tests/__isfork.sh || travis_terminate 0
 - true
