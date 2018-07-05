@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 
-import sys, os, time, inspect, traceback, argparse, json, uuid
+import sys
+import os
+import time
+import inspect
+import traceback
+import argparse
+import json
+import uuid
+
 from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
