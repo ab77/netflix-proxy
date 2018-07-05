@@ -287,11 +287,14 @@ if [[ "${IPV6}" == '1' ]] && [[ -n "${EXTIP6}" ]]; then
 fi
 log_action_end_msg $?
 
-log_action_begin_msg "installing python-pip and docker-compose"
-sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\
-  && sudo apt-get -y install python-pip sqlite3 &>> ${CWD}/netflix-proxy.log\
-  && sudo pip install --upgrade pip setuptools &>> ${CWD}/netflix-proxy.log\
-  && sudo $(which pip) install docker-compose &>> ${CWD}/netflix-proxy.log
+log_action_begin_msg "installing python-pip and docker-compose"                
+sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\                           
+  && sudo apt-get -y install python-pip sqlite3 &>> ${CWD}/netflix-proxy.log\  
+  && pip install --upgrade pip setuptools &>> ${CWD}/netflix-proxy.log\        
+  && $(which pip) install virtualenv &>> ${CWD}/netflix-proxy.log\             
+  && $(which virtualenv) venv &>> ${CWD}/netflix-proxy.log\                  
+  && source venv/bin/activate &>> ${CWD}/netflix-proxy.log\                    
+  && $(which pip) install docker-compose &>> ${CWD}/netflix-proxy.log          
 log_action_end_msg $?
 
 log_action_begin_msg "configuring admin backend"

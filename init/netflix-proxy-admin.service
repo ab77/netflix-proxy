@@ -6,7 +6,7 @@ After=docker.service
 [Service]
 Restart=always
 WorkingDirectory={{CWD}}/auth
-ExecStart=/usr/bin/python ./auth.py 43867
+ExecStart=/bin/bash -c '. {{CWD}}/venv/bin/activate && {{CWD}}/venv/bin/python auth.py 43867'
 
 [Install]
 WantedBy=multi-user.target
