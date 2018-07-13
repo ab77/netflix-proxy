@@ -10,6 +10,7 @@ apt-get update\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
+  && sudo pip install passlib\
   && ./build.sh
 ```
 
