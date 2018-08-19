@@ -27,6 +27,7 @@ hulu.com
 huluim.com
 hbonow.com
 hbogo.com
+hbo.com
 amazon.com
 amazon.co.uk
 amazonvideo.com
@@ -70,3 +71,4 @@ sa.bbc.co.uk
 www.bbc.co.uk
 crunchyroll.com
 ifconfig.co
+omtrdc.net
