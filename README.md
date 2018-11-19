@@ -3,15 +3,14 @@
 > `TL;DR`
 
 find a Debian or Ubuntu box with root on a clean public IP and run:
-```
-apt-get update\
-  && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
-  && mkdir -p ~/netflix-proxy\
-  && cd ~/netflix-proxy\
-  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
-  && ./build.sh
-```
+
+    apt-get update\
+	  && apt-get -y install vim dnsutils curl sudo\
+	  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
+	  && mkdir -p ~/netflix-proxy\
+	  && cd ~/netflix-proxy\
+	  && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
+	  && ./build.sh
 
 See the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some common troubleshooting ideas.
 
@@ -27,7 +26,7 @@ The following are supported out of the box, however adding additional services i
 nning `docker restart dnsmasq`:
 * Netflix
 * Hulu[[n2]](#footnotes)
-* HBO Now 
+* HBO Now
 * Amazon Instant Video
 * Crackle
 * Pandora
@@ -112,7 +111,7 @@ Usage: ./build.sh [-b 0|1] [-c <ip>]
 ```
 
 ### updates
-In order to update your existing database schema, please run the provided `update.sh` script. Alternatively you can run the schema updates manually (e.g. if you skipped a version). 
+In order to update your existing database schema, please run the provided `update.sh` script. Alternatively you can run the schema updates manually (e.g. if you skipped a version).
 
 ## other cloud providers
 
@@ -137,15 +136,17 @@ export LANGUAGE=en_US.UTF-8\
 1. For a limited time, head over to [Vultr](http://www.vultr.com/?ref=6962933-3B) to create and account and get **$20 USD credit**.
 2. Create a compute instance in a geographic location of interest using Debian or Ubuntu image.
 3. SSH to your server and run:
+
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
   && ./build.sh
 ```
+
 4. Make sure to **record the credentials** for the `netflix-proxy` admin site.
 5. Set your DNS server to the IP given at the end of the script, then go to [this](http://ifconfig.co/) site to make sure the same IP is displayed.
 6. Finally, enjoy `Netflix` and others out of region.
@@ -160,9 +161,9 @@ apt-get update\
 3. SSH to your server and run:
 
 ```
-apt-get update\ 
+apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
@@ -186,7 +187,7 @@ apt-get update\
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
@@ -209,7 +210,7 @@ apt-get update\
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\
@@ -234,7 +235,7 @@ apt-get update\
 ```
 sudo apt-get update\
   && sudo apt-get -y install vim dnsutils curl\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && sudo usermod -aG docker $(whoami | awk '{print $1}')\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
@@ -257,7 +258,7 @@ The following is based on Ubuntu image provided by `Gandi` using` root` login wi
 ```
 apt-get update\
   && apt-get -y install vim dnsutils curl sudo\
-  && curl -fsSL https://get.docker.com/ | sh\
+  && curl -fsSL https://get.docker.com/ | sh || apt-get -y install docker.io\
   && mkdir -p ~/netflix-proxy\
   && cd ~/netflix-proxy\
   && curl -fsSL https://github.com/ab77/netflix-proxy/archive/latest.tar.gz | gunzip - | tar x --strip-components=1\

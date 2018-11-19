@@ -196,7 +196,7 @@ sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --
   && sudo ip6tables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT\
   && sudo ip6tables -A INPUT -j REJECT --reject-with icmp6-adm-prohibited
 log_action_end_msg $?
-	
+
 # check if public IPv6 access is available
 log_action_begin_msg "creating Docker and sniproxy configuration templates"
 sudo cp ${CWD}/docker-sniproxy/sniproxy.conf.template ${CWD}/docker-sniproxy/sniproxy.conf &>> ${CWD}/netflix-proxy.log\
@@ -233,19 +233,19 @@ if [ -f "/etc/init.d/iptables-persistent" ]; then
 elif [ -f "/etc/init.d/netfilter-persistent" ]; then
     SERVICE=netfilter
 fi
-	
+
 # socialise Docker with iptables-persistent
 # https://groups.google.com/forum/#!topic/docker-dev/4SfOwCOmw-E
-if [ ! -f "/etc/init/docker.conf.bak" ]; then    
+if [ ! -f "/etc/init/docker.conf.bak" ] && [ -f "/etc/init/docker.conf" ]; then
     log_action_begin_msg "socialising Docker with iptables-persistent service"
-    sudo $(which sed) -i.bak "s/ and net-device-up IFACE!=lo)/ and net-device-up IFACE!=lo and started ${SERVICE}-persistent)/" /etc/init/docker.conf &>> ${CWD}/netflix-proxy.log
+    sudo $(which sed) -i.bak "s/ and net-device-up IFACE!=lo)/ and net-device-up IFACE!=lo and started ${SERVICE}-persistent)/" /etc/init/docker.conf || true &>> ${CWD}/netflix-proxy.log
     log_action_end_msg $?
 fi
-	
+
 if [[ ${SERVICE} == "iptables" ]]; then
-    if [ ! -f "/etc/init.d/iptables-persistent.bak" ]; then
+    if [ ! -f "/etc/init.d/iptables-persistent.bak" ] && [ -f "/etc/init.d/iptables-persistent" ]; then
         log_action_begin_msg "updating iptables-persistent init script"
-        sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent &>> ${CWD}/netflix-proxy.log\
+        sudo $(which sed) -i.bak '/load_rules$/{N;s/load_rules\n\t;;/load_rules\n\tinitctl emit -n started JOB=iptables-persistent\n\t;;/}' /etc/init.d/iptables-persistent || true &>> ${CWD}/netflix-proxy.log\
           && sudo $(which sed) -i'' 's/stop)/stop)\n\tinitctl emit stopping JOB=iptables-persistent/' /etc/init.d/iptables-persistent &>> ${CWD}/netflix-proxy.log
         log_action_end_msg $?
     fi
@@ -327,7 +327,7 @@ if [[ "${DOCKER_BUILD}" == '1' ]]; then
 else
     log_action_begin_msg "pulling Docker containers"
     sudo $(which docker-compose) pull &>> ${CWD}/netflix-proxy.log
-    log_action_end_msg $?   
+    log_action_end_msg $?
 fi
 
 log_action_begin_msg "creating and starting Docker containers"
