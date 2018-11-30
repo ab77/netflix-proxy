@@ -22,8 +22,7 @@ See the [**Wiki**](https://github.com/ab77/netflix-proxy/wiki) page(s) for some 
 `netflix-proxy` is a smart DNS proxy to stream `Netflix`, `Hulu`[[n2]](#footnotes), `HBO Now` and others out of region. It is deployed using Docker containers and uses `dnsmasq` and `sniproxy`[[n1]](#footnotes) to provide SmartDNS services. It works for some blocked sites, such as [PornHub](http://www.pornhub.com/) and [YouTube](https://en.wikipedia.org/wiki/Blocking_of_YouTube_videos_in_Germany). [Subscribe](http://eepurl.com/cb4rUv) to the mailing list and be notified of new features, updates, etc.
 
 # supported services
-The following are supported out of the box, however adding additional services is trivial and is done by updating `dnsmasq.conf` file and ru
-nning `docker restart dnsmasq`:
+The following are supported out of the box, however adding additional services is trivial and is done by updating `dnsmasq.conf` file and running `docker restart dnsmasq`:
 * Netflix
 * Hulu[[n2]](#footnotes)
 * HBO Now
