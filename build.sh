@@ -134,6 +134,12 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 sudo touch ${CWD}/netflix-proxy.log
+
+log_action_begin_msg "log start command line parameters"
+printf "${0}: ${@}\n"
+printf "${0}: ${@}\n" &>> ${CWD}/netflix-proxy.log
+log_action_end_msg $?
+
 log_action_begin_msg "log diagnostics info"
 printf "build=${DOCKER_BUILD} client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
 printf "${debug}\n" &>> ${CWD}/netflix-proxy.log

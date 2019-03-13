@@ -4,42 +4,24 @@ import sys
 import os
 import time
 import inspect
-import traceback
 import argparse
 import json
 import uuid
+import requests
+import dns.resolver
 
 from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
 from socket import socket, gethostbyname
 from functools import wraps
-
-try:
-    import requests
-except ImportError:
-    stderr.write('ERROR: Python module "requests" not found, please run "pip install requests".\n')
-    exit(1)
-
-try:
-    import dns.resolver
-except ImportError:
-    stderr.write('ERROR: Python module "dnspython" not found, please run "pip install dnspython".\n')
-    exit(1)
-    
-try:
-    from termcolor import colored
-except ImportError:
-    stderr.write('ERROR: Python module "termcolor" not found, please run "pip install termcolor".\n')
-    exit(1)
-
-try:
-    from OpenSSL.SSL import (OP_NO_SSLv3, TLSv1_2_METHOD, Context, Connection)
-except ImportError:
-    stderr.write('ERROR: Python module "OpenSSL" not found, please run "pip install pyopenssl".\n')
-    exit(1)
-
+from traceback import print_exc
+from termcolor import colored
+from OpenSSL.SSL import *
 from settings import *
+
+
+verbose = bool(int(os.getenv('VERBOSE', 0)))
 
 
 def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DEFAULT_BACKOFF, cdata=None):
@@ -68,8 +50,14 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
             while mtries > 0:
                 try:
                     return f(*args, **kwargs)
-                except ExceptionToCheck, e:
-                    logger(message='%s, retrying in %d seconds (mtries=%d): %s' % (repr(e), mdelay, mtries, str(cdata)))
+                except ExceptionToCheck as e:
+                    logger('{}, retrying in {} seconds (mtries={}): {}'.format(
+                        repr(e),
+                        mdelay,
+                        mtries,
+                        str(cdata)
+                    ))
+                    if verbose: print_exc()
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
@@ -78,8 +66,8 @@ def retry(ExceptionToCheck, tries=DEFAULT_TRIES, delay=DEFAULT_DELAY, backoff=DE
     return deco_retry
 
 
-def logger(message=None):
-    print '%s\n' % repr(message)
+def logger(msg):
+    print(msg)
 
 
 def get_public_ip():
@@ -116,42 +104,49 @@ def args():
     return args
 
 
-def create_droplet(s, name, cip, fps, region, branch=DEFAULT_BRANCH):
+def create_droplet(s, name, fps, region, cip=get_public_ip(), branch=DEFAULT_BRANCH):
     user_data = '''#cloud-config
 
 runcmd:
   - git clone -b {} https://github.com/ab77/netflix-proxy\
       && cd netflix-proxy\
-      && ./build.sh -c {}'''.format(branch, cip)
+      && ./build.sh -c {}
+      '''.format(branch, cip)
+
+    if verbose: logger('user_data={}'.format(user_data))
     
-    json_data = {'name': name,
-                 'region': region,
-                 'size': DEFAULT_MEMORY_SIZE_SLUG,
-                 'vcpus': DEFAULT_VCPUS,
-                 'disk': DEFAULT_DISK_SIZE,
-                 'image': DOCKER_IMAGE_SLUG,
-                 'ssh_keys': fps,
-                 'backups': False,
-                 'ipv6': False,
-                 'private_networking': False,
-                 'user_data': user_data}
-    
+    json_data = {
+        'name': name,
+        'region': region,
+        'size': DEFAULT_MEMORY_SIZE_SLUG,
+        'vcpus': DEFAULT_VCPUS,
+        'disk': DEFAULT_DISK_SIZE,
+        'image': DOCKER_IMAGE_SLUG,
+        'ssh_keys': fps,
+        'backups': False,
+        'ipv6': False,
+        'private_networking': False,
+        'user_data': user_data
+    }
+
+    if verbose: logger('user_data={}'.format(json_data))
+
     s.headers.update({'Content-Type': 'application/json'})
     post_body = json.dumps(json_data)
     response = s.post('%s/droplets' % BASE_API_URL, data=post_body)
     d = json.loads(response.text)
-    pprint(d)
+    if verbose: logger('response={}'.format(d))
 
-    @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(AssertionError, cdata='method={}'.format(inspect.stack()[0][3]))
     def wait_for_vm_provisioning_completion_retry(action_url):
         response = s.get(action_url)
         d = json.loads(response.text)
         if 'completed' in d['action']['status']:
-            print colored(d['action']['status'], 'green')
+            logger(colored(d['action']['status'], 'green'))
             assert True
             return d
         else:
-            print colored(d['action']['status'], 'red')
+            logger(colored(d['action']['status'], 'red'))
             assert False
             return None
         
@@ -168,11 +163,11 @@ def destroy_droplet(s, droplet_id):
         response = s.delete('%s/droplets/%d' % (BASE_API_URL,
                                                 droplet_id))
         if response.__dict__['status_code'] == 204:
-            print colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'green')
+            logger(colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'green'))
             assert True
             return response.__dict__
         else:
-            print colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'red')
+            logger(colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'red'))
             assert False
             return None
 
@@ -215,35 +210,53 @@ def get_droplet_name_by_ip(s, ip):
 
 def ssh_run_command(ip, command):
     result = None
-    ssh = Popen(['ssh', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'StrictHostKeyChecking=no',
-                 '-i', 'id_rsa.travis', 'root@%s' % ip, command],
-                shell=False, stdout=PIPE, stderr=PIPE)
+    ssh = Popen(
+        [
+            'ssh', '-o',
+            'UserKnownHostsFile=/dev/null',
+            '-o', 'StrictHostKeyChecking=no',
+            '-i', 'id_rsa.travis',
+            'root@{}'.format(ip),
+            command
+        ],
+        shell=False,
+        stdout=PIPE,
+        stderr=PIPE
+    )
     (stdout, stderr) = ssh.communicate()
-    print colored('%s: pid = %d, stdout = %s, stderr = %s, rc = %d' % (inspect.stack()[0][3],
-                                                                       ssh.pid,
-                                                                       stdout.splitlines(),
-                                                                       stderr.splitlines(),
-                                                                       ssh.returncode), 'grey')
-    return dict({'stdout': stdout.splitlines(),
-                 'stderr': stderr.splitlines(),
-                 'rc': ssh.returncode,
-                 'pid': ssh.pid})
+    logger(colored('{}: pid = {}, stdout = {}, stderr = {}, rc = {}'.format(
+        inspect.stack()[0][3],
+        ssh.pid,
+        stdout.splitlines(),
+        stderr.splitlines(),
+        ssh.returncode
+    ), 'grey'))
+    return dict({
+        'stdout': stdout.splitlines(),
+        'stderr': stderr.splitlines(),
+        'rc': ssh.returncode,
+        'pid': ssh.pid
+    })
 
 
-@retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
+@retry(AssertionError, cdata='method={}'.format(inspect.stack()[0][3]))
 def docker_test_retry(ip):
     stdout = ssh_run_command(ip, 'docker ps')['stdout']
     # https://docs.docker.com/reference/commandline/ps/
     if len(stdout) < 5: # quick and dirty check (5 lines of output = header + containers), needs improvement..
-        print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
-                                                             stdout,
-                                                             len(stdout)), 'red')
+        logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
+            inspect.stack()[0][3],
+            stdout,
+            len(stdout)
+        ), 'red'))
         assert False
         return False
     else:
-        print colored('%s: stdout = %s, len(stdout) = %d' % (inspect.stack()[0][3],
-                                                             stdout,
-                                                             len(stdout)), 'green')
+        logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
+            inspect.stack()[0][3],
+            stdout,
+            len(stdout)
+        ), 'green'))
         assert True
         return True
 
@@ -254,38 +267,36 @@ def docker_test(ip):
 
 def netflix_proxy_test(ip):
 
-    @retry(AssertionError, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(AssertionError, cdata='method={}'.format(inspect.stack()[0][3]))
     def netflix_proxy_test_retry(ip):
         ssh_run_command(ip, 'tail /var/log/cloud-init-output.log')
         rc = ssh_run_command(ip, "grep -E 'Change your DNS to ([0-9]{1,3}[\.]){3}[0-9]{1,3} and start watching Netflix out of region\.' /var/log/cloud-init-output.log")['rc']
         if rc > 0:
-            print colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'red')
+            logger(colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'red'))
             assert False
             return None
         else:
-            print colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'green')
+            logger(colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'green'))
             assert True
             return rc
             
     return netflix_proxy_test_retry(ip)
 
 
-def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_NFLX_HOST):
+def netflix_openssl_test(ip=get_public_ip(), port=443, hostname=DEFAULT_NFLX_HOST):
     """
     Connect to an SNI-enabled server and request a specific hostname
     """
 
-    @retry(Exception, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(Exception, cdata='method={}'.format(inspect.stack()[0][3]))
     def netflix_openssl_test_retry(ip):
+        logger('SNI hostname={}'.format(hostname))
         client = socket()
-        
-        print 'Connecting...',
+        logger('Connecting ip={} port={}'.format(ip, port))
         stdout.flush()
         client.connect((ip, port))
-        print 'connected', client.getpeername()
-
+        logger('Connected {}'.format(client.getpeername()))
         context_ssl = Context(TLSv1_2_METHOD)
-        context_ssl.set_options(OP_NO_SSLv3)
         client_ssl = Connection(context_ssl, client)
         client_ssl.set_connect_state()
         client_ssl.set_tlsext_host_name(hostname)
@@ -293,22 +304,23 @@ def netflix_openssl_test(ip=None, port=443, hostname=DEFAULT_NFLX_HOST):
         cert = client_ssl.get_peer_certificate().get_subject()
         cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
         client_ssl.close()
-        print cn
+        logger(cn)
         if hostname in cn[0][1]:
             return True
         else:
             return False
 
-    if not ip: ip = get_public_ip()
+    hostname = hostname.encode()
+    
     return netflix_openssl_test_retry(ip)
 
 
 def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
 
-    @retry(Exception, tries=3, delay=10, backoff=2, cdata='method=%s()' % inspect.stack()[0][3])
+    @retry(Exception, tries=3, delay=10, backoff=2, cdata='method={}'.format(inspect.stack()[0][3]))
     def netflix_openssl_test_retry(ip):
         status_code = requests.get('http://%s' % ip, headers={'Host': host}, timeout=10).status_code
-        print '%s: status_code=%s' % (host, status_code)
+        logger('%s: status_code=%s' % (host, status_code))
         if not status_code == 200:
             return False
         else:
@@ -320,7 +332,7 @@ def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
 
 def reboot_test(ip):
     stdout = ssh_run_command(ip, 'sudo reboot')['stdout']
-    print colored('%s: stdout = %s' % (inspect.stack()[0][3], stdout), 'grey')
+    logger(colored('%s: stdout = %s' % (inspect.stack()[0][3], stdout), 'grey'))
     time.sleep(DEFAULT_SLEEP)
     return docker_test_retry(ip)
 
@@ -342,6 +354,7 @@ def get_sysdns():
 
 
 if __name__ == '__main__':
+    if verbose: logger('verbose={}'.format(verbose))
     arg = args()
     if arg.api_token:
         if not arg.name:
@@ -358,67 +371,78 @@ if __name__ == '__main__':
         s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
     
         if arg.list_regions:
-            pprint(get_regions(s))
+            logger(get_regions(s))
             exit(0)
+
+        if verbose: logger('arg={}'.format(arg))
 
         if arg.create:
             try:
-                print colored('client_ip={}'.format(arg.client_ip), 'cyan')
-                print colored('Creating Droplet {}...'.format(name), 'yellow')
-                d = create_droplet(s, name, arg.client_ip, arg.fingerprint, arg.region, branch=arg.branch)                
-                pprint(d)
+                logger(colored('client_ip={}'.format(arg.client_ip), 'cyan'))
+                logger(colored('Creating Droplet {}...'.format(name), 'yellow'))
+                d = create_droplet(
+                    s,
+                    name,
+                    arg.fingerprint,
+                    arg.region,
+                    cip=arg.client_ip,
+                    branch=arg.branch
+                )                
+                logger('create_droplet={}'.format(d))
                 
                 droplet_ip = get_droplet_ip_by_name(s, name)
-                print colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan')
+                logger(colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan'))
 
-                print colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                logger(colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
                 result = docker_test(droplet_ip)
                 if not result: exit(1)
                 
-                print colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                logger(colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
                 rc = netflix_proxy_test(droplet_ip)
                 if rc > 0: exit(rc)
         
-                print colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                logger(colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
                 result = reboot_test(droplet_ip)
                 if not result: exit(1)
 
-                print colored('SNIProxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                logger(colored('SNIProxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
                 rc = netflix_openssl_test(ip=droplet_ip)
                 if not rc: exit(1)
 
-                print colored('SNIProxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow')
+                logger(colored('SNIProxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
                 rc = netflix_test(ip=droplet_ip)
                 if not rc: exit(1)
 
-                print colored('get_sysdns(): %s' % get_sysdns(), 'grey')
-                print colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow')
+                logger(colored('get_sysdns(): %s' % get_sysdns(), 'grey'))
+                logger(colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow'))
                 rc = set_sysdns(droplet_ip)
                 if rc > 0: exit(1)
 
-                print colored('get_sysdns(): %s' % get_sysdns(), 'cyan')
+                logger(colored('get_sysdns(): %s' % get_sysdns(), 'cyan'))
 
-                print colored('Tested, OK..', 'green')
+                logger(colored('Tested, OK..', 'green'))
                 
             except Exception:
-                print colored(traceback.print_exc(), 'red')
+                if verbose: logger(colored(print_exc(), 'red'))
                 exit(1)
                 
             finally:
                 if arg.destroy:
                     droplet_id = get_droplet_id_by_name(s, name)
                     if droplet_id:
-                        print colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow')
+                        logger(colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow'))
                         d = destroy_droplet(s, droplet_id)
-                        pprint(d)
+                        logger(d)
                         
         elif arg.destroy and arg.name and not arg.create:
             droplet_id = get_droplet_id_by_name(s, arg.name)
-            print colored('Destroying Droplet name = %s id = %s...\n' % (arg.name,
-                                                                         droplet_id), 'red')
+            logger(colored('Destroying Droplet name = {} id = {}...\n'.format(
+                arg.name,
+                droplet_id
+            ), 'red'))
             time.sleep(DEFAULT_SLEEP)
             d = destroy_droplet(s, droplet_id)
-            pprint(d)
+            logger(d)
 
         else:
-            print('No action specified: [--create] [--destroy] [--list_regions]')
+            logger('No action specified: [--create] [--destroy] [--list_regions]')
