@@ -76,7 +76,7 @@ def get_public_ip():
 
 
 def get_regions(s):
-    response = s.get('%s/regions' % BASE_API_URL)
+    response = s.get('{}/regions'.format(BASE_API_URL))
     d = json.loads(response.text)
     slugs = []
     for region in d['regions']:
@@ -87,14 +87,14 @@ def get_regions(s):
 
 def args():   
     parser = argparse.ArgumentParser()
-    sp = parser.add_subparsers(help='version %s' % VERSION)    
+    sp = parser.add_subparsers(help='version {}'.format(VERSION)  )  
     digitalocean = sp.add_parser('digitalocean')
     digitalocean.add_argument('provider', action='store_const', const='digitalocean', help=argparse.SUPPRESS)
     digitalocean.add_argument('--api_token', type=str, required=True, help='DigitalOcean API v2 secret token')
     digitalocean.add_argument('--client_ip', type=str, required=False, default=get_public_ip(), help='client IP to secure Droplet')
     digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
     digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
-    digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: %s)' % DEFAULT_BRANCH)
+    digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: {})'.format(DEFAULT_BRANCH))
     digitalocean.add_argument('--create', action='store_true', required=False, help='Create droplet')
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
@@ -131,7 +131,7 @@ runcmd:
 
     s.headers.update({'Content-Type': 'application/json'})
     post_body = json.dumps(json_data)
-    response = s.post('%s/droplets' % BASE_API_URL, data=post_body)
+    response = s.post('{}/droplets'.format(BASE_API_URL), data=post_body)
     d = json.loads(response.text)
     if verbose: logger('response={}'.format(d))
 
@@ -167,7 +167,7 @@ def destroy_droplet(s, droplet_id):
 
 
 def get_droplet_id_by_name(s, name):
-    response = s.get('%s/droplets' % BASE_API_URL)
+    response = s.get('{}/droplets'.format(BASE_API_URL))
     d = json.loads(response.text)
     droplet_id = None
     for droplet in d['droplets']:
@@ -178,7 +178,7 @@ def get_droplet_id_by_name(s, name):
 
 
 def get_droplet_ip_by_name(s, name):
-    response = s.get('%s/droplets' % BASE_API_URL)
+    response = s.get('{}/droplets'.format(BASE_API_URL))
     d = json.loads(response.text)
     droplet_ip = None
     for droplet in d['droplets']:
@@ -189,7 +189,7 @@ def get_droplet_ip_by_name(s, name):
 
 
 def get_droplet_name_by_ip(s, ip):
-    response = s.get('%s/droplets' % BASE_API_URL)
+    response = s.get('{}/droplets'.format(BASE_API_URL))
     d = json.loads(response.text)
     droplet_name = None
     for droplet in d['droplets']:
@@ -255,8 +255,9 @@ def netflix_proxy_test(ip):
         ssh_run_command(ip, 'tail /var/log/cloud-init-output.log')
         rc = ssh_run_command(ip, "grep -E 'Change your DNS to ([0-9]{1,3}[\.]){3}[0-9]{1,3} and start watching Netflix out of region\.' /var/log/cloud-init-output.log")['rc']
         assert rc == 0, 'rc={}'.format(rc)
-        logger(colored('{}: SSH return code = %s'.format(
-            inspect.stack()[0][3], rc
+        logger(colored('{}: SSH return code = {}'.format(
+            inspect.stack()[0][3],
+            rc
         ), 'green'))
         return rc
             
@@ -282,10 +283,14 @@ def netflix_openssl_test(ip=get_public_ip(), port=443, hostname=DEFAULT_NFLX_HOS
         client_ssl.set_tlsext_host_name(hostname)
         client_ssl.do_handshake()
         cert = client_ssl.get_peer_certificate().get_subject()
-        cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
+        logger('cert={} components={}'.format(cert, cert.get_components()))
+        cn = [
+            comp for comp in cert.get_components()
+            if comp[0] in [b'CN']
+        ]
         client_ssl.close()
-        logger(cn)
-        assert hostname in cn[0][1], 'cn={}'.format(cn)
+        logger('cn={}'.format(cn))
+        assert hostname in cn[0][1], 'host={}'.format(cn[0][1])
         return cn[0][1]
 
     hostname = hostname.encode()
@@ -297,7 +302,13 @@ def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
 
     @retry(Exception, tries=3, delay=10, backoff=2, cdata='method={}'.format(inspect.stack()[0][3]))
     def netflix_openssl_test_retry(ip):
-        status_code = requests.get('http://%s' % ip, headers={'Host': host}, timeout=10).status_code
+        status_code = requests.get(
+            'http://{}'.format(ip),
+            headers={
+                'Host': host
+            },
+            timeout=10
+        ).status_code
         logger('{}: status_code={}'.format(host, status_code))
         assert status_code == 200, 'status_code={}'.format(status_code)
         return status_code
@@ -308,7 +319,7 @@ def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
 
 def reboot_test(ip):
     stdout = ssh_run_command(ip, 'sudo reboot')['stdout']
-    logger(colored('%s: stdout = %s' % (inspect.stack()[0][3], stdout), 'grey'))
+    logger(colored('{}: stdout = {}'.format(inspect.stack()[0][3], stdout), 'grey'))
     time.sleep(DEFAULT_SLEEP)
     return docker_test_retry(ip)
 
@@ -316,7 +327,7 @@ def reboot_test(ip):
 def set_sysdns(ips):
     # quick hack, clobbers /etc/resolv.conf
     ns = None
-    if isinstance(ips, unicode):
+    if isinstance(ips, str):
         ns = 'nameserver %s' % ips
     elif isinstance(ips, list):
         for i in xrange(0, len(ips)):
@@ -342,10 +353,13 @@ if __name__ == '__main__':
         s = requests.Session()
         if DEFAULT_PROXY:
             s.verify = False
-            s.proxies = {'http' : 'http://%s' % DEFAULT_PROXY,
-                         'https': 'https://%s' % DEFAULT_PROXY}
-        s.headers.update({'Authorization': 'Bearer %s' % arg.api_token})
-    
+            s.proxies = {
+                'http' : 'http://{}'.format(DEFAULT_PROXY),
+                'https': 'https://{}'.format(DEFAULT_PROXY)
+            }
+        s.headers.update({
+            'Authorization': 'Bearer {}'.format(arg.api_token)
+        })
         if arg.list_regions:
             logger(get_regions(s))
             exit(0)
@@ -367,34 +381,34 @@ if __name__ == '__main__':
                 logger('create_droplet={}'.format(d))
                 
                 droplet_ip = get_droplet_ip_by_name(s, name)
-                logger(colored('Droplet ipaddr = %s...' % droplet_ip, 'cyan'))
+                logger(colored('Droplet ipaddr = {}...'.format(droplet_ip), 'cyan'))
 
-                logger(colored('Checking running Docker containers on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
+                logger(colored('Checking running Docker containers on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 result = docker_test(droplet_ip)
                 if not result: exit(1)
                 
-                logger(colored('Testing netflix-proxy on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
+                logger(colored('Testing netflix-proxy on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 rc = netflix_proxy_test(droplet_ip)
                 if rc > 0: exit(rc)
         
-                logger(colored('Rebooting Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
+                logger(colored('Rebooting Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 result = reboot_test(droplet_ip)
                 if not result: exit(1)
 
-                logger(colored('SNIProxy remote test (OpenSSL) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
+                logger(colored('SNIProxy remote test (OpenSSL) on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 rc = netflix_openssl_test(ip=droplet_ip)
                 if not rc: exit(1)
 
-                logger(colored('SNIProxy remote test (HTTP/S) on Droplet with name = %s, ipaddr = %s...' % (name, droplet_ip), 'yellow'))
+                logger(colored('SNIProxy remote test (HTTP/S) on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 rc = netflix_test(ip=droplet_ip)
                 if not rc: exit(1)
 
-                logger(colored('get_sysdns(): %s' % get_sysdns(), 'grey'))
-                logger(colored('Setting system resolver to nameserver = %s...' % droplet_ip, 'yellow'))
+                logger(colored('get_sysdns(): {}'.format(get_sysdns()), 'grey'))
+                logger(colored('Setting system resolver to nameserver = {}...'.format(droplet_ip), 'yellow'))
                 rc = set_sysdns(droplet_ip)
                 if rc > 0: exit(1)
 
-                logger(colored('get_sysdns(): %s' % get_sysdns(), 'cyan'))
+                logger(colored('get_sysdns(): {}'.format(get_sysdns()), 'cyan'))
 
                 logger(colored('Tested, OK..', 'green'))
                 
@@ -406,7 +420,7 @@ if __name__ == '__main__':
                 if arg.destroy:
                     droplet_id = get_droplet_id_by_name(s, name)
                     if droplet_id:
-                        logger(colored('Destroying Droplet name = %s, id = %s...' % (name, droplet_id), 'yellow'))
+                        logger(colored('Destroying Droplet name = {}, id = {}...'.format(name, droplet_id), 'yellow'))
                         d = destroy_droplet(s, droplet_id)
                         logger(d)
                         

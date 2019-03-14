@@ -29,7 +29,7 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
 fi
 
 # process options
-printf "$0: \"$@ ($*)\"\n"
+printf "$0: $@\n"
 while getopts "b:c:" o; do
     case "${o}" in
         b)
