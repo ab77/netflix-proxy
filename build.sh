@@ -19,7 +19,17 @@ usage() {
     exit 1;
 }
 
+# fix terminfo
+# http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
+if [[ $(infocmp | grep 'hpa=') == "" ]]; then
+  (infocmp; printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic\
+    && tic -s tmp-$$.tic -o /etc/terminfo\
+    && rm tmp-$$.tic\
+    && exec $0 $*
+fi
+
 # process options
+printf "$0: \"$@ ($*)\"\n"
 while getopts "b:c:" o; do
     case "${o}" in
         b)
@@ -38,16 +48,6 @@ shift $((OPTIND-1))
 
 if [ ${b} ]; then DOCKER_BUILD=${b}; fi
 if [ ${c} ]; then CLIENTIP=${c}; fi
-
-# fix terminfo
-# http://ashberlin.co.uk/blog/2010/08/24/color-in-ubuntu-init-scripts/
-if [[ $(infocmp | grep 'hpa=') == "" ]]; then
-  (infocmp; printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
-    tic -s tmp-$$.tic -o /etc/terminfo && \
-    rm tmp-$$.tic && \
-    printf "fix-terminfo: \"$0 $@\"\n"
-    exec $0 "$@"
-fi
 
 log_action_begin_msg "checking OS compatibility"
 if [[ $(cat /etc/os-release | grep '^ID=') =~ ubuntu ]]\
