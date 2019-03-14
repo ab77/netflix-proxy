@@ -10,7 +10,6 @@ import uuid
 import requests
 import dns.resolver
 
-from pprint import pprint
 from subprocess import Popen, PIPE
 from sys import argv, stdout, stderr
 from socket import socket, gethostbyname
@@ -108,13 +107,12 @@ def create_droplet(s, name, fps, region, cip=get_public_ip(), branch=DEFAULT_BRA
     user_data = '''#cloud-config
 
 runcmd:
-  - git clone -b {} https://github.com/ab77/netflix-proxy\
-      && cd netflix-proxy\
-      && ./build.sh -c {}
-      '''.format(branch, cip)
+  - [ git, clone, -b, {}, "https://github.com/ab77/netflix-proxy" ]
+  - cd netflix-proxy
+  - [ bash, -c, "./build.sh -c {}" ]'''.format(branch, cip)
 
     if verbose: logger('user_data={}'.format(user_data))
-    
+
     json_data = {
         'name': name,
         'region': region,
@@ -129,7 +127,7 @@ runcmd:
         'user_data': user_data
     }
 
-    if verbose: logger('user_data={}'.format(json_data))
+    if verbose: logger('json_data={}'.format(json_data))
 
     s.headers.update({'Content-Type': 'application/json'})
     post_body = json.dumps(json_data)
@@ -141,35 +139,29 @@ runcmd:
     def wait_for_vm_provisioning_completion_retry(action_url):
         response = s.get(action_url)
         d = json.loads(response.text)
-        if 'completed' in d['action']['status']:
-            logger(colored(d['action']['status'], 'green'))
-            assert True
-            return d
-        else:
-            logger(colored(d['action']['status'], 'red'))
-            assert False
-            return None
-        
-    if 'links' not in d:
-        return False
-    else:
-        return wait_for_vm_provisioning_completion_retry(d['links']['actions'][0]['href'])
+        assert 'completed' in d['action']['status'], 'status={}'.format(d['action']['status'])
+        logger(colored(d['action']['status'], 'green'))
+        return d
+
+    return wait_for_vm_provisioning_completion_retry(
+        d['links']['actions'][0]['href']
+    )
 
 
 def destroy_droplet(s, droplet_id):
 
     @retry(AssertionError)
     def wait_for_vm_deletion_completion_retry(s, droplet_id):
-        response = s.delete('%s/droplets/%d' % (BASE_API_URL,
-                                                droplet_id))
-        if response.__dict__['status_code'] == 204:
-            logger(colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'green'))
-            assert True
-            return response.__dict__
-        else:
-            logger(colored('DELETE /droplets/%d status code %d' % (droplet_id, response.__dict__['status_code']), 'red'))
-            assert False
-            return None
+        response = s.delete('{}/droplets/{}'.format(
+            BASE_API_URL,
+            droplet_id
+        ))
+        assert response.status_code == 204, 'status_code={}'.format(response.status_code)
+        logger(colored('DELETE /droplets/{} status code {}'.format(
+            droplet_id,
+            response.status_code
+        ), 'green'))
+        return response.content
 
     return wait_for_vm_deletion_completion_retry(s, droplet_id)
 
@@ -243,22 +235,13 @@ def ssh_run_command(ip, command):
 def docker_test_retry(ip):
     stdout = ssh_run_command(ip, 'docker ps')['stdout']
     # https://docs.docker.com/reference/commandline/ps/
-    if len(stdout) < 5: # quick and dirty check (5 lines of output = header + containers), needs improvement..
-        logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
-            inspect.stack()[0][3],
-            stdout,
-            len(stdout)
-        ), 'red'))
-        assert False
-        return False
-    else:
-        logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
-            inspect.stack()[0][3],
-            stdout,
-            len(stdout)
-        ), 'green'))
-        assert True
-        return True
+    assert len(stdout) > 5, 'length={}'.format(len(stdout)) # quick and dirty check (5 lines of output = header + containers), needs improvement..
+    logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
+        inspect.stack()[0][3],
+        stdout,
+        len(stdout)
+    ), 'green'))
+    return True
 
 
 def docker_test(ip):
@@ -271,14 +254,11 @@ def netflix_proxy_test(ip):
     def netflix_proxy_test_retry(ip):
         ssh_run_command(ip, 'tail /var/log/cloud-init-output.log')
         rc = ssh_run_command(ip, "grep -E 'Change your DNS to ([0-9]{1,3}[\.]){3}[0-9]{1,3} and start watching Netflix out of region\.' /var/log/cloud-init-output.log")['rc']
-        if rc > 0:
-            logger(colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'red'))
-            assert False
-            return None
-        else:
-            logger(colored('%s: SSH return code = %s' % (inspect.stack()[0][3], rc), 'green'))
-            assert True
-            return rc
+        assert rc == 0, 'rc={}'.format(rc)
+        logger(colored('{}: SSH return code = %s'.format(
+            inspect.stack()[0][3], rc
+        ), 'green'))
+        return rc
             
     return netflix_proxy_test_retry(ip)
 
@@ -305,10 +285,8 @@ def netflix_openssl_test(ip=get_public_ip(), port=443, hostname=DEFAULT_NFLX_HOS
         cn = [comp for comp in cert.get_components() if comp[0] in ['CN']]
         client_ssl.close()
         logger(cn)
-        if hostname in cn[0][1]:
-            return True
-        else:
-            return False
+        assert hostname in cn[0][1], 'cn={}'.format(cn)
+        return cn[0][1]
 
     hostname = hostname.encode()
     
@@ -320,11 +298,9 @@ def netflix_test(ip=None, host=DEFAULT_NFLX_HOST):
     @retry(Exception, tries=3, delay=10, backoff=2, cdata='method={}'.format(inspect.stack()[0][3]))
     def netflix_openssl_test_retry(ip):
         status_code = requests.get('http://%s' % ip, headers={'Host': host}, timeout=10).status_code
-        logger('%s: status_code=%s' % (host, status_code))
-        if not status_code == 200:
-            return False
-        else:
-            return True
+        logger('{}: status_code={}'.format(host, status_code))
+        assert status_code == 200, 'status_code={}'.format(status_code)
+        return status_code
 
     if not ip: ip = get_public_ip()
     return netflix_openssl_test_retry(ip)
