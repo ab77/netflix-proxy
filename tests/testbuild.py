@@ -235,7 +235,7 @@ def ssh_run_command(ip, command):
 def docker_test_retry(ip):
     stdout = ssh_run_command(ip, 'docker ps')['stdout']
     # https://docs.docker.com/reference/commandline/ps/
-    assert len(stdout) > 5, 'length={}'.format(len(stdout)) # quick and dirty check (5 lines of output = header + containers), needs improvement..
+    assert len(stdout) == 5, 'length={}'.format(len(stdout)) # quick and dirty check (5 lines of output = header + containers), needs improvement..
     logger(colored('{}: stdout = {}, len(stdout) = {}'.format(
         inspect.stack()[0][3],
         stdout,

@@ -45,8 +45,8 @@ if [[ $(infocmp | grep 'hpa=') == "" ]]; then
   (infocmp; printf '\thpa=\\E[%sG,\n' %i%p1%d) > tmp-${$}.tic && \
     tic -s tmp-$$.tic -o /etc/terminfo && \
     rm tmp-$$.tic && \
-    printf "fix-terminfo: \"exec ${0} ${@}\"\n"
-    exec ${0} ${@}
+    printf "fix-terminfo: \"$0 $@\"\n"
+    exec $0 "$@"
 fi
 
 log_action_begin_msg "checking OS compatibility"
@@ -135,11 +135,6 @@ if [[ "${IPV6}" == '1' ]]; then
 fi
 
 sudo touch ${CWD}/netflix-proxy.log
-
-log_action_begin_msg "log start command line parameters"
-printf "\"${0}: ${@}\"\n"
-printf "\"${0}: ${@}\"\n" &>> ${CWD}/netflix-proxy.log
-log_action_end_msg $?
 
 log_action_begin_msg "log diagnostics info"
 printf "build=${DOCKER_BUILD} client=${CLIENTIP} local=${IPADDR} public=${EXTIP}\n"
