@@ -1,0 +1,3 @@
+dnspython
+git+https://github.com/webpy/webpy#egg=web.py
+passlib
