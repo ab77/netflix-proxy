@@ -1,3 +1,0 @@
-dnspython
-web.py
-passlib
