@@ -294,12 +294,12 @@ sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\
   && sudo apt-get -y install python3.6 python3-venv python3-pip sqlite3 &>> ${CWD}/netflix-proxy.log\
   && python3 -m venv venv &>> ${CWD}/netflix-proxy.log\
   && source venv/bin/activate &>> ${CWD}/netflix-proxy.log\
-  && pip3 install -r requirements.txt &>> ${CWD}/netflix-proxy.log
+  && pip3 install -r requirements.txt &>> ${CWD}/netflix-proxy.log\
+  && pip3 install -r ${CWD}/auth/requirements.txt &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "configuring admin backend"
-sudo pip3 install -r ${CWD}/auth/requirements.txt &>> ${CWD}/netflix-proxy.log\
-  && PLAINTEXT=$(${CWD}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')\
+PLAINTEXT=$(${CWD}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')\
   && HASH=$(${CWD}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}')\
   && sudo cp ${CWD}/auth/db/auth.default.db ${CWD}/auth/db/auth.db &>> ${CWD}/netflix-proxy.log\
   && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${CWD}/netflix-proxy.log

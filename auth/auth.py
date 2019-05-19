@@ -131,7 +131,7 @@ def is_redirected():
     
 
 def csrf_token():
-    if not session.has_key('csrf_token'):
+    if not 'csrf_token' in session:
         from uuid import uuid4
         session.csrf_token = uuid4().hex
     return session.csrf_token
@@ -140,7 +140,7 @@ def csrf_token():
 def csrf_protected(f):
     def decorated(*args, **kwargs):
         inp = web.input()
-        if not (inp.has_key('csrf_token') and inp.csrf_token == session.pop('csrf_token', None)):
+        if not ('csrf_token' in inp and inp.csrf_token == session.pop('csrf_token', None)):
             raise web.HTTPError(
                 "400 Bad request",
                 {'content-type':'text/html'},
@@ -555,7 +555,7 @@ class DDNSIndex:
     ddns_add_form = web.form.Form(web.form.Textbox('domain', web.form.notnull))
     def GET(self):
         try:
-            if session.has_key('user'):
+            if 'user' in session:
                 domains = db.query('SELECT * FROM DDNS WHERE user_id=$user_id',
                        vars={'user_id': session.user['ID']})
                 return render.ddns(domains, DDNSIndex.ddns_add_form())
