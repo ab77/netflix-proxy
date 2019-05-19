@@ -9,4 +9,4 @@ try:
 except IndexError:
   plaintext = generate_password()
 
-print plaintext, pbkdf2_sha256.encrypt(plaintext, rounds=200000, salt_size=16)
+print(plaintext, pbkdf2_sha256.encrypt(plaintext, rounds=200000, salt_size=16))
