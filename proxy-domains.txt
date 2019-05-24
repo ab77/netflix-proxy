@@ -72,3 +72,5 @@ www.bbc.co.uk
 crunchyroll.com
 ifconfig.co
 omtrdc.net
+sling.com
+movetv.com
