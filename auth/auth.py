@@ -64,7 +64,10 @@ def get_iface():
     rc = p.returncode
     web.debug('DEBUG: get_iface()=%s' % [rc, err, output])
     if rc == 0:
-        iface = output.rstrip()
+        try:
+            iface = output.rstrip().decode()
+        except:
+            iface = output.rstrip()
     else:
         iface = 'eth0'
         web.debug('WARNING: get_iface() failed, guessing iface=%s' % iface)
@@ -86,7 +89,10 @@ def get_server_iface_ip():
     rc = p.returncode
     web.debug('DEBUG: get_server_iface_ip()=%s' % [rc, err, output])
     if rc == 0:
-        ipaddr = output[0].rstrip()
+        try:
+            ipaddr = output[0].rstrip().decode()
+        except:
+            ipaddr = output[0].rstrip()
     else:
         ipaddr = web.ctx.env['SERVER_NAME']
         web.debug('WARNING: get_server_iface_ip() failed, guessing ipaddr=%s' % ipaddr)
