@@ -74,3 +74,5 @@ ifconfig.co
 omtrdc.net
 sling.com
 movetv.com
+optus.com.au
+optusnet.com.au
