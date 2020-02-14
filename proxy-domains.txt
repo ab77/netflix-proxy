@@ -76,3 +76,4 @@ sling.com
 movetv.com
 optus.com.au
 optusnet.com.au
+gamer.com.tw
