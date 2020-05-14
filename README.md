@@ -40,7 +40,6 @@ This project is **free**, covered by the [MIT License](https://github.com/ab77/n
 # instructions
 The following paragraphs show how to get this solution up and running with a few different Cloud providers I've tried so far. If you prefer a video tutorial, [here](https://www.youtube.com/watch?v=8DrNgnq_cdM) is one prapared by one of the users. Note, OpenVZ **won't work**[[n15]](#footnotes), make sure to get a proper virtual machine using KVM or Xen.
 
-![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/digitalocean.png)](https://m.do.co/c/937b01397c94)
 
 (Netflix is **blocked**[[n16]](#footnotes)) The following is based on a standard Ubuntu Docker image provided by `DigitalOcean`, but should in theory work on any Linux distribution **with** Docker pre-installed.
