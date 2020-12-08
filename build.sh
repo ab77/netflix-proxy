@@ -97,6 +97,11 @@ if [[ $(cat /proc/swaps | wc -l) -le 1 ]]; then
     log_action_end_msg $?
 fi
 
+log_action_begin_msg "installing net-tools"
+sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\
+  && sudo apt-get -y install net-tools &>> ${CWD}/netflix-proxy.log
+log_action_end_msg $?
+
 # obtain the interface with the default gateway
 IFACE=$(get_iface 4)
 
