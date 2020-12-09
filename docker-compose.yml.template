@@ -5,11 +5,9 @@ services:
     image: andyshinn/dnsmasq:latest
     container_name: dnsmasq
     privileged: true
+    network_mode: host
     cap_add:
       - NET_ADMIN
-    ports:
-      - "53:53"
-      - "53:53/udp"
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
     restart: always
@@ -18,11 +16,9 @@ services:
     image: andyshinn/dnsmasq:latest
     container_name: dnsmasq-bogus
     privileged: true
+    network_mode: host
     cap_add:
       - NET_ADMIN
-    ports:
-      - "5353:5353"
-      - "5353:5353/udp"
     command: --port=5353 --log-facility=- -A /#/${EXTIP} -A /#/${EXTIP6}
     restart: always
 
@@ -30,6 +26,7 @@ services:
     image: abiosoft/caddy:latest
     container_name: caddy
     privileged: true
+    network_mode: host
     cap_add:
       - NET_ADMIN
     volumes:
@@ -43,11 +40,9 @@ services:
     build:
       context: docker-sniproxy
     privileged: true
+    network_mode: host
     cap_add:
       - NET_ADMIN
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - ./docker-sniproxy/sniproxy.conf:/etc/sniproxy.conf
     restart: always
