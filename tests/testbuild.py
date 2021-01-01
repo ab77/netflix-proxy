@@ -81,13 +81,13 @@ def get_regions(s):
     slugs = []
     for region in d['regions']:
         slugs.append(region['slug'])
-            
+
     return slugs
 
 
-def args():   
+def args():
     parser = argparse.ArgumentParser()
-    sp = parser.add_subparsers(help='version {}'.format(VERSION)  )  
+    sp = parser.add_subparsers(help='version {}'.format(VERSION)  )
     digitalocean = sp.add_parser('digitalocean')
     digitalocean.add_argument('provider', action='store_const', const='digitalocean', help=argparse.SUPPRESS)
     digitalocean.add_argument('--api_token', type=str, required=True, help='DigitalOcean API v2 secret token')
@@ -173,30 +173,33 @@ def get_droplet_id_by_name(s, name):
     for droplet in d['droplets']:
         if name in droplet['name']:
             droplet_id = droplet['id']
-            
+
     return droplet_id
 
 
 def get_droplet_ip_by_name(s, name):
     response = s.get('{}/droplets'.format(BASE_API_URL))
     d = json.loads(response.text)
+    if verbose: logger('d={}'.format(d))
     droplet_ip = None
     for droplet in d['droplets']:
         if name in droplet['name']:
-            droplet_ip = droplet['networks']['v4'][0]['ip_address']
-            
+            for net in droplet['networks']['v4']:
+                if net['type'] == 'public': droplet_ip = net['ip_address']
+
     return droplet_ip
 
 
 def get_droplet_name_by_ip(s, ip):
     response = s.get('{}/droplets'.format(BASE_API_URL))
     d = json.loads(response.text)
+    if verbose: logger('d={}'.format(d))
     droplet_name = None
     for droplet in d['droplets']:
         droplet_ip = droplet['networks']['v4'][0]['ip_address']
         if ip in droplet_ip:
             droplet_name = droplet['name']
-            
+
     return droplet_name
 
 
@@ -260,7 +263,7 @@ def netflix_proxy_test(ip):
             rc
         ), 'green'))
         return rc
-            
+
     return netflix_proxy_test_retry(ip)
 
 
@@ -294,7 +297,7 @@ def netflix_openssl_test(ip=get_public_ip(), port=443, hostname=DEFAULT_NFLX_HOS
         return cn[0][1]
 
     hostname = hostname.encode()
-    
+
     return netflix_openssl_test_retry(ip)
 
 
@@ -331,7 +334,7 @@ def set_sysdns(ips):
         ns = 'nameserver %s' % ips
     elif isinstance(ips, list):
         for i in xrange(0, len(ips)):
-            ips[i] = 'nameserver %s'% ips[i]            
+            ips[i] = 'nameserver %s'% ips[i]
         ns = '\n'.join(ips)
     if ns: return os.system('printf "%s\n" | sudo tee /etc/resolv.conf' % ns)
 
@@ -348,7 +351,7 @@ if __name__ == '__main__':
             name = str(uuid.uuid4())
         else:
             name = arg.name
-            
+
         droplet_id = None
         s = requests.Session()
         if DEFAULT_PROXY:
@@ -377,20 +380,20 @@ if __name__ == '__main__':
                     arg.region,
                     cip=arg.client_ip,
                     branch=arg.branch
-                )                
+                )
                 logger('create_droplet={}'.format(d))
-                
+
                 droplet_ip = get_droplet_ip_by_name(s, name)
                 logger(colored('Droplet ipaddr = {}...'.format(droplet_ip), 'cyan'))
 
                 logger(colored('Checking running Docker containers on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 result = docker_test(droplet_ip)
                 if not result: exit(1)
-                
+
                 logger(colored('Testing netflix-proxy on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 rc = netflix_proxy_test(droplet_ip)
                 if rc > 0: exit(rc)
-        
+
                 logger(colored('Rebooting Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 result = reboot_test(droplet_ip)
                 if not result: exit(1)
@@ -411,11 +414,11 @@ if __name__ == '__main__':
                 logger(colored('get_sysdns(): {}'.format(get_sysdns()), 'cyan'))
 
                 logger(colored('Tested, OK..', 'green'))
-                
+
             except Exception:
                 if verbose: logger(colored(print_exc(), 'red'))
                 exit(1)
-                
+
             finally:
                 if arg.destroy:
                     droplet_id = get_droplet_id_by_name(s, name)
@@ -423,7 +426,7 @@ if __name__ == '__main__':
                         logger(colored('Destroying Droplet name = {}, id = {}...'.format(name, droplet_id), 'yellow'))
                         d = destroy_droplet(s, droplet_id)
                         logger(d)
-                        
+
         elif arg.destroy and arg.name and not arg.create:
             droplet_id = get_droplet_id_by_name(s, arg.name)
             logger(colored('Destroying Droplet name = {} id = {}...\n'.format(
