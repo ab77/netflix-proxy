@@ -196,9 +196,9 @@ def get_droplet_name_by_ip(s, ip):
     if verbose: logger('d={}'.format(d))
     droplet_name = None
     for droplet in d['droplets']:
-        droplet_ip = droplet['networks']['v4'][0]['ip_address']
-        if ip in droplet_ip:
-            droplet_name = droplet['name']
+        for net in droplet['networks']['v4']:
+            if ip in net['ip_address']
+                droplet_name = droplet['name']
 
     return droplet_name
 
