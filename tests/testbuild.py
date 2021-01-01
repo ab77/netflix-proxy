@@ -197,7 +197,7 @@ def get_droplet_name_by_ip(s, ip):
     droplet_name = None
     for droplet in d['droplets']:
         for net in droplet['networks']['v4']:
-            if ip in net['ip_address']
+            if ip in net['ip_address']:
                 droplet_name = droplet['name']
 
     return droplet_name
