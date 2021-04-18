@@ -343,7 +343,7 @@ log_action_end_msg $?
 
 # configure appropriate init system
 log_action_begin_msg "configuring init system"
-if [[ `/sbin/init --version` =~ upstart ]]; then
+if [[ `/lib/systemd/systemd --version` =~ upstart ]]; then
     sudo cp ${CWD}/init/*.conf /etc/init/ &>> ${CWD}/netflix-proxy.log\
       && sudo $(which sed) -i'' "s#{{CWD}}#${CWD}#g" /etc/init/netflix-proxy-admin.conf &>> ${CWD}/netflix-proxy.log\
       && sudo service netflix-proxy-admin restart &>> ${CWD}/netflix-proxy.log
