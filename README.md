@@ -61,7 +61,7 @@ mkdir -p ~/netflix-proxy\
 7. Enjoy or try `#netflix-proxy` on [freenode](https://webchat.freenode.net/?channels=netflix-proxy) for help.
 
 ### authorising additional IPs
-If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build. If you've forgotten your admin credentials, [reset](https://github.com/ab77/netflix-proxy/wiki/Changing-Admin-Password-For-Auth-Version).
+If you want to share your system with friends and family, you can authorise their home IP address(s) using the `netflix-proxy` admin site, located at `http://<ipaddr>:8080/`, where `ipaddr` is the public IP address of your VPS. Login using `admin` account with the password you recorded during the build. If you've forgotten your admin credentials, [reset](https://github.com/ab77/netflix-proxy/wiki/Change-admin-password).
 
 [![](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)](https://raw.githubusercontent.com/ab77/netflix-proxy/master/static/admin.png)
 
