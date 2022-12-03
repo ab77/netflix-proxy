@@ -17,6 +17,6 @@ jobs:
       repo_config: true
       repo_description: |
         Smart DNS proxy to watch Netflix
-      homepage: "http://anton.belodedenko.me/tag/netflix-proxy/"
+      repo_homepage: "http://anton.belodedenko.me/tag/netflix-proxy/"
       repo_enable_issues: false
       repo_enable_wiki: true
