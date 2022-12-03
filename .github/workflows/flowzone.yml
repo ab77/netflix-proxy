@@ -1,0 +1,22 @@
+name: Flowzone
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+    branches: [main, master]
+
+jobs:
+  flowzone:
+    name: Flowzone
+    uses: product-os/flowzone/.github/workflows/flowzone.yml@ab77/repo-standard-config
+    secrets:
+      FLOWZONE_TOKEN: ${{ secrets.FLOWZONE_TOKEN }}
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    with:
+      repo_config: true
+      repo_description: |
+        Smart DNS proxy to watch Netflix
+      repo_homepage: "http://anton.belodedenko.me/tag/netflix-proxy/"
+      repo_enable_issues: false
+      repo_enable_wiki: true
