@@ -5,7 +5,7 @@ CREATE TABLE "DDNS"(
 	"created" DateTime DEFAULT CURRENT_TIMESTAMP,
 	"user_id" Integer NOT NULL,
 	"last_ipaddr" Text,
-	"domain" Text NOT NULL  );
+	"domain" Text NOT  );
 
 PRAGMA user_version = 1;
 
